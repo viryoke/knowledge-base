@@ -1,6 +1,7 @@
 const KROKI_API = "https://kroki.io";
 
 const DIAGRAM_TYPES = [
+  { lang: "d2", krokiType: "d2", label: "D2" },
   { lang: "plantuml", krokiType: "plantuml", label: "PlantUML" },
   { lang: "dot", krokiType: "graphviz", label: "GraphViz" },
   { lang: "graphviz", krokiType: "graphviz", label: "GraphViz" },
