@@ -110,12 +110,12 @@ Precision 和 Recall 通常此消彼长。调整分类阈值：
 
 ```mermaid
 graph TD
-    Start(("开始")) --> step1["1. 数据准备"]
-    step1 --> step2["2. 模型选择"]
-    step2 --> step3["3. 定义损失函数"]
-    step3 --> step4["4. 训练优化"]
-    step4 --> step5["5. 评估验证"]
-    step5 --> step6["6. 正则化"]
+    Start(("开始")) --> step1["数据准备"]
+    step1 --> step2["模型选择"]
+    step2 --> step3["定义损失函数"]
+    step3 --> step4["训练优化"]
+    step4 --> step5["评估验证"]
+    step5 --> step6["正则化"]
     step6 --> End(("结束"))
 ```
 
