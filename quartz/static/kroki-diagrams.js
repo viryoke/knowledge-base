@@ -88,4 +88,11 @@ async function renderDiagrams() {
 
 document.addEventListener("nav", renderDiagrams);
 document.addEventListener("render", renderDiagrams);
-renderDiagrams();
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", renderDiagrams);
+} else {
+  renderDiagrams();
+}
+
+setTimeout(renderDiagrams, 1000);
