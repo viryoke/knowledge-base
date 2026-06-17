@@ -29,6 +29,37 @@ confidence: medium
         └─────────────────────┘
 ```
 
+```mermaid
+graph LR
+    subgraph Driving["入站适配器 (Driving Adapters)"]
+        HTTP["HTTP Controller"]
+        gRPC["gRPC Handler"]
+        CLI["CLI Command"]
+    end
+
+    subgraph Domain["核心域 (Domain)"]
+        DP["入站端口\n(Driving Port)"]
+        BL["业务逻辑\n(Business Logic)"]
+        VP["出站端口\n(Driven Port)"]
+        DP --> BL --> VP
+    end
+
+    subgraph Driven["出站适配器 (Driven Adapters)"]
+        MySQL["MySQL Repository"]
+        Redis["Redis Repository"]
+        Kafka["Kafka Producer"]
+    end
+
+    HTTP --> DP
+    gRPC --> DP
+    CLI --> DP
+    VP --> MySQL
+    VP --> Redis
+    VP --> Kafka
+```
+
+> 上图展示六边形架构的三层结构：入站适配器通过入站端口驱动核心业务逻辑，核心业务逻辑通过出站端口调用出站适配器。依赖方向始终从外向内。
+
 三个核心概念：
 
 **1. 端口（Port）：** 核心业务域对外暴露的接口契约

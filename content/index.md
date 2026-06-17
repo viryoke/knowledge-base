@@ -99,8 +99,8 @@
 - [[vector-database-ai]] — 向量数据库
 
 ### 软件工程
-- [[hexagonal-architecture]] — 六边形架构
-- [[clean-architecture]] — Clean Architecture
+- [[hexagonal-architecture]] — 六边形架构（含 Mermaid 图表）
+- [[clean-architecture]] — Clean Architecture（含 Mermaid 图表）
 - [[onion-architecture]] — 洋葱架构
 - [[microservice-architecture]] — 微服务架构
 - [[ddd-tactical-patterns]] — DDD 战术模式

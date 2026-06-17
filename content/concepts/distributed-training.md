@@ -20,6 +20,36 @@ sources:
 
 ## 训练并行策略
 
+```mermaid
+graph TD
+    subgraph DP["数据并行 (Data Parallelism)"]
+        DP1["GPU 0\n完整模型副本\n数据批次 A"] 
+        DP2["GPU 1\n完整模型副本\n数据批次 B"]
+        DP1 --> Sync["梯度同步"]
+        DP2 --> Sync
+        Sync --> Update["统一更新参数"]
+    end
+
+    subgraph MP["模型并行 (Model Parallelism)"]
+        L1["GPU 0\n第 1-10 层"] --> L2["GPU 1\n第 11-20 层"]
+        L2 --> L3["GPU 2\n第 21-30 层"]
+    end
+
+    subgraph PP["流水线并行 (Pipeline Parallelism)"]
+        Stage1["Stage 1\nGPU 0"] --> Stage2["Stage 2\nGPU 1"]
+        Stage2 --> Stage3["Stage 3\nGPU 2"]
+    end
+
+    subgraph TP["张量并行 (Tensor Parallelism)"]
+        Mat["矩阵乘法"] --> Slice1["GPU 0\n列切分"]
+        Mat --> Slice2["GPU 1\n列切分"]
+        Slice1 --> AllReduce["AllReduce"]
+        Slice2 --> AllReduce
+    end
+```
+
+> 四种训练并行策略各有适用场景：数据并行最简单但内存需求高，模型并行可训练超大模型但利用率低，流水线并行减少气泡时间，张量并行通信效率高但需高速互联。
+
 ### 1. 数据并行（Data Parallelism）
 
 **原理**：
@@ -71,6 +101,23 @@ sources:
 **代表**：Switch Transformer、GLaM
 
 ## 内存优化技术
+
+```mermaid
+graph LR
+    subgraph Memory["内存优化策略"]
+        Offload["CPU Offloading\n不活跃张量卸载到CPU"]
+        Recompute["激活重计算\n前向不保存激活值\n反向重新计算"]
+        MixedPrec["混合精度训练\nFP16前向/反向\nFP32参数更新"]
+        ZeRO["ZeRO 优化器\n分片优化器状态"]
+    end
+
+    Offload --> Trade["以计算/延迟换内存"]
+    Recompute --> Trade
+    MixedPrec --> Reduce["直接减少内存占用"]
+    ZeRO --> Reduce
+```
+
+> 内存优化技术的核心思路：以计算换内存（CPU Offloading、激活重计算）或直接减少内存占用（混合精度、ZeRO 分片）。
 
 ### CPU Offloading
 - 将不活跃的张量卸载到CPU内存

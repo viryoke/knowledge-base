@@ -57,6 +57,18 @@ Tool Calls → 外部工具执行 → 结果返回
 最终响应
 ```
 
+```mermaid
+graph TD
+    Goal["用户目标"] --> Agent["Agent\n(LLM + Planning)"]
+    Agent --> TC["Tool Calls\n(搜索/代码/数据库/API)"]
+    TC --> Ext["外部工具执行"]
+    Ext --> Result["结果返回"]
+    Result --> Agent
+    Agent -->|"任务完成"| Final["最终响应"]
+```
+
+> Agent 模式的核心循环：LLM 推理 → 工具调用 → 获取结果 → 判断是否完成。通过 Planning、Memory、Tools、Reflection 四个组件实现自主任务执行。
+
 Agent 模式的核心组件：
 - **Planning**：任务分解与步骤规划（ReAct、Plan-and-Execute）
 - **Memory**：短期记忆（对话历史）+ 长期记忆（[[vector-database-ai]]）
@@ -122,6 +134,17 @@ LLM 生成基于检索上下文的回答
          ↓           ↓
       Guardrails   Tools/DB
 ```
+
+```mermaid
+graph LR
+    User["用户"] --> Pre["预处理\n+ Guardrails"]
+    Pre --> Chain["LLM Chain"]
+    Chain --> Post["后处理\n+ 格式化"]
+    Post --> Resp["响应"]
+    Chain <--> Tools["Tools / DB"]
+```
+
+> 管道架构在 LLM 调用前后加入预处理和后处理环节，适用于需要输入验证、格式化输出的场景（如客服系统、内容审核）。
 - 适用：需要输入验证、格式化输出的场景
 - 典型：客服系统、内容审核
 
@@ -145,6 +168,17 @@ LLM 生成基于检索上下文的回答
          ├─→ Review Agent
          └─→ Summary Agent
 ```
+
+```mermaid
+graph TD
+    User["用户"] --> Orch["Orchestrator Agent"]
+    Orch --> Research["Research Agent"]
+    Orch --> Code["Code Agent"]
+    Orch --> Review["Review Agent"]
+    Orch --> Summary["Summary Agent"]
+```
+
+> 多 Agent 架构通过 Orchestrator 协调多个专业 Agent 并行工作，适用于需要多专业协作的复杂任务。挑战在于通信开销和协调一致性。
 - 适用：需要多专业协作的复杂任务
 - 挑战：通信开销、协调一致性
 

@@ -38,6 +38,46 @@ confidence: medium
   └──────────────────────────────────────┘
 ```
 
+```mermaid
+graph TB
+    subgraph L4["最外层 · Frameworks & Drivers"]
+        Web["Web 框架"]
+        DB["数据库"]
+        UI["UI 层"]
+        ExtTool["外部工具"]
+    end
+
+    subgraph L3["第三层 · Interface Adapters"]
+        Ctrl["Controllers"]
+        Presenter["Presenters"]
+        Gateway["Gateways"]
+    end
+
+    subgraph L2["第二层 · Use Cases"]
+        UC1["PlaceOrderUseCase"]
+        UC2["CancelOrderUseCase"]
+    end
+
+    subgraph L1["最内层 · Entities"]
+        E1["Order"]
+        E2["Product"]
+    end
+
+    Web --> Ctrl
+    DB --> Gateway
+    UI --> Presenter
+    ExtTool --> Gateway
+    Ctrl --> UC1
+    Ctrl --> UC2
+    Presenter --> UC1
+    Gateway --> UC1
+    UC1 --> E1
+    UC1 --> E2
+    UC2 --> E1
+```
+
+> 上图展示 Clean Architecture 四层同心圆结构及依赖方向。源代码依赖只能从外层指向内层，内层不知道外层的存在。
+
 从内到外四层：
 
 | 层级 | 名称 | 内容 | 变化频率 |
