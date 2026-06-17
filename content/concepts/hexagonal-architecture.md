@@ -29,13 +29,11 @@ Driving: {
 Domain: {
   label: "核心域 (Domain)"
   DP: {
-    label: "入站端口 (Driving Port)"
-    shape: interface
+    label: "«interface»\n入站端口 (Driving Port)"
   }
   BL: "业务逻辑 (Business Logic)"
   VP: {
-    label: "出站端口 (Driven Port)"
-    shape: interface
+    label: "«interface»\n出站端口 (Driven Port)"
   }
   DP -> BL -> VP
 }
@@ -81,8 +79,7 @@ Domain.VP -> Driven.Kafka
 direction: right
 Adapter: "适配器"
 Port: {
-  label: "端口"
-  shape: interface
+  label: "«interface»\n端口"
 }
 Domain: "核心域"
 Adapter -> Port -> Domain

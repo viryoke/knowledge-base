@@ -26,11 +26,11 @@ Driving Adapters: {
 
 Domain: {
   Driving Port: {
-    shape: interface
+    label: "«interface»\nDriving Port"
   }
   Business Logic
   Driven Port: {
-    shape: interface
+    label: "«interface»\nDriven Port"
   }
   Driving Port -> Business Logic -> Driven Port
 }
