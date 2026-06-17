@@ -99,7 +99,49 @@ export default (() => {
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
           .map((res) => JSResourceToScriptElement(res, true))}
-        <script defer src={joinSegments(baseDir, "static/kroki-diagrams.js")} data-persist="true"></script>
+        <script defer data-persist="true" dangerouslySetInnerHTML={{__html: `
+const KROKI_API = "https://kroki.io";
+const DIAGRAM_TYPES = [
+  { lang: "d2", krokiType: "d2", label: "D2" },
+  { lang: "plantuml", krokiType: "plantuml", label: "PlantUML" },
+  { lang: "dot", krokiType: "graphviz", label: "GraphViz" },
+  { lang: "graphviz", krokiType: "graphviz", label: "GraphViz" },
+];
+async function renderKrokiDiagram(code, krokiType) {
+  const r = await fetch(KROKI_API + "/" + krokiType + "/svg", {method: "POST", headers: {"Content-Type": "text/plain"}, body: code});
+  if (!r.ok) throw new Error("Kroki error: " + r.status);
+  return r.text();
+}
+function createKrokiContainer(svg, label) {
+  const c = document.createElement("div"); c.className = "diagram-container";
+  const w = document.createElement("div"); w.innerHTML = svg; c.appendChild(w);
+  const cap = document.createElement("div"); cap.className = "diagram-caption"; cap.textContent = label; c.appendChild(cap);
+  return c;
+}
+async function renderKrokiDiagrams() {
+  for (const dt of DIAGRAM_TYPES) {
+    document.querySelectorAll("code[data-language='" + dt.lang + "']").forEach(function(cb) {
+      const fig = cb.closest("figure") || cb.closest("pre").parentElement;
+      if (fig.dataset.krokiDone) return;
+      const src = cb.textContent.trim();
+      if (!src) return;
+      const ld = document.createElement("div"); ld.className = "kroki-loading"; ld.textContent = "Rendering " + dt.label + "...";
+      fig.parentElement.insertBefore(ld, fig);
+      renderKrokiDiagram(src, dt.krokiType).then(function(svg) {
+        const c = createKrokiContainer(svg, dt.label);
+        const btn = document.createElement("button"); btn.className = "diagram-source-toggle"; btn.textContent = "Show source";
+        btn.onclick = function() { var v = fig.style.display !== "none"; fig.style.display = v ? "none" : "block"; btn.textContent = v ? "Show source" : "Hide source"; };
+        fig.style.display = "none"; fig.dataset.krokiDone = "1";
+        ld.replaceWith(c); c.appendChild(btn);
+      }).catch(function(e) { ld.remove(); console.warn("Kroki fail:", e); });
+    });
+  }
+}
+document.addEventListener("nav", renderKrokiDiagrams);
+document.addEventListener("render", renderKrokiDiagrams);
+if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", renderKrokiDiagrams); } else { renderKrokiDiagrams(); }
+setTimeout(renderKrokiDiagrams, 1500);
+`}} />
         {additionalHead.map((resource) => {
           if (typeof resource === "function") {
             return resource(fileData)
