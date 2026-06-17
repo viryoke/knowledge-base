@@ -57,6 +57,9 @@ async function renderDiagrams() {
     for (const codeBlock of codeBlocks) {
       const pre = codeBlock.closest("pre") || codeBlock.parentElement;
       const figure = codeBlock.closest("figure") || pre.parentElement;
+
+      if (figure.dataset.krokiRendered === "true") continue;
+
       const sourceCode = codeBlock.textContent || "";
 
       if (!sourceCode.trim()) continue;
@@ -72,6 +75,7 @@ async function renderDiagrams() {
         const toggle = createSourceToggle(figure);
 
         figure.style.display = "none";
+        figure.dataset.krokiRendered = "true";
         loadingDiv.replaceWith(container);
         container.appendChild(toggle);
       } catch (error) {

@@ -85,27 +85,29 @@ Indexing.VectorStore -> Querying.Retriever
 ### Clean Architecture 同心圆
 
 ```d2
-Frameworks: Frameworks & Drivers {
-  style.fill: "#f0f0f0"
+direction: down
+
+Frameworks: {
+  label: "Frameworks & Drivers"
   Web Framework
   Database
   UI
 }
 
-Adapters: Interface Adapters {
-  style.fill: "#e0e0e0"
+Adapters: {
+  label: "Interface Adapters"
   Controllers
   Gateways
   Presenters
 }
 
-UseCases: Application Business Rules {
-  style.fill: "#d0d0d0"
+UseCases: {
+  label: "Application Business Rules"
   Use Cases
 }
 
-Entities: Enterprise Business Rules {
-  style.fill: "#c0c0c0"
+Entities: {
+  label: "Enterprise Business Rules"
   Entities
 }
 
@@ -194,7 +196,7 @@ Empty -> End
 ## D2 类图风格
 
 ```d2
-classes: {
+Order: {
   shape: class
   +name: String
   +status: OrderStatus
@@ -218,8 +220,8 @@ ShippingAddress: {
   +country: String
 }
 
-classes -> OrderItem: contains
-classes -> ShippingAddress: ships to
+Order -> OrderItem: contains
+Order -> ShippingAddress: ships to
 ```
 
 ## 对比总结
@@ -230,3 +232,161 @@ classes -> ShippingAddress: ships to
 | 布局控制 | 强 | 中等 | 自动布局 |
 | 适合场景 | 架构图、系统图 | 时序图、类图 | 依赖图、流程图 |
 | 主题支持 | 丰富 | 有限 | 有限 |
+
+---
+
+## PlantUML 架构图对比
+
+### PlantUML 六边形架构
+
+```plantuml
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam roundCorner 10
+
+package "Driving Adapters" {
+  [HTTP Controller] as HC
+  [gRPC Handler] as GH
+  [CLI Command] as CLI
+}
+
+package "Domain" {
+  interface "Driving Port" as DP
+  [Business Logic] as BL
+  interface "Driven Port" as DrP
+  DP --> BL
+  BL --> DrP
+}
+
+package "Driven Adapters" {
+  [MySQL Repository] as MySQL
+  [Redis Repository] as Redis
+  [Kafka Producer] as Kafka
+}
+
+HC --> DP
+GH --> DP
+CLI --> DP
+DrP --> MySQL
+DrP --> Redis
+DrP --> Kafka
+@enduml
+```
+
+### PlantUML Clean Architecture
+
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam roundCorner 10
+
+rectangle "Frameworks & Drivers" as L4 {
+  [Web Framework]
+  [Database]
+  [UI]
+}
+
+rectangle "Interface Adapters" as L3 {
+  [Controllers]
+  [Gateways]
+  [Presenters]
+}
+
+rectangle "Application Business Rules" as L2 {
+  [Use Cases]
+}
+
+rectangle "Enterprise Business Rules" as L1 {
+  [Entities]
+}
+
+L4 --> L3
+L3 --> L2
+L2 --> L1
+@enduml
+```
+
+### PlantUML RAG 系统架构
+
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam roundCorner 10
+
+package "离线索引阶段 (Indexing)" {
+  [原始文档] --> [Document\nLoader] --> [Chunker\n分块器] --> [Embedder\n嵌入器] --> database "Vector Store\n向量数据库" as VS
+}
+
+package "在线查询阶段 (Querying)" {
+  [用户查询] --> [Query Transform\n查询转换] --> [Retriever\n检索器] --> [Reranker\n重排序] --> [Generator\n生成器] --> [响应]
+}
+
+VS --> [Retriever\n检索器]
+@enduml
+```
+
+### PlantUML 微服务架构
+
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam roundCorner 10
+
+actor Client
+
+rectangle "API Gateway\n统一入口、路由、鉴权" as GW
+
+package "Services" {
+  [Order Service] as OS
+  [Payment Service] as PS
+  [Inventory Service] as IS
+}
+
+database "Order DB" as ODB
+database "Pay DB" as PDB
+database "Inventory DB" as IDB
+
+queue "Message Broker\n(Kafka / RabbitMQ)" as MB
+
+Client --> GW
+GW --> OS
+GW --> PS
+GW --> IS
+OS --> ODB
+PS --> PDB
+IS --> IDB
+OS --> MB
+PS --> MB
+IS --> MB
+@enduml
+```
+
+### PlantUML 流程图（训练诊断）
+
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam ActivityDiamondFontSize 12
+
+start
+:训练结果不好？;
+
+if (Training Loss\n降不下去？) then (Optimization 问题)
+  :换更强的 Optimizer\n(Adam/AdamW);
+  :调整 Learning Rate Schedule;
+  :检查 Initialization;
+  :添加 Batch Normalization\n/ Skip Connection;
+  :不要用 Data Augmentation\n(会让优化更难);
+else (Generalization 问题)
+  :Training Loss 低但\nValidation Loss 高？;
+  :收集更多数据;
+  :Data Augmentation;
+  :Dropout / Weight Decay;
+  :Early Stopping;
+  :减小模型规模;
+endif
+
+stop
+@enduml
+```
