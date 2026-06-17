@@ -108,26 +108,15 @@ Precision 和 Recall 通常此消彼长。调整分类阈值：
 
 ## 分类模型训练流程
 
-```plantuml
-@startuml
-skinparam shadowing false
-skinparam roundCorner 10
-
-start
-:1. 数据准备
-特征工程 + 标签标注;
-:2. 模型选择
-逻辑回归 / SVM / 神经网络 / 决策树;
-:3. 定义损失函数
-Cross-Entropy Loss;
-:4. 训练优化
-梯度下降最小化损失;
-:5. 评估验证
-Confusion Matrix / F1 / AUC;
-:6. 正则化
-防止过拟合，提升泛化;
-stop
-@enduml
+```mermaid
+graph TD
+    Start(("开始")) --> step1["1. 数据准备\n特征工程 + 标签标注"]
+    step1 --> step2["2. 模型选择\n逻辑回归 / SVM / 神经网络 / 决策树"]
+    step2 --> step3["3. 定义损失函数\nCross-Entropy Loss"]
+    step3 --> step4["4. 训练优化\n梯度下降最小化损失"]
+    step4 --> step5["5. 评估验证\nConfusion Matrix / F1 / AUC"]
+    step5 --> step6["6. 正则化\n防止过拟合，提升泛化"]
+    step6 --> End(("结束"))
 ```
 
 ## 跨课程视角

@@ -62,29 +62,28 @@ Build 2026 发布的 Agent OS，基于 Android 而非 Windows。
 
 [[ai-agent]] 定义了 Agent 的逻辑架构（LLM + Planning + Memory + Tools），而 Agent OS 提供物理执行环境：
 
-```d2
-direction: down
+```mermaid
+graph TD
+    subgraph app["Application Layer"]
+        scout["Scout"]
+        copilot["Copilot"]
+        custom["Custom Agent"]
+    end
 
-app: "Application Layer" {
-  scout: Scout
-  copilot: Copilot
-  custom: "Custom Agent"
-}
+    subgraph os["Agent OS (Solara, 定制 Android)"]
+        lifecycle["Agent 生命周期管理"]
+        sandbox["工具调用沙箱"]
+        io["多模态 I/O 抽象"]
+        security["安全策略执行 (ACS)"]
+    end
 
-os: "Agent OS (Solara, 定制 Android)" {
-  lifecycle: "Agent 生命周期管理"
-  sandbox: "工具调用沙箱"
-  io: "多模态 I/O 抽象"
-  security: "安全策略执行 (ACS)"
-}
+    subgraph hw["Hardware"]
+        rtx["RTX Spark"]
+        sensor["传感器"]
+        network["网络"]
+    end
 
-hw: Hardware {
-  rtx: "RTX Spark"
-  sensor: 传感器
-  network: 网络
-}
-
-app -> os -> hw
+    app --> os --> hw
 ```
 
 ## 与 [[evaluation-benchmark]] 的关系

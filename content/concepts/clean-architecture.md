@@ -20,50 +20,42 @@ confidence: medium
 
 ### 1. 同心圆分层
 
-```d2
-direction: down
+```mermaid
+graph TD
+    subgraph Outer["最外层 · Frameworks & Drivers"]
+        Web["Web 框架"]
+        DB[("数据库")]
+        UI["UI 层"]
+        ExtTool["外部工具"]
+    end
 
-Outer: {
-  label: "最外层 · Frameworks & Drivers"
-  Web: "Web 框架"
-  DB: {
-    label: "数据库"
-    shape: cylinder
-  }
-  UI: "UI 层"
-  ExtTool: "外部工具"
-}
+    subgraph Adapters["第三层 · Interface Adapters"]
+        Ctrl["Controllers"]
+        Presenter["Presenters"]
+        Gateway["Gateways"]
+    end
 
-Adapters: {
-  label: "第三层 · Interface Adapters"
-  Ctrl: "Controllers"
-  Presenter: "Presenters"
-  Gateway: "Gateways"
-}
+    subgraph UseCases["第二层 · Use Cases"]
+        UC1["PlaceOrderUseCase"]
+        UC2["CancelOrderUseCase"]
+    end
 
-UseCases: {
-  label: "第二层 · Use Cases"
-  UC1: "PlaceOrderUseCase"
-  UC2: "CancelOrderUseCase"
-}
+    subgraph Entities["最内层 · Entities"]
+        E1["Order"]
+        E2["Product"]
+    end
 
-Entities: {
-  label: "最内层 · Entities"
-  E1: "Order"
-  E2: "Product"
-}
-
-Outer.Web -> Adapters.Ctrl
-Outer.DB -> Adapters.Gateway
-Outer.UI -> Adapters.Presenter
-Outer.ExtTool -> Adapters.Gateway
-Adapters.Ctrl -> UseCases.UC1
-Adapters.Ctrl -> UseCases.UC2
-Adapters.Presenter -> UseCases.UC1
-Adapters.Gateway -> UseCases.UC1
-UseCases.UC1 -> Entities.E1
-UseCases.UC1 -> Entities.E2
-UseCases.UC2 -> Entities.E1
+    Web --> Ctrl
+    DB --> Gateway
+    UI --> Presenter
+    ExtTool --> Gateway
+    Ctrl --> UC1
+    Ctrl --> UC2
+    Presenter --> UC1
+    Gateway --> UC1
+    UC1 --> E1
+    UC1 --> E2
+    UC2 --> E1
 ```
 
 > 上图展示 Clean Architecture 四层同心圆结构及依赖方向。源代码依赖只能从外层指向内层，内层不知道外层的存在。

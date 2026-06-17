@@ -20,43 +20,42 @@ sources:
 
 ## 训练并行策略
 
-```d2
-direction: down
+```mermaid
+graph TD
+    subgraph DP["数据并行 (Data Parallelism)"]
+        DP1["GPU 0<br>完整模型副本<br>数据批次 A"]
+        DP2["GPU 1<br>完整模型副本<br>数据批次 B"]
+        Sync["梯度同步"]
+        Update["统一更新参数"]
+        DP1 --> Sync
+        DP2 --> Sync
+        Sync --> Update
+    end
 
-DP: 数据并行 (Data Parallelism) {
-  DP1: "GPU 0\n完整模型副本\n数据批次 A"
-  DP2: "GPU 1\n完整模型副本\n数据批次 B"
-  Sync: "梯度同步"
-  Update: "统一更新参数"
-  DP1 -> Sync
-  DP2 -> Sync
-  Sync -> Update
-}
+    subgraph MP["模型并行 (Model Parallelism)"]
+        L1["GPU 0<br>第 1-10 层"]
+        L2["GPU 1<br>第 11-20 层"]
+        L3["GPU 2<br>第 21-30 层"]
+        L1 --> L2 --> L3
+    end
 
-MP: 模型并行 (Model Parallelism) {
-  L1: "GPU 0\n第 1-10 层"
-  L2: "GPU 1\n第 11-20 层"
-  L3: "GPU 2\n第 21-30 层"
-  L1 -> L2 -> L3
-}
+    subgraph PP["流水线并行 (Pipeline Parallelism)"]
+        Stage1["Stage 1<br>GPU 0"]
+        Stage2["Stage 2<br>GPU 1"]
+        Stage3["Stage 3<br>GPU 2"]
+        Stage1 --> Stage2 --> Stage3
+    end
 
-PP: 流水线并行 (Pipeline Parallelism) {
-  Stage1: "Stage 1\nGPU 0"
-  Stage2: "Stage 2\nGPU 1"
-  Stage3: "Stage 3\nGPU 2"
-  Stage1 -> Stage2 -> Stage3
-}
-
-TP: 张量并行 (Tensor Parallelism) {
-  Mat: "矩阵乘法"
-  Slice1: "GPU 0\n列切分"
-  Slice2: "GPU 1\n列切分"
-  AllReduce: "AllReduce"
-  Mat -> Slice1
-  Mat -> Slice2
-  Slice1 -> AllReduce
-  Slice2 -> AllReduce
-}
+    subgraph TP["张量并行 (Tensor Parallelism)"]
+        Mat["矩阵乘法"]
+        Slice1["GPU 0<br>列切分"]
+        Slice2["GPU 1<br>列切分"]
+        AllReduce["AllReduce"]
+        Mat --> Slice1
+        Mat --> Slice2
+        Slice1 --> AllReduce
+        Slice2 --> AllReduce
+    end
 ```
 
 > 四种训练并行策略各有适用场景：数据并行最简单但内存需求高，模型并行可训练超大模型但利用率低，流水线并行减少气泡时间，张量并行通信效率高但需高速互联。
@@ -113,23 +112,22 @@ TP: 张量并行 (Tensor Parallelism) {
 
 ## 内存优化技术
 
-```d2
-direction: right
+```mermaid
+graph LR
+    subgraph Memory["内存优化策略"]
+        Offload["CPU Offloading<br>不活跃张量卸载到CPU"]
+        Recompute["激活重计算<br>前向不保存激活值<br>反向重新计算"]
+        MixedPrec["混合精度训练<br>FP16前向/反向<br>FP32参数更新"]
+        ZeRO["ZeRO 优化器<br>分片优化器状态"]
+    end
 
-Memory: 内存优化策略 {
-  Offload: "CPU Offloading\n不活跃张量卸载到CPU"
-  Recompute: "激活重计算\n前向不保存激活值\n反向重新计算"
-  MixedPrec: "混合精度训练\nFP16前向/反向\nFP32参数更新"
-  ZeRO: "ZeRO 优化器\n分片优化器状态"
-}
+    Trade["以计算/延迟换内存"]
+    Reduce["直接减少内存占用"]
 
-Trade: "以计算/延迟换内存"
-Reduce: "直接减少内存占用"
-
-Memory.Offload -> Trade
-Memory.Recompute -> Trade
-Memory.MixedPrec -> Reduce
-Memory.ZeRO -> Reduce
+    Offload --> Trade
+    Recompute --> Trade
+    MixedPrec --> Reduce
+    ZeRO --> Reduce
 ```
 
 > 内存优化技术的核心思路：以计算换内存（CPU Offloading、激活重计算）或直接减少内存占用（混合精度、ZeRO 分片）。

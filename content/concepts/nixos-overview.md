@@ -67,27 +67,14 @@ Nix 使用**纯函数式构建**：
 
 ### 核心组件
 
-```d2
-direction: down
+```mermaid
+graph TD
+    Config["用户配置文件\n(configuration.nix / flake.nix)"]
+    Nix["Nix 包管理器\n解析配置 · 计算依赖图 · 构建/下载软件包"]
+    Store[("/nix/store (只读存储)\n所有软件包 · 所有配置文件 · 哈希命名，多版本共存")]
+    Links["系统链接\n/run/current-system → 当前配置\n/etc → 指向 /nix/store 的链接"]
 
-Config: {
-  label: "用户配置文件\n(configuration.nix / flake.nix)"
-}
-
-Nix: {
-  label: "Nix 包管理器\n解析配置 · 计算依赖图 · 构建/下载软件包"
-}
-
-Store: {
-  label: "/nix/store (只读存储)\n所有软件包 · 所有配置文件 · 哈希命名，多版本共存"
-  shape: cylinder
-}
-
-Links: {
-  label: "系统链接\n/run/current-system → 当前配置\n/etc → 指向 /nix/store 的链接"
-}
-
-Config -> Nix -> Store -> Links
+    Config --> Nix --> Store --> Links
 ```
 
 ### 配置层级

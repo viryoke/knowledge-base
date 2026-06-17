@@ -67,19 +67,17 @@ record Money(BigDecimal amount, Currency currency) {
 
 一组**作为数据修改单元**的相关对象集合，由 **Aggregate Root**（聚合根）统一管控外部访问。
 
-```d2
-Aggregate: {
-  label: "Order Aggregate"
-  Root: {
-    label: "[Order]\nAggregate Root"
-  }
-  I1: "OrderItem\n(Entity)"
-  I2: "OrderItem\n(Entity)"
-  SA: "ShippingAddress\n(Value Object)"
-  Root -> I1
-  Root -> I2
-  Root -> SA
-}
+```mermaid
+graph TD
+    subgraph Aggregate["Order Aggregate"]
+        Root["[Order]<br>Aggregate Root"]
+        I1["OrderItem<br>(Entity)"]
+        I2["OrderItem<br>(Entity)"]
+        SA["ShippingAddress<br>(Value Object)"]
+        Root --> I1
+        Root --> I2
+        Root --> SA
+    end
 ```
 
 > 外部只能通过 Order（Aggregate Root）操作内部对象。
@@ -139,28 +137,25 @@ record OrderConfirmedEvent(String orderId, LocalDateTime timestamp) {}
 
 ## 模式之间的关系
 
-```d2
-Aggregate: {
-  label: "Aggregate"
-  Root: "Aggregate Root"
-  E: "Entity"
-  VO: "Value Object"
-  Root -> E
-  Root -> VO
-}
+```mermaid
+graph TD
+    subgraph Agg["Aggregate"]
+        Root["Aggregate Root"]
+        E["Entity"]
+        VO["Value Object"]
+        Root --> E
+        Root --> VO
+    end
 
-DomainEvent: "Domain Event"
-DomainService: "Domain Service\n(跨聚合操作)"
-Factory: "Factory\n(创建聚合)"
-Repository: {
-  label: "Repository\n(持久化聚合)"
-  shape: cylinder
-}
+    DomainEvent["Domain Event"]
+    DomainService["Domain Service<br>(跨聚合操作)"]
+    Factory["Factory<br>(创建聚合)"]
+    Repository[("Repository<br>(持久化聚合)")]
 
-Aggregate.Root -> DomainEvent: "发布"
-Aggregate -> DomainService: {style: dashed}
-Aggregate -> Factory: {style: dashed}
-Aggregate -> Repository: {style: dashed}
+    Root -->|"发布"| DomainEvent
+    Agg -.-> DomainService
+    Agg -.-> Factory
+    Agg -.-> Repository
 ```
 
 ## 与其他架构模式的比较

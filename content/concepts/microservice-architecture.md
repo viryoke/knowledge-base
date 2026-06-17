@@ -52,43 +52,32 @@ confidence: medium
 
 ## 典型架构
 
-```d2
-direction: down
+```mermaid
+graph TD
+    Client["Client"]
+    Gateway["API Gateway<br>统一入口、路由、鉴权"]
 
-Client: "Client"
-Gateway: "API Gateway\n统一入口、路由、鉴权"
+    subgraph Services["Microservices"]
+        Order["Order Service"]
+        Payment["Payment Service"]
+        Inventory["Inventory Service"]
+        OrderDB[("Order DB")]
+        PayDB[("Pay DB")]
+        InvDB[("Inventory DB")]
+        Order --> OrderDB
+        Payment --> PayDB
+        Inventory --> InvDB
+    end
 
-Services: {
-  label: "Microservices"
-  Order: "Order Service"
-  Payment: "Payment Service"
-  Inventory: "Inventory Service"
-  OrderDB: {
-    label: "Order DB"
-    shape: cylinder
-  }
-  PayDB: {
-    label: "Pay DB"
-    shape: cylinder
-  }
-  InvDB: {
-    label: "Inventory DB"
-    shape: cylinder
-  }
-  Order -> OrderDB
-  Payment -> PayDB
-  Inventory -> InvDB
-}
+    MessageBroker["Message Broker<br>(Kafka / RabbitMQ)"]
 
-MessageBroker: "Message Broker\n(Kafka / RabbitMQ)"
-
-Client -> Gateway
-Gateway -> Services.Order
-Gateway -> Services.Payment
-Gateway -> Services.Inventory
-Services.Order -> MessageBroker
-Services.Payment -> MessageBroker
-Services.Inventory -> MessageBroker
+    Client --> Gateway
+    Gateway --> Order
+    Gateway --> Payment
+    Gateway --> Inventory
+    Order --> MessageBroker
+    Payment --> MessageBroker
+    Inventory --> MessageBroker
 ```
 
 ## 关键挑战与应对
