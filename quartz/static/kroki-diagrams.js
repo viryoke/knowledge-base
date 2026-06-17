@@ -49,20 +49,30 @@ function createSourceToggle(pre) {
 }
 
 async function renderDiagrams() {
+  const debugInfo = [];
+
   for (const diagramType of DIAGRAM_TYPES) {
     const codeBlocks = document.querySelectorAll(
       "code[data-language='" + diagramType.lang + "']"
     );
 
+    debugInfo.push({lang: diagramType.lang, count: codeBlocks.length});
+
     for (const codeBlock of codeBlocks) {
       const pre = codeBlock.closest("pre") || codeBlock.parentElement;
       const figure = codeBlock.closest("figure") || pre.parentElement;
 
-      if (figure.dataset.krokiRendered === "true") continue;
+      if (figure.dataset.krokiRendered === "true") {
+        debugInfo.push({lang: diagramType.lang, skip: "already rendered"});
+        continue;
+      }
 
       const sourceCode = codeBlock.textContent || "";
 
-      if (!sourceCode.trim()) continue;
+      if (!sourceCode.trim()) {
+        debugInfo.push({lang: diagramType.lang, skip: "empty"});
+        continue;
+      }
 
       const loadingDiv = document.createElement("div");
       loadingDiv.className = "kroki-loading";
@@ -78,12 +88,16 @@ async function renderDiagrams() {
         figure.dataset.krokiRendered = "true";
         loadingDiv.replaceWith(container);
         container.appendChild(toggle);
+        debugInfo.push({lang: diagramType.lang, success: true});
       } catch (error) {
         loadingDiv.remove();
         console.warn("Failed to render " + diagramType.label + ":", error);
+        debugInfo.push({lang: diagramType.lang, error: error.message});
       }
     }
   }
+
+  window.__krokiDebug = debugInfo;
 }
 
 document.addEventListener("nav", renderDiagrams);
