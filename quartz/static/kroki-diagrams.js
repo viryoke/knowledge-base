@@ -50,10 +50,13 @@ function createSourceToggle(pre) {
 
 async function renderDiagrams() {
   for (const diagramType of DIAGRAM_TYPES) {
-    const codeBlocks = document.querySelectorAll("pre > code.language-" + diagramType.lang);
+    const codeBlocks = document.querySelectorAll(
+      "code[data-language='" + diagramType.lang + "']"
+    );
 
     for (const codeBlock of codeBlocks) {
-      const pre = codeBlock.parentElement;
+      const pre = codeBlock.closest("pre") || codeBlock.parentElement;
+      const figure = codeBlock.closest("figure") || pre.parentElement;
       const sourceCode = codeBlock.textContent || "";
 
       if (!sourceCode.trim()) continue;
@@ -61,14 +64,14 @@ async function renderDiagrams() {
       const loadingDiv = document.createElement("div");
       loadingDiv.className = "kroki-loading";
       loadingDiv.textContent = "Rendering " + diagramType.label + "...";
-      pre.parentElement.insertBefore(loadingDiv, pre);
+      figure.parentElement.insertBefore(loadingDiv, figure);
 
       try {
         const svgContent = await renderKrokiDiagram(sourceCode, diagramType.krokiType);
         const container = createDiagramContainer(svgContent, diagramType.label);
-        const toggle = createSourceToggle(pre);
+        const toggle = createSourceToggle(figure);
 
-        pre.style.display = "none";
+        figure.style.display = "none";
         loadingDiv.replaceWith(container);
         container.appendChild(toggle);
       } catch (error) {
