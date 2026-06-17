@@ -19,18 +19,26 @@ confidence: high
 
 ## 现有结构
 
+```mermaid
+graph TD
+    Root[nix-config/] --> Flake[flake.nix<br/>入口 4 inputs]
+    Root --> Lock[flake.lock<br/>锁定依赖]
+    Root --> Hosts[hosts/desktop/]
+    Root --> Home[home/]
+    
+    Hosts --> HostDefault[default.nix<br/>系统配置 201行]
+    Hosts --> Hardware[hardware-configuration.nix<br/>硬件配置]
+    
+    Home --> HomeDefault[default.nix<br/>用户配置 203行]
+    Home --> Niri[niri.nix<br/>Niri配置 193行]
+    Home --> Dev[dev.nix<br/>开发备注 27行]
+    
+    style Root fill:#e8f4ff
+    style Flake fill:#fff4e1
+    style Dev fill:#ffe8e8
 ```
-nix-config/
-├── flake.nix                          # 入口（4 inputs）
-├── flake.lock                         # 锁定依赖
-├── hosts/desktop/
-│   ├── default.nix                    # 系统配置（201 行）
-│   └── hardware-configuration.nix     # 硬件配置（占位符）
-└── home/
-    ├── default.nix                    # 用户配置（203 行）
-    ├── niri.nix                       # Niri 配置（193 行）
-    └── dev.nix                        # 开发备注（27 行，基本为空）
-```
+
+> nix-config 的目录结构：Flakes 作为入口，分别管理主机配置和用户配置，采用模块化设计。
 
 ---
 

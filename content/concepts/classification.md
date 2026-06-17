@@ -119,6 +119,8 @@ graph TD
     step6 --> End(("结束"))
 ```
 
+> 分类模型的训练流程包含六个步骤：数据准备、模型选择、损失函数定义、训练优化、评估验证和正则化，形成从数据到可部署模型的完整闭环。
+
 ## 跨课程视角
 
 ### [[andrew-ng-ml-specialization|Andrew Ng ML Specialization]]

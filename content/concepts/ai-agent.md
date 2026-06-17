@@ -24,6 +24,8 @@ graph TD
     end
 ```
 
+> AI Agent 由四大核心组件构成：LLM 作为推理核心，Tools 扩展外部能力，Memory 管理上下文，Planning 负责任务分解。
+
 - **LLM (Reasoning Core)**: 基于 [[transformer]] 架构的语言模型，负责理解意图和生成行动计划
 - **Tools**: 搜索引擎、代码执行、API 调用等外部工具——扩展 LLM 的能力边界
 - **Memory**: 短期（对话上下文）和长期（向量数据库）记忆管理

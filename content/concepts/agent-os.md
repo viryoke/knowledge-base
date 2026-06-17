@@ -86,6 +86,8 @@ graph TD
     app --> os --> hw
 ```
 
+> 该图展示了 AI Agent 应用的三层架构：上层应用（Scout、Copilot 等）运行在 Agent OS 之上，Agent OS 负责生命周期管理、沙箱隔离和多模态 I/O，底层由 RTX Spark 硬件提供算力支撑。
+
 ## 与 [[evaluation-benchmark]] 的关系
 
 Agent OS 需要内置评估机制：

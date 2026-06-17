@@ -37,19 +37,20 @@ RAG 通过在推理时引入外部检索结果，弥补了上述不足：
 
 ## RAG Pipeline
 
+```mermaid
+graph TD
+    A[用户提问 Query] --> B[1. Query 处理]
+    B --> |生成检索关键词 / Query 改写| C[2. 检索 Retrieval]
+    C --> |从知识库找出 Top-K 文档片段| D[3. 重排序 Reranking]
+    D --> |精选最相关文档| E[4. 上下文组装]
+    E --> |拼接检索结果与 prompt| F[5. 生成 Generation]
+    F --> |基于增强 context 生成回答| G[最终回答]
+    
+    style A fill:#e1f5ff
+    style G fill:#fff4e1
 ```
-用户提问 (Query)
-    ↓
-[1] Query 处理 → 生成检索关键词 / Query 改写
-    ↓
-[2] 检索 (Retrieval) → 从知识库中找出 Top-K 相关文档片段
-    ↓
-[3] 重排序 (Reranking) → 精选最相关的文档
-    ↓
-[4] 上下文组装 → 将检索结果与原始 prompt 拼接
-    ↓
-[5] 生成 (Generation) → LLM 基于增强后的 context 生成回答
-```
+
+> RAG 的五阶段流程：从用户提问到最终生成，检索结果逐步精炼并增强 LLM 的上下文。
 
 ## Chunking 策略
 

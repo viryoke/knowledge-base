@@ -25,17 +25,18 @@ confidence: high
 
 ## 学习路线总览
 
+```mermaid
+graph TD
+    P1["Phase 1: ML基础理论<br/>(6-8周)"] --> P2["Phase 2: 深度学习核心<br/>(8-10周)"]
+    P2 --> P3["Phase 3: LLM应用开发<br/>(6-8周)"]
+    P3 --> P4["Phase 4: 生产化能力<br/>(6-8周)"]
+    P4 --> P5["Phase 5: 专业方向深化<br/>(持续)"]
+    
+    style P1 fill:#e8f4e8
+    style P5 fill:#fff4e1
 ```
-Phase 1: 基础理论 (6-8周)
-  ↓
-Phase 2: 深度学习核心 (8-10周)
-  ↓
-Phase 3: LLM应用开发 (6-8周)
-  ↓
-Phase 4: 生产化能力 (6-8周)
-  ↓
-Phase 5: 专业方向深化 (持续)
-```
+
+> AI 工程师系统学习的五阶段路径：从 ML 基础理论到专业方向深化，逐步构建完整的 AI 技术栈。
 
 ---
 

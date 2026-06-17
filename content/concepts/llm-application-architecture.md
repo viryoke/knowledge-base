@@ -34,6 +34,8 @@ sequenceDiagram
     LLM-->>User: Assistantₙ (响应)
 ```
 
+> Chat 模式通过 System Prompt 设定人设和指令，后续多轮对话（User/Assistant 交替）作为上下文输入 LLM，生成感知对话历史的响应。
+
 ### Completion（补全模式）
 
 给定 prompt 前缀，LLM 续写生成完整内容。
@@ -62,6 +64,8 @@ graph LR
     Result --> Agent
     Agent -->|"任务完成"| Final
 ```
+
+> Agent 模式的工作流：从用户目标出发，LLM 推理产生工具调用指令，外部工具执行后返回结果，循环直到任务完成。
 
 ```mermaid
 graph LR
@@ -102,6 +106,8 @@ graph LR
 
     Q --> QE --> VDB --> TopK --> LLM
 ```
+
+> RAG 流程：用户查询经 Embedding 转换为向量，在向量数据库中检索 Top-K 相关文档，将检索结果与查询一起送入 LLM 生成基于外部知识的回答。
 
 ## 编排框架 (Orchestration Frameworks)
 
@@ -145,6 +151,9 @@ graph LR
 
     User --> GW --> LLM --> Resp
 ```
+
+> 单层架构是最简单的 LLM 部署模式，用户请求经 API Gateway 直接调用 LLM 返回响应，适用于无状态单轮任务。
+
 - 适用：简单问答、单轮任务
 - 优点：低延迟、简单
 - 缺点：无上下文、无外部知识
@@ -187,6 +196,9 @@ graph TD
     Loop --> Check
     Check -->|"继续"| Loop
 ```
+
+> Agent 架构的核心是一个循环：LLM 推理 → 工具执行 → 记忆读写 → 判断是否终止，支持复杂多步骤任务的自主完成。
+
 - 适用：复杂多步骤任务
 - 挑战：可靠性、成本控制、延迟
 

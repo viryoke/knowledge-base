@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Viryoke's Knowledge Base
-  pageTitleSuffix: " | VKB"
+  pageTitle: 知识库
+  pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
   analytics:
@@ -13,38 +13,40 @@ configuration:
     - templates
     - .obsidian
     - raw
-    - profile
     - DailyNotes
-    - presentations
-    - node_modules
+    - profile
+    - _archive
+    - _meta
+    - LINT-RULES.md
+    - AGENTS.md
   theme:
     fontOrigin: googleFonts
     cdnCaching: true
     typography:
-      header: Fraunces
-      body: DM Sans
+      header: Inter
+      body: Inter
       code: JetBrains Mono
     colors:
       lightMode:
-        light: "#faf9f6"
-        lightgray: "#e8e4df"
-        gray: "#94a3b8"
-        darkgray: "#334155"
-        dark: "#0f172a"
-        secondary: "#0d9488"
-        tertiary: "#0891b2"
-        highlight: "rgba(13, 148, 136, 0.08)"
-        textHighlight: "rgba(250, 204, 21, 0.25)"
+        light: "#faf8f5"
+        lightgray: "#e5ddd3"
+        gray: "#b5aa9c"
+        darkgray: "#4e4640"
+        dark: "#2b2722"
+        secondary: "#8b6f47"
+        tertiary: "#c4a97d"
+        highlight: "rgba(196, 169, 125, 0.15)"
+        textHighlight: "#fff23688"
       darkMode:
-        light: "#0b1120"
-        lightgray: "#1a2332"
-        gray: "#475569"
-        darkgray: "#c8d2df"
-        dark: "#e8edf4"
-        secondary: "#818cf8"
-        tertiary: "#a78bfa"
-        highlight: "rgba(129, 140, 248, 0.1)"
-        textHighlight: "rgba(250, 204, 21, 0.15)"
+        light: "#1e1c19"
+        lightgray: "#332f29"
+        gray: "#7d7468"
+        darkgray: "#d4ccc2"
+        dark: "#e5ddd3"
+        secondary: "#c4a97d"
+        tertiary: "#8b6f47"
+        highlight: "rgba(196, 169, 125, 0.15)"
+        textHighlight: "#b3aa0288"
 plugins:
   - source: github:quartz-community/created-modified-date
     enabled: true
@@ -97,6 +99,12 @@ plugins:
   - source: github:quartz-community/hard-line-breaks
     enabled: false
     order: 90
+  - source: github:quartz-community/ox-hugo
+    enabled: false
+    order: 91
+  - source: github:quartz-community/roam
+    enabled: false
+    order: 92
   - source: github:quartz-community/fonts
     enabled: true
   - source: github:quartz-community/remove-draft
@@ -115,7 +123,7 @@ plugins:
   - source: github:quartz-community/og-image
     enabled: true
   - source: github:quartz-community/cname
-    enabled: true
+    enabled: false
   - source: github:quartz-community/canvas-page
     enabled: true
   - source: github:quartz-community/content-page
@@ -158,7 +166,7 @@ plugins:
       position: beforeBody
       priority: 20
   - source: github:quartz-community/tag-list
-    enabled: false
+    enabled: true
     layout:
       position: beforeBody
       priority: 30
@@ -191,7 +199,9 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://github.com/viryoke
+        源代码: https://github.com/viryoke/obsidian-vault
+  - source: github:quartz-community/recent-notes
+    enabled: false
   - source: github:quartz-community/spacer
     enabled: true
     options: {}
@@ -236,6 +246,12 @@ plugins:
     layout:
       position: body
       priority: 100
+      display: all
+  - source: github:quartz-community/stacked-pages
+    enabled: false
+    layout:
+      position: afterBody
+      priority: 50
       display: all
 layout:
   groups:

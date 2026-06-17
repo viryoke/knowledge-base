@@ -49,6 +49,8 @@ graph LR
     end
 ```
 
+> X11 架构中所有应用必须通过 X Server 中间层通信，导致不必要的往返延迟和安全隐患——任何应用都可读取其他窗口内容。
+
 ```mermaid
 graph LR
     subgraph Wayland["Wayland 架构"]

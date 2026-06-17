@@ -56,9 +56,19 @@ confidence: medium
 ## 架构设计要点
 
 **数据流：**
+
+```mermaid
+graph LR
+    A[原始数据] --> B[Chunking\n文档切片]
+    B --> C[Embedding模型\n向量化]
+    C --> D[(向量数据库\n存储与索引)]
+    D --> E[检索\n相似度搜索]
+    E --> F[LLM生成\n基于检索结果]
+    
+    style D fill:#e8f4ff,stroke:#2196F3
 ```
-原始数据 → Chunking → Embedding模型 → 向量数据库 → 检索 → LLM生成
-```
+
+> 向量数据库的完整数据流：从原始文档切分到向量化存储，再到检索增强的 LLM 生成。
 
 **关键决策：**
 - Chunk策略：按段落/固定长度/语义切分，影响检索质量

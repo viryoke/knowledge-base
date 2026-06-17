@@ -196,6 +196,8 @@ graph TD
     Q3 --> Merge
 ```
 
+> Multi-Query 查询转换将原始复杂问题拆分为多个子查询，分别检索后合并结果，提升检索的召回率和覆盖面。
+
 ### Contextual Compression（上下文压缩）
 
 检索到的文档块可能包含大量无关信息，在送入 LLM 前进行压缩。

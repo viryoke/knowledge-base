@@ -42,15 +42,23 @@
 
 ### 我的日常协作模式
 
+```mermaid
+graph TD
+    A["📱 碎片问题\n打开 Hermes"] --> B{问题复杂？}
+    B -->|是| C["💻 深度分析\nClaude Code"]
+    B -->|否| D[直接解决]
+    C --> E{流程可复用？}
+    E -->|是| F["🔧 沉淀流程\nOpenCode Skill"]
+    E -->|否| G[经验记入笔记]
+    F --> H["📚 知识库\nWiki 复利增长"]
+    G --> H
+    
+    I["⚙️ AGENTS.md\n全局统一约束"] -.->|约束| A
+    I -.->|约束| C
+    I -.->|约束| F
 ```
-碎片问题 → 打开 Hermes（手机上 Telegram 直接问）
-    ↓ 发现这个问题比较复杂
-深度分析 → 切到 Claude Code（坐下来认真搞）
-    ↓ 搞完了发现这个流程可以复用
-沉淀流程 → OpenCode（写成 Skill）
-    ↓ 经验写进知识库
-所有工具共享 → AGENTS.md 统一约束
-```
+
+> 三种工具对应三种工作模式：Hermes（持久陪伴）→ Claude Code（深度攻坚）→ OpenCode（流程沉淀），经验最终汇入知识库形成复利。
 
 **核心观点：别纠结"哪个工具最好"，想清楚"我现在处于哪种模式"。**
 
@@ -77,10 +85,18 @@
 
 ### 这 5 个 Skill 形成了一条能力链
 
+```mermaid
+graph LR
+    A["🔍 find-skills\n发现"] --> B["⚡ SuperPowers\n加载"]
+    B --> C["🛠️ Skill-Creator\n提炼"]
+    C --> D["🎯 领域 Skill\n执行"]
+    D --> E["🔄 反馈迭代"]
+    E -->|新经验| C
+    
+    style E fill:#fff4e1
 ```
-发现 → 加载 → 提炼 → 执行 → 反馈迭代
-find-skills  SuperPowers  Skill-Creator  领域Skill  回到Skill-Creator
-```
+
+> Skill 能力飞轮：发现→加载→提炼→执行→反馈，形成自我强化的循环。每次迭代让 AI 的能力更精准。
 
 **核心观点：Skill 的本质是"把最佳实践编码化"。单个 Skill 有用，但能力链（发现→加载→提炼→执行）才是真正让 AI 越用越强的飞轮。**
 

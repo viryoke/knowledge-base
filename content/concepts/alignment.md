@@ -23,6 +23,8 @@ graph TD
     chat --> End(("结束"))
 ```
 
+> 对齐过程将预训练的 Base Model 通过 RLHF/DPO/SFT 等方法转化为能遵循指令、拒绝有害请求的 Chat/Instruct Model。
+
 Alignment 也可以看作是 [[fine-tuning|Post-training]] 的一种特殊形式——目标不是教模型新领域知识，而是让模型学会「怎么做人」。
 
 ## 核心方法
@@ -37,6 +39,8 @@ graph LR
     reward --> ppo["PPO 优化 LLM"]
     ppo -->|"迭代改进"| annotate
 ```
+
+> RLHF 的核心循环：人类标注偏好数据 → 训练 Reward Model → PPO 优化 LLM → 迭代改进，逐步提升模型与人类意图的对齐程度。
 
 - **优点**：灵活，可以编码复杂的人类偏好
 - **缺点**：训练流程复杂、不稳定，reward model 可能被 [[reward-hacking|hack]]

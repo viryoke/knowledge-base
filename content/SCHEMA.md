@@ -540,31 +540,118 @@ Actions: `ingest`, `update`, `query`, `lint`, `create`, `archive`, `delete`
 
 ## 图表绘制规范（Diagrams as Code）
 
-Wiki 页面中需要图表时，使用「代码即图表」语言，禁止手动截图或外部图片。详见 AGENTS.md「图表绘制规范」章节。
+Wiki 页面中需要图表时，使用「代码即图表」语言，禁止手动截图或外部图片。
 
-### 快速选择指南
+### 图表语言选择规则
 
-| 场景 | 推荐语言 | 示例 |
-|------|----------|------|
-| 流程图、时序图、状态图、类图 | **Mermaid**（首选） | 架构分层、数据流、组件关系 |
-| 系统架构、基础设施拓扑 | **D2**（需插件） | 微服务架构、云拓扑 |
-| 复杂 UML（用例图、组件图） | **PlantUML**（需插件） | 仅当 Mermaid 表达力不足时 |
+| 场景 | 推荐语言 | 渲染方式 | 示例 |
+|------|---------|---------|------|
+| **一般图表**（流程图、时序图、状态图、甘特图、饼图、思维导图） | **Mermaid** | Obsidian 原生渲染 | 流程分支、交互序列、状态机 |
+| **UML 图表**（类图、用例图、组件图、部署图、活动图、大型时序图） | **PlantUML** | Kroki.io 预渲染 SVG | 面向对象建模、系统组件关系 |
+| **复杂依赖图**（调用链、依赖树、模块关系、自动布局） | **GraphViz (DOT)** | Kroki.io 预渲染 SVG | 包依赖、函数调用图、有向图 |
+| **系统架构图** | **D2** | Kroki.io 预渲染 SVG | 微服务拓扑、云基础设施 |
+| **手绘风格草图** | **Excalidraw** | Kroki.io 预渲染 SVG | 白板风格概念图 |
+| **网络拓扑图** | **NwDiag** | Kroki.io 预渲染 SVG | 网络分段、VLAN 布局 |
+| **ER 图 / 数据库建模** | **DBML** 或 **Erd** | Kroki.io 预渲染 SVG | 数据库表关系 |
+| **数字波形图** | **WaveDrom** | Kroki.io 预渲染 SVG | 时序信号、协议波形 |
+| **学术论文精密图表** | **TikZ** | Kroki.io 预渲染 SVG | 数学/物理/工程图表 |
+
+**其他场景**：查询 [Kroki.io](https://kroki.io) 支持的 27 种图表引擎。
+
+### 决策流程
+
+```
+需要图表？
+├─ 一般图表（流程/时序/状态/甘特/饼图）→ Mermaid
+├─ UML 图表（类/用例/组件/部署/活动图）→ PlantUML
+├─ 复杂依赖/自动布局图 → GraphViz
+├─ 系统架构/基础设施图 → D2
+├─ 手绘风格 → Excalidraw
+└─ 其他专业场景 → 查 Kroki.io 支持的 27 种引擎
+```
 
 ### 实践规则
 
-1. **默认使用 Mermaid**：Obsidian 原生渲染，零配置，覆盖 80% 的图表需求
-2. **架构图用 D2**：系统架构、微服务拓扑、云基础设施等复杂架构图，D2 表达力更强
-3. **复杂 UML 用 PlantUML**：当 Mermaid 的类图/用例图表达力不足时降级使用
-4. **避免外部图片**：所有图表必须可编辑、可版本控制，截图/PNG 不符合此要求
-5. **图表必须配说明文字**：图表下方或前方用 1-2 句话解释图表表达的核心信息
-6. **保持图表简洁**：单图节点不超过 15 个，超过则拆分为多张子图
-7. **保留 ASCII 艺术作为备选**：如果已有 ASCII 艺术图表，可以保留并新增 Mermaid 版本，两者并存
+1. **默认使用 Mermaid**：Obsidian 原生渲染，零配置，覆盖大部分图表需求
+2. **UML 用 PlantUML**：类图、用例图、组件图、部署图等标准 UML，PlantUML 表达力远超 Mermaid
+3. **复杂依赖用 GraphViz**：需要自动布局的有向图/无向图、依赖树、调用链，GraphViz 布局算法最强
+4. **架构图用 D2**：系统架构、微服务拓扑、云基础设施，D2 多布局引擎 + 精细控制
+5. **Kroki.io 作为渲染后端**：非 Mermaid 图表统一通过 Kroki.io API 预渲染为 SVG 嵌入
+6. **避免外部图片**：所有图表必须可编辑、可版本控制，截图/PNG 不符合此要求
+7. **图表必须配说明文字**：图表下方或前方用 1-2 句话解释图表表达的核心信息
+8. **保持图表简洁**：单图节点不超过 15 个，超过则拆分为多张子图
+
+### Mermaid 语法速查
+
+```markdown
+<!-- 流程图 -->
+```mermaid
+graph TD
+    A[开始] --> B{条件}
+    B -->|是| C[执行]
+    B -->|否| D[跳过]
+```
+
+<!-- 时序图 -->
+```mermaid
+sequenceDiagram
+    participant A as 客户端
+    participant B as 服务端
+    A->>B: 请求
+    B-->>A: 响应
+```
+
+<!-- 状态图 -->
+```mermaid
+stateDiagram-v2
+    [*] --> 空闲
+    空闲 --> 运行中: 启动
+    运行中 --> 空闲: 完成
+```
+```
+
+### PlantUML 语法速查
+
+```plantuml
+@startuml
+class Animal {
+  +String name
+  +makeSound()
+}
+class Dog {
+  +fetch()
+}
+Animal <|-- Dog
+@enduml
+```
+
+### GraphViz 语法速查
+
+```dot
+digraph dependencies {
+  rankdir=LR;
+  A -> B -> C;
+  A -> D;
+  D -> C;
+}
+```
+
+### Kroki.io 集成方式
+
+```bash
+# 构建时预渲染（推荐）
+# 将源码通过 Kroki API 转为 SVG 静态文件
+curl -X POST https://kroki.io/{引擎}/{格式} -d '源码' -o output.svg
+
+# 嵌入 Markdown
+![图表说明](./diagrams/xxx.svg)
+```
 
 ### 禁用场景
 
-- **禁止用 Mermaid 画架构图**：Mermaid 的布局算法不适合复杂系统架构，用 D2 替代
 - **禁止用代码图表画简单表格**：能用 Markdown 表格表达的内容不要画流程图
-- **禁止嵌入外部渲染的图片链接**：所有图表必须内嵌于 .md 文件中
+- **禁止嵌入外部渲染的图片链接**：所有图表必须内嵌于 .md 文件中或通过 Kroki 预渲染为本地 SVG
+- **禁止用 Mermaid 画 UML 类图**：UML 类图、用例图、组件图等标准 UML 应使用 PlantUML
 
 ---
 

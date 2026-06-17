@@ -158,6 +158,8 @@ graph TD
     Agg -.-> Repository
 ```
 
+> 该图展示了 DDD 战术模式之间的协作关系：Aggregate Root 管理内部 Entity 和 Value Object，通过 Domain Event 发布状态变化，并借助 Repository 持久化、Factory 创建、Domain Service 处理跨聚合操作。
+
 ## 与其他架构模式的比较
 
 | 对比维度 | DDD 战术模式 | [[clean-architecture]] | [[hexagonal-architecture]] | 传统三层架构 |

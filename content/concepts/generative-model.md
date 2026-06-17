@@ -29,6 +29,8 @@ graph TD
     ar --> ct["连续 Token 接龙 (Continuous Token)"]
 ```
 
+> 生成模型可分为五大范式：自回归（Autoregressive）、VAE、GAN、扩散模型和 Flow Matching，其中自回归模型又分为离散 Token 和连续 Token 两种接龙方式。
+
 ### Autoregressive Model (自回归模型)
 
 通过逐步生成序列中的元素来构建完整输出。每次生成一个 token，将其加入已有序列，再生成下一个 token——即"接龙"。

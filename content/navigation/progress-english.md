@@ -12,9 +12,18 @@ tags: [english]
 
 ## 学习路径总览
 
+```mermaid
+graph LR
+    S1[Step 1\n发音基础] --> S2[Step 2\n词汇积累]
+    S2 --> S3[Step 3\n语法模式]
+    S3 --> S4[Step 4\n听力实战]
+    S4 --> S5[Step 5\n口语输出]
+    
+    style S1 fill:#ffe8e8
+    style S5 fill:#e8f4e8
 ```
-Step 1: 发音基础 → Step 2: 词汇积累 → Step 3: 语法模式 → Step 4: 听力实战 → Step 5: 口语输出
-```
+
+> 英语学习的五步递进路径：从发音基础到口语输出，循序渐进构建技术英语能力。
 
 ---
 
