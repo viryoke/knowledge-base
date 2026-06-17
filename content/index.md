@@ -170,8 +170,9 @@
 
 ---
 
-## Comparisons
-<!-- 暂无 -->
+## ⚡ Skills（skills/）
+
+- [[skills/index]] — Skills 索引（10 个自定义 skill，通过 symlink 与 Hermes 双向同步）
 
 ## Queries
 - [[ai-agent-tooling-team-sharing]] — AI Agent 工具链团队经验分享稿（基于 ai-agent-tooling-practice 的口语化分享版）

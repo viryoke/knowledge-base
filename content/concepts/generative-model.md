@@ -18,15 +18,16 @@ confidence: medium
 
 ## 主要类型
 
-```
-生成模型 (Generative Models)
-├── Autoregressive (自回归)
-│   ├── 离散 Token 接龙 (Discrete Token)
-│   └── 连续 Token 接龙 (Continuous Token)
-├── VAE (Variational Autoencoder, 变分自编码器)
-├── GAN (Generative Adversarial Network, 生成对抗网络)
-├── Diffusion Model (扩散模型)
-└── Flow Matching (流匹配模型)
+```mermaid
+graph TD
+    GM["生成模型\n(Generative Models)"]
+    GM --> AR["Autoregressive\n(自回归)"]
+    GM --> VAE["VAE\n(变分自编码器)"]
+    GM --> GAN["GAN\n(生成对抗网络)"]
+    GM --> DM["Diffusion Model\n(扩散模型)"]
+    GM --> FM["Flow Matching\n(流匹配模型)"]
+    AR --> DT["离散 Token 接龙\n(Discrete Token)"]
+    AR --> CT["连续 Token 接龙\n(Continuous Token)"]
 ```
 
 ### Autoregressive Model (自回归模型)

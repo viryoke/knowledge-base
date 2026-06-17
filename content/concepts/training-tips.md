@@ -135,21 +135,23 @@ Skip connection 改变了网络架构（步骤 2），主要带来 **Optimizatio
 
 ## 诊断训练问题的决策树
 
-```
-训练结果不好？
-├── Training Loss 降不下去？ → Optimization 问题
-│   ├── 换更强的 Optimizer（Adam/AdamW）
-│   ├── 调整 Learning Rate Schedule
-│   ├── 检查 Initialization
-│   ├── 添加 Batch Normalization / Skip Connection
-│   └── 不要用 Data Augmentation（会让优化更难）
-│
-└── Training Loss 低但 Validation Loss 高？ → Generalization 问题
-    ├── 收集更多数据
-    ├── Data Augmentation
-    ├── Dropout / Weight Decay
-    ├── Early Stopping
-    └── 减小模型规模
+```mermaid
+graph TD
+    Root["训练结果不好？"]
+    Root --> Opt["Training Loss 降不下去？\n→ Optimization 问题"]
+    Root --> Gen["Training Loss 低但\nValidation Loss 高？\n→ Generalization 问题"]
+
+    Opt --> O1["换更强的 Optimizer\n(Adam/AdamW)"]
+    Opt --> O2["调整 Learning Rate Schedule"]
+    Opt --> O3["检查 Initialization"]
+    Opt --> O4["添加 Batch Normalization\n/ Skip Connection"]
+    Opt --> O5["不要用 Data Augmentation\n(会让优化更难)"]
+
+    Gen --> G1["收集更多数据"]
+    Gen --> G2["Data Augmentation"]
+    Gen --> G3["Dropout / Weight Decay"]
+    Gen --> G4["Early Stopping"]
+    Gen --> G5["减小模型规模"]
 ```
 
 ## 技巧分类总览

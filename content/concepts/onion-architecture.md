@@ -20,25 +20,29 @@ confidence: medium
 
 ### 1. 同心圆分层
 
-```
-  ┌─────────────────────────────────────────┐
-  │  Infrastructure（基础设施层）              │
-  │  UI / Web / DB / External APIs          │
-  │  ┌───────────────────────────────────┐  │
-  │  │  Application Services（应用服务层） │  │
-  │  │  编排、协调、事务管理              │  │
-  │  │  ┌────────────────────────────┐   │  │
-  │  │  │  Domain Services（领域服务层）│   │  │
-  │  │  │  跨聚合的业务逻辑           │   │  │
-  │  │  │  ┌──────────────────────┐  │   │  │
-  │  │  │  │  Domain Model        │  │   │  │
-  │  │  │  │  （领域模型/核心层）   │  │   │  │
-  │  │  │  │  Entity / VO /       │  │   │  │
-  │  │  │  │  Aggregate Root      │  │   │  │
-  │  │  │  └──────────────────────┘  │   │  │
-  │  │  └────────────────────────────┘   │  │
-  │  └───────────────────────────────────┘  │
-  └─────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph L4["最外层 · Infrastructure（基础设施层）"]
+        UI["UI / Web"]
+        DB2["DB"]
+        API["External APIs"]
+    end
+
+    subgraph L3["第三层 · Application Services（应用服务层）"]
+        AS["编排、协调、事务管理"]
+    end
+
+    subgraph L2["第二层 · Domain Services（领域服务层）"]
+        DS["跨聚合的业务逻辑"]
+    end
+
+    subgraph L1["核心层 · Domain Model（领域模型）"]
+        E["Entity"]
+        VO["Value Object"]
+        AR["Aggregate Root"]
+    end
+
+    L4 --> L3 --> L2 --> L1
 ```
 
 ### 2. 各层职责

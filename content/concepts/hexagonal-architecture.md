@@ -16,19 +16,6 @@ confidence: medium
 
 ## 核心结构
 
-```
-        ┌─────────────────────┐
-  HTTP  │    ┌───────────┐    │  MySQL
-  ────→ │    │           │ ───→
-  gRPC  │    │   核心    │    │  Redis
-  ────→ │    │  业务域   │ ───→
-  CLI   │    │  (Domain) │    │  Kafka
-  ────→ │    │           │ ───→
-        │    └───────────┘    │
-        │   Port ← Adapter   │
-        └─────────────────────┘
-```
-
 ```mermaid
 graph LR
     subgraph Driving["入站适配器 (Driving Adapters)"]
@@ -74,10 +61,12 @@ graph LR
 
 ## 依赖规则
 
+```mermaid
+graph LR
+    Adapter["适配器"] --> Port["端口"] --> Domain["核心域"]
 ```
-适配器 → 端口 → 核心域
-（外层依赖内层，内层不知道外层存在）
-```
+
+> 外层依赖内层，内层不知道外层存在。
 
 这与[[clean-architecture|整洁架构]]和[[onion-architecture|洋葱架构]]共享同一核心原则：**依赖指向内部**。
 

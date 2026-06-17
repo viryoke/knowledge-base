@@ -52,28 +52,21 @@ confidence: medium
 
 ## 典型架构
 
-```
-  ┌─────────┐
-  │  Client  │
-  └────┬─────┘
-       │
-  ┌────▼──────────┐
-  │  API Gateway   │  ← 统一入口、路由、鉴权
-  └────┬──────────┘
-       │
-  ┌────▼────┐  ┌────────┐  ┌──────────┐
-  │ Order   │→ │Payment │  │ Inventory│
-  │ Service │  │Service │  │ Service  │
-  └────┬────┘  └────┬───┘  └────┬─────┘
-       │            │            │
-  ┌────▼───┐  ┌────▼───┐  ┌────▼─────┐
-  │Order DB│  │Pay DB  │  │Invent DB │
-  └────────┘  └────────┘  └──────────┘
-       │            │            │
-  ┌────▼────────────▼────────────▼─────┐
-  │         Message Broker             │
-  │      (Kafka / RabbitMQ)            │
-  └────────────────────────────────────┘
+```mermaid
+graph TD
+    Client["Client"] --> GW["API Gateway\n统一入口、路由、鉴权"]
+
+    GW --> Order["Order Service"]
+    GW --> Payment["Payment Service"]
+    GW --> Inventory["Inventory Service"]
+
+    Order --> OrderDB[("Order DB")]
+    Payment --> PayDB[("Pay DB")]
+    Inventory --> InvDB[("Inventory DB")]
+
+    Order --> MB["Message Broker\n(Kafka / RabbitMQ)"]
+    Payment --> MB
+    Inventory --> MB
 ```
 
 ## 关键挑战与应对
@@ -121,14 +114,12 @@ confidence: medium
 
 微服务架构与 [[hexagonal-architecture|六边形架构]] 的关系是**宏观与微观的配合**：
 
-```
-  微服务架构（宏观）                六边形架构（微观）
-  ──────────────                  ──────────────
-  服务间通信（HTTP/gRPC/MQ）  →    入站端口 + 入站适配器
-  数据库/缓存/消息中间件       →    出站端口 + 出站适配器
-  每个微服务                   →    一个独立的六边形
-  服务边界                     →    对应 DDD Bounded Context
-```
+| 微服务架构（宏观） | 六边形架构（微观） |
+|-------------------|-------------------|
+| 服务间通信（HTTP/gRPC/MQ） | 入站端口 + 入站适配器 |
+| 数据库/缓存/消息中间件 | 出站端口 + 出站适配器 |
+| 每个微服务 | 一个独立的六边形 |
+| 服务边界 | 对应 DDD Bounded Context |
 
 - 每个微服务**内部**可以用六边形架构组织代码
 - 微服务间的 API 调用 = 六边形的**入站适配器**接收请求

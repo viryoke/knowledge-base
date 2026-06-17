@@ -24,12 +24,11 @@ LLM Application Architecture（大语言模型应用架构）指围绕[[language
 - **上下文管理**：对话历史截断、摘要压缩、滑动窗口
 - **典型应用**：客服机器人、编程助手、知识问答
 
-```
-System Prompt (指令 + 人设)
-    ↓
-[User₁, Assistant₁, User₂, Assistant₂, ..., Userₙ]
-    ↓
-LLM → Assistantₙ (响应)
+```mermaid
+graph TD
+    SP["System Prompt\n(指令 + 人设)"] --> History["User₁, Assistant₁,\nUser₂, Assistant₂,\n..., Userₙ"]
+    History --> LLM["LLM"]
+    LLM --> Resp["Assistantₙ (响应)"]
 ```
 
 ### Completion（补全模式）
@@ -44,17 +43,14 @@ LLM → Assistantₙ (响应)
 
 LLM 作为推理引擎，通过工具调用 (tool use) 与外部环境交互，自主规划和执行复杂任务。参见 [[ai-agent]]。
 
-```
-用户目标
-    ↓
-Agent (LLM + Planning)
-    ↓         ↑
-Tool Calls → 外部工具执行 → 结果返回
-(搜索/代码/数据库/API)
-    ↓
-循环直到任务完成
-    ↓
-最终响应
+```mermaid
+graph TD
+    Goal["用户目标"] --> Agent["Agent\n(LLM + Planning)"]
+    Agent --> TC["Tool Calls"]
+    TC --> Ext["外部工具执行\n(搜索/代码/数据库/API)"]
+    Ext --> Result["结果返回"]
+    Result --> Agent
+    Agent -->|"任务完成"| Final["最终响应"]
 ```
 
 ```mermaid
@@ -79,12 +75,12 @@ Agent 模式的核心组件：
 
 结合外部知识库检索与 LLM 生成能力，解决 LLM 知识截止和幻觉问题。详见 [[rag]] 和 [[rag-architecture]]。
 
-```
-用户查询 → Query Embedding → [[vector-database-ai|向量数据库]]检索
-    ↓
-Top-K 相关文档 + 用户查询
-    ↓
-LLM 生成基于检索上下文的回答
+```mermaid
+graph LR
+    Q["用户查询"] --> QE["Query Embedding"]
+    QE --> VDB[("向量数据库\n检索")]
+    VDB --> TopK["Top-K 相关文档\n+ 用户查询"]
+    TopK --> LLM["LLM 生成\n基于检索上下文\n的回答"]
 ```
 
 ## 编排框架 (Orchestration Frameworks)
@@ -120,20 +116,15 @@ LLM 生成基于检索上下文的回答
 
 ### 单层架构 (Direct LLM Call)
 
-```
-用户 → API Gateway → LLM → 响应
+```mermaid
+graph LR
+    User["用户"] --> GW["API Gateway"] --> LLM["LLM"] --> Resp["响应"]
 ```
 - 适用：简单问答、单轮任务
 - 优点：低延迟、简单
 - 缺点：无上下文、无外部知识
 
 ### 管道架构 (Pipeline)
-
-```
-用户 → 预处理 → LLM Chain → 后处理 → 响应
-         ↓           ↓
-      Guardrails   Tools/DB
-```
 
 ```mermaid
 graph LR
@@ -150,24 +141,19 @@ graph LR
 
 ### Agent 架构 (Autonomous)
 
-```
-用户 → Agent Loop ─┬─→ LLM 推理
-                   ├─→ Tool 执行
-                   ├─→ Memory 读写
-                   └─→ 循环/终止判断
+```mermaid
+graph TD
+    User["用户"] --> Loop["Agent Loop"]
+    Loop --> LLM["LLM 推理"]
+    Loop --> Tool["Tool 执行"]
+    Loop --> Mem["Memory 读写"]
+    Loop --> Check{"循环/终止判断"}
+    Check -->|"继续"| Loop
 ```
 - 适用：复杂多步骤任务
 - 挑战：可靠性、成本控制、延迟
 
 ### 多 Agent 架构 (Multi-Agent)
-
-```
-用户 → Orchestrator Agent
-         ├─→ Research Agent
-         ├─→ Code Agent
-         ├─→ Review Agent
-         └─→ Summary Agent
-```
 
 ```mermaid
 graph TD
