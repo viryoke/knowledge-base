@@ -15,9 +15,17 @@ confidence: medium
 
 Alignment（对齐）是指让 [[language-model]] 的行为与人类意图 (human intent) 保持一致的过程。一个 pre-trained 的 base model 经过 alignment 后，变成一个能够遵循指令、拒绝有害请求、以人类期望方式回答问题的 chat model 或 instruct model。
 
-```mermaid
-graph TD
-    Base["Base Model\n(pre-trained)"] -->|"Alignment\n(RLHF / DPO / SFT)"| Chat["Chat / Instruct Model"]
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam roundCorner 10
+
+start
+:Base Model (pre-trained);
+:Alignment (RLHF / DPO / SFT);
+:Chat / Instruct Model;
+stop
+@enduml
 ```
 
 Alignment 也可以看作是 [[fine-tuning|Post-training]] 的一种特殊形式——目标不是教模型新领域知识，而是让模型学会「怎么做人」。
@@ -28,11 +36,15 @@ Alignment 也可以看作是 [[fine-tuning|Post-training]] 的一种特殊形式
 
 通过人类偏好数据训练一个 **Reward Model**，再用强化学习（如 PPO）优化 [[language-model]] 使其生成 reward model 评分更高的回答。
 
-```mermaid
-graph LR
-    A["人类标注偏好"] --> B["训练 Reward Model"]
-    B --> C["PPO 优化 LLM"]
-    C -->|"迭代改进"| A
+```d2
+direction: right
+
+annotate: "人类标注偏好"
+reward: "训练 Reward Model"
+ppo: "PPO 优化 LLM"
+
+annotate -> reward -> ppo
+ppo -> annotate: 迭代改进
 ```
 
 - **优点**：灵活，可以编码复杂的人类偏好

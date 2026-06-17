@@ -44,16 +44,14 @@ Classification（分类）是一种监督学习任务，目标是根据输入数
 
 决策边界是特征空间中将不同类别分开的超曲面。
 
-```mermaid
-quadrantChart
-    title 二分类决策边界（2D 特征空间）
-    x-axis "x₁"
-    y-axis "x₂"
-    quadrant-1 "类别 B"
-    quadrant-2 "类别 A"
-    quadrant-3 "类别 A"
-    quadrant-4 "类别 B"
-```
+**二分类决策边界（2D 特征空间）**
+
+| 区域 | x₁ | x₂ | 类别 |
+|------|----|----|------|
+| 左上 | 低 | 高 | 类别 A |
+| 左下 | 低 | 低 | 类别 A |
+| 右上 | 高 | 高 | 类别 B |
+| 右下 | 高 | 低 | 类别 B |
 
 - **线性决策边界**：逻辑回归、线性 SVM 产生超平面
 - **非线性决策边界**：核 SVM、[[neural-network]]、决策树可产生复杂曲面
@@ -110,15 +108,26 @@ Precision 和 Recall 通常此消彼长。调整分类阈值：
 
 ## 分类模型训练流程
 
-```mermaid
-graph TD
-    S1["1. 数据准备\n特征工程 + 标签标注"]
-    S2["2. 模型选择\n逻辑回归 / SVM / 神经网络 / 决策树"]
-    S3["3. 定义损失函数\nCross-Entropy Loss"]
-    S4["4. 训练优化\n梯度下降最小化损失"]
-    S5["5. 评估验证\nConfusion Matrix / F1 / AUC"]
-    S6["6. 正则化\n防止过拟合，提升泛化"]
-    S1 --> S2 --> S3 --> S4 --> S5 --> S6
+```plantuml
+@startuml
+skinparam shadowing false
+skinparam roundCorner 10
+
+start
+:1. 数据准备
+特征工程 + 标签标注;
+:2. 模型选择
+逻辑回归 / SVM / 神经网络 / 决策树;
+:3. 定义损失函数
+Cross-Entropy Loss;
+:4. 训练优化
+梯度下降最小化损失;
+:5. 评估验证
+Confusion Matrix / F1 / AUC;
+:6. 正则化
+防止过拟合，提升泛化;
+stop
+@enduml
 ```
 
 ## 跨课程视角

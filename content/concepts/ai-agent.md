@@ -14,14 +14,15 @@ confidence: high
 
 ## 核心组件
 
-```mermaid
-graph TD
-    subgraph Agent["AI Agent"]
-        LLM["LLM — 推理核心"]
-        Tools["Tools — 外部能力"]
-        Memory["Memory — 上下文管理"]
-        Planning["Planning — 任务分解"]
-    end
+```d2
+direction: down
+
+agent: AI Agent {
+  llm: "LLM — 推理核心"
+  tools: "Tools — 外部能力"
+  memory: "Memory — 上下文管理"
+  planning: "Planning — 任务分解"
+}
 ```
 
 - **LLM (Reasoning Core)**: 基于 [[transformer]] 架构的语言模型，负责理解意图和生成行动计划

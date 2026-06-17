@@ -20,29 +20,37 @@ confidence: medium
 
 ### 1. 同心圆分层
 
-```mermaid
-graph TB
-    subgraph L4["最外层 · Infrastructure（基础设施层）"]
-        UI["UI / Web"]
-        DB2["DB"]
-        API["External APIs"]
-    end
+```d2
+direction: down
 
-    subgraph L3["第三层 · Application Services（应用服务层）"]
-        AS["编排、协调、事务管理"]
-    end
+Infra: {
+  label: "最外层 · Infrastructure（基础设施层）"
+  UI: "UI / Web"
+  DB: {
+    label: "DB"
+    shape: cylinder
+  }
+  API: "External APIs"
+}
 
-    subgraph L2["第二层 · Domain Services（领域服务层）"]
-        DS["跨聚合的业务逻辑"]
-    end
+AppServices: {
+  label: "第三层 · Application Services（应用服务层）"
+  AS: "编排、协调、事务管理"
+}
 
-    subgraph L1["核心层 · Domain Model（领域模型）"]
-        E["Entity"]
-        VO["Value Object"]
-        AR["Aggregate Root"]
-    end
+DomainServices: {
+  label: "第二层 · Domain Services（领域服务层）"
+  DS: "跨聚合的业务逻辑"
+}
 
-    L4 --> L3 --> L2 --> L1
+DomainModel: {
+  label: "核心层 · Domain Model（领域模型）"
+  E: "Entity"
+  VO: "Value Object"
+  AR: "Aggregate Root"
+}
+
+Infra -> AppServices -> DomainServices -> DomainModel
 ```
 
 ### 2. 各层职责

@@ -16,33 +16,49 @@ confidence: medium
 
 ## 核心结构
 
-```mermaid
-graph LR
-    subgraph Driving["入站适配器 (Driving Adapters)"]
-        HTTP["HTTP Controller"]
-        gRPC["gRPC Handler"]
-        CLI["CLI Command"]
-    end
+```d2
+direction: right
 
-    subgraph Domain["核心域 (Domain)"]
-        DP["入站端口\n(Driving Port)"]
-        BL["业务逻辑\n(Business Logic)"]
-        VP["出站端口\n(Driven Port)"]
-        DP --> BL --> VP
-    end
+Driving: {
+  label: "入站适配器 (Driving Adapters)"
+  HTTP: "HTTP Controller"
+  gRPC: "gRPC Handler"
+  CLI: "CLI Command"
+}
 
-    subgraph Driven["出站适配器 (Driven Adapters)"]
-        MySQL["MySQL Repository"]
-        Redis["Redis Repository"]
-        Kafka["Kafka Producer"]
-    end
+Domain: {
+  label: "核心域 (Domain)"
+  DP: {
+    label: "入站端口 (Driving Port)"
+    shape: interface
+  }
+  BL: "业务逻辑 (Business Logic)"
+  VP: {
+    label: "出站端口 (Driven Port)"
+    shape: interface
+  }
+  DP -> BL -> VP
+}
 
-    HTTP --> DP
-    gRPC --> DP
-    CLI --> DP
-    VP --> MySQL
-    VP --> Redis
-    VP --> Kafka
+Driven: {
+  label: "出站适配器 (Driven Adapters)"
+  MySQL: {
+    label: "MySQL Repository"
+    shape: cylinder
+  }
+  Redis: {
+    label: "Redis Repository"
+    shape: cylinder
+  }
+  Kafka: "Kafka Producer"
+}
+
+Driving.HTTP -> Domain.DP
+Driving.gRPC -> Domain.DP
+Driving.CLI -> Domain.DP
+Domain.VP -> Driven.MySQL
+Domain.VP -> Driven.Redis
+Domain.VP -> Driven.Kafka
 ```
 
 > 上图展示六边形架构的三层结构：入站适配器通过入站端口驱动核心业务逻辑，核心业务逻辑通过出站端口调用出站适配器。依赖方向始终从外向内。
@@ -61,9 +77,15 @@ graph LR
 
 ## 依赖规则
 
-```mermaid
-graph LR
-    Adapter["适配器"] --> Port["端口"] --> Domain["核心域"]
+```d2
+direction: right
+Adapter: "适配器"
+Port: {
+  label: "端口"
+  shape: interface
+}
+Domain: "核心域"
+Adapter -> Port -> Domain
 ```
 
 > 外层依赖内层，内层不知道外层存在。

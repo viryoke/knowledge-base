@@ -1,7 +1,7 @@
 ---
 title: Wayland 与 Niri 合成器
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-17
 type: concept
 tags: [linux]
 sources: []
@@ -34,23 +34,37 @@ confidence: high
 
 ### 架构对比
 
-```mermaid
-graph LR
-    subgraph X11["X11 架构"]
-        XA["应用 A"] --> XS["X Server"]
-        XB["应用 B"] --> XS
-        XS --> XD["显示设备"]
-        XS -.->|"复杂的往返通信"| XS
-    end
+```d2
+direction: right
+
+X11: {
+  label: "X11 架构"
+  AppA: "应用 A"
+  AppB: "应用 B"
+  Server: "X Server"
+  Display: "显示设备"
+
+  AppA -> Server
+  AppB -> Server
+  Server -> Display
+  Server ..> Server: "复杂的往返通信"
+}
 ```
 
-```mermaid
-graph LR
-    subgraph Wayland["Wayland 架构"]
-        WA["应用 A"] --> WC["合成器\n(Compositor)"]
-        WB["应用 B"] --> WC
-        WC --> WD["显示设备"]
-    end
+```d2
+direction: right
+
+Wayland: {
+  label: "Wayland 架构"
+  AppA: "应用 A"
+  AppB: "应用 B"
+  Compositor: "合成器\n(Compositor)"
+  Display: "显示设备"
+
+  AppA -> Compositor
+  AppB -> Compositor
+  Compositor -> Display
+}
 ```
 
 > Wayland 合成器直接管理渲染，无中间层，更安全高效。
@@ -66,20 +80,26 @@ Niri 采用**滚动平铺**（scrolling tiling）布局：
 - 列可以水平排列
 - 超出屏幕的列可以滚动查看
 
-```mermaid
-graph LR
-    subgraph Col1["列 1"]
-        W1["Win A"]
-        W2["Win D"]
-    end
-    subgraph Col2["列 2"]
-        W3["Win B"]
-        W4["Win E"]
-    end
-    subgraph Col3["列 3 (滚动)"]
-        W5["Win C"]
-    end
-    Col1 --> Col2 --> Col3
+```d2
+direction: right
+
+Col1: "列 1" {
+  WinA: "Win A"
+  WinD: "Win D"
+  WinA -> WinD
+}
+
+Col2: "列 2" {
+  WinB: "Win B"
+  WinE: "Win E"
+  WinB -> WinE
+}
+
+Col3: "列 3 (滚动)" {
+  WinC: "Win C"
+}
+
+Col1 -> Col2 -> Col3
 ```
 
 > Niri 的滚动平铺布局：窗口以列形式垂直堆叠，列水平排列，超出屏幕的列可滚动查看。

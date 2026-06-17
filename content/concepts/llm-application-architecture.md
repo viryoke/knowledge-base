@@ -24,11 +24,16 @@ LLM Application Architecture（大语言模型应用架构）指围绕[[language
 - **上下文管理**：对话历史截断、摘要压缩、滑动窗口
 - **典型应用**：客服机器人、编程助手、知识问答
 
-```mermaid
-graph TD
-    SP["System Prompt\n(指令 + 人设)"] --> History["User₁, Assistant₁,\nUser₂, Assistant₂,\n..., Userₙ"]
-    History --> LLM["LLM"]
-    LLM --> Resp["Assistantₙ (响应)"]
+```plantuml
+@startuml
+skinparam shadowing false
+actor User
+participant "System Prompt\n(指令 + 人设)" as SP
+participant "LLM" as LLM
+User -> SP: 设定指令 + 人设
+User -> LLM: User₁, Assistant₁, ..., Userₙ
+LLM --> User: Assistantₙ (响应)
+@enduml
 ```
 
 ### Completion（补全模式）
@@ -43,24 +48,38 @@ graph TD
 
 LLM 作为推理引擎，通过工具调用 (tool use) 与外部环境交互，自主规划和执行复杂任务。参见 [[ai-agent]]。
 
-```mermaid
-graph TD
-    Goal["用户目标"] --> Agent["Agent\n(LLM + Planning)"]
-    Agent --> TC["Tool Calls"]
-    TC --> Ext["外部工具执行\n(搜索/代码/数据库/API)"]
-    Ext --> Result["结果返回"]
-    Result --> Agent
-    Agent -->|"任务完成"| Final["最终响应"]
+```d2
+direction: right
+Goal: "用户目标"
+Agent: "Agent\n(LLM + Planning)"
+TC: "Tool Calls"
+Ext: "外部工具执行\n(搜索/代码/数据库/API)"
+Result: "结果返回"
+Final: "最终响应"
+
+Goal -> Agent
+Agent -> TC
+TC -> Ext
+Ext -> Result
+Result -> Agent
+Agent -> Final: "任务完成"
 ```
 
-```mermaid
-graph TD
-    Goal["用户目标"] --> Agent["Agent\n(LLM + Planning)"]
-    Agent --> TC["Tool Calls\n(搜索/代码/数据库/API)"]
-    TC --> Ext["外部工具执行"]
-    Ext --> Result["结果返回"]
-    Result --> Agent
-    Agent -->|"任务完成"| Final["最终响应"]
+```d2
+direction: right
+Goal: "用户目标"
+Agent: "Agent\n(LLM + Planning)"
+TC: "Tool Calls\n(搜索/代码/数据库/API)"
+Ext: "外部工具执行"
+Result: "结果返回"
+Final: "最终响应"
+
+Goal -> Agent
+Agent -> TC
+TC -> Ext
+Ext -> Result
+Result -> Agent
+Agent -> Final: "任务完成"
 ```
 
 > Agent 模式的核心循环：LLM 推理 → 工具调用 → 获取结果 → 判断是否完成。通过 Planning、Memory、Tools、Reflection 四个组件实现自主任务执行。
@@ -75,12 +94,18 @@ Agent 模式的核心组件：
 
 结合外部知识库检索与 LLM 生成能力，解决 LLM 知识截止和幻觉问题。详见 [[rag]] 和 [[rag-architecture]]。
 
-```mermaid
-graph LR
-    Q["用户查询"] --> QE["Query Embedding"]
-    QE --> VDB[("向量数据库\n检索")]
-    VDB --> TopK["Top-K 相关文档\n+ 用户查询"]
-    TopK --> LLM["LLM 生成\n基于检索上下文\n的回答"]
+```d2
+direction: right
+Q: "用户查询"
+QE: "Query Embedding"
+VDB: {
+  shape: cylinder
+  label: "向量数据库\n检索"
+}
+TopK: "Top-K 相关文档\n+ 用户查询"
+LLM: "LLM 生成\n基于检索上下文\n的回答"
+
+Q -> QE -> VDB -> TopK -> LLM
 ```
 
 ## 编排框架 (Orchestration Frameworks)
@@ -116,9 +141,14 @@ graph LR
 
 ### 单层架构 (Direct LLM Call)
 
-```mermaid
-graph LR
-    User["用户"] --> GW["API Gateway"] --> LLM["LLM"] --> Resp["响应"]
+```d2
+direction: right
+User: "用户"
+GW: "API Gateway"
+LLM: "LLM"
+Resp: "响应"
+
+User -> GW -> LLM -> Resp
 ```
 - 适用：简单问答、单轮任务
 - 优点：低延迟、简单
@@ -126,13 +156,18 @@ graph LR
 
 ### 管道架构 (Pipeline)
 
-```mermaid
-graph LR
-    User["用户"] --> Pre["预处理\n+ Guardrails"]
-    Pre --> Chain["LLM Chain"]
-    Chain --> Post["后处理\n+ 格式化"]
-    Post --> Resp["响应"]
-    Chain <--> Tools["Tools / DB"]
+```d2
+direction: right
+User: "用户"
+Pre: "预处理\n+ Guardrails"
+Chain: "LLM Chain"
+Post: "后处理\n+ 格式化"
+Resp: "响应"
+Tools: "Tools / DB"
+
+User -> Pre -> Chain -> Post -> Resp
+Chain -> Tools
+Tools -> Chain
 ```
 
 > 管道架构在 LLM 调用前后加入预处理和后处理环节，适用于需要输入验证、格式化输出的场景（如客服系统、内容审核）。
@@ -141,27 +176,44 @@ graph LR
 
 ### Agent 架构 (Autonomous)
 
-```mermaid
-graph TD
-    User["用户"] --> Loop["Agent Loop"]
-    Loop --> LLM["LLM 推理"]
-    Loop --> Tool["Tool 执行"]
-    Loop --> Mem["Memory 读写"]
-    Loop --> Check{"循环/终止判断"}
-    Check -->|"继续"| Loop
+```d2
+direction: down
+User: "用户"
+Loop: "Agent Loop"
+LLM: "LLM 推理"
+Tool: "Tool 执行"
+Mem: "Memory 读写"
+Check: {
+  label: "循环/终止判断"
+  shape: diamond
+}
+
+User -> Loop
+Loop -> LLM
+Loop -> Tool
+Loop -> Mem
+Loop -> Check
+Check -> Loop: "继续"
 ```
 - 适用：复杂多步骤任务
 - 挑战：可靠性、成本控制、延迟
 
 ### 多 Agent 架构 (Multi-Agent)
 
-```mermaid
-graph TD
-    User["用户"] --> Orch["Orchestrator Agent"]
-    Orch --> Research["Research Agent"]
-    Orch --> Code["Code Agent"]
-    Orch --> Review["Review Agent"]
-    Orch --> Summary["Summary Agent"]
+```d2
+direction: down
+User: "用户"
+Orch: "Orchestrator Agent"
+Research: "Research Agent"
+Code: "Code Agent"
+Review: "Review Agent"
+Summary: "Summary Agent"
+
+User -> Orch
+Orch -> Research
+Orch -> Code
+Orch -> Review
+Orch -> Summary
 ```
 
 > 多 Agent 架构通过 Orchestrator 协调多个专业 Agent 并行工作，适用于需要多专业协作的复杂任务。挑战在于通信开销和协调一致性。

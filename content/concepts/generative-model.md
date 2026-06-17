@@ -18,16 +18,25 @@ confidence: medium
 
 ## 主要类型
 
-```mermaid
-graph TD
-    GM["生成模型\n(Generative Models)"]
-    GM --> AR["Autoregressive\n(自回归)"]
-    GM --> VAE["VAE\n(变分自编码器)"]
-    GM --> GAN["GAN\n(生成对抗网络)"]
-    GM --> DM["Diffusion Model\n(扩散模型)"]
-    GM --> FM["Flow Matching\n(流匹配模型)"]
-    AR --> DT["离散 Token 接龙\n(Discrete Token)"]
-    AR --> CT["连续 Token 接龙\n(Continuous Token)"]
+```d2
+direction: down
+
+gm: "生成模型 (Generative Models)"
+ar: "Autoregressive (自回归)"
+vae: "VAE (变分自编码器)"
+gan: "GAN (生成对抗网络)"
+dm: "Diffusion Model (扩散模型)"
+fm: "Flow Matching (流匹配模型)"
+dt: "离散 Token 接龙 (Discrete Token)"
+ct: "连续 Token 接龙 (Continuous Token)"
+
+gm -> ar
+gm -> vae
+gm -> gan
+gm -> dm
+gm -> fm
+ar -> dt
+ar -> ct
 ```
 
 ### Autoregressive Model (自回归模型)

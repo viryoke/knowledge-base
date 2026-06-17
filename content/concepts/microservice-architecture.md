@@ -52,21 +52,43 @@ confidence: medium
 
 ## 典型架构
 
-```mermaid
-graph TD
-    Client["Client"] --> GW["API Gateway\n统一入口、路由、鉴权"]
+```d2
+direction: down
 
-    GW --> Order["Order Service"]
-    GW --> Payment["Payment Service"]
-    GW --> Inventory["Inventory Service"]
+Client: "Client"
+Gateway: "API Gateway\n统一入口、路由、鉴权"
 
-    Order --> OrderDB[("Order DB")]
-    Payment --> PayDB[("Pay DB")]
-    Inventory --> InvDB[("Inventory DB")]
+Services: {
+  label: "Microservices"
+  Order: "Order Service"
+  Payment: "Payment Service"
+  Inventory: "Inventory Service"
+  OrderDB: {
+    label: "Order DB"
+    shape: cylinder
+  }
+  PayDB: {
+    label: "Pay DB"
+    shape: cylinder
+  }
+  InvDB: {
+    label: "Inventory DB"
+    shape: cylinder
+  }
+  Order -> OrderDB
+  Payment -> PayDB
+  Inventory -> InvDB
+}
 
-    Order --> MB["Message Broker\n(Kafka / RabbitMQ)"]
-    Payment --> MB
-    Inventory --> MB
+MessageBroker: "Message Broker\n(Kafka / RabbitMQ)"
+
+Client -> Gateway
+Gateway -> Services.Order
+Gateway -> Services.Payment
+Gateway -> Services.Inventory
+Services.Order -> MessageBroker
+Services.Payment -> MessageBroker
+Services.Inventory -> MessageBroker
 ```
 
 ## 关键挑战与应对
