@@ -417,6 +417,196 @@ hr {
   }
 }
 
+// ============================================================================
+// Diagram & Chart Beautification
+// ============================================================================
+
+// --- Mermaid diagrams ---
+
+pre:has(> code.mermaid) {
+  border: 1px solid var(--lightgray);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--lightgray) 15%, var(--light));
+  margin: 1.5rem 0;
+  overflow: visible;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--secondary) 8%, transparent);
+  }
+
+  code.mermaid {
+    background: transparent;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+
+    svg {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+}
+
+// Mermaid fullscreen overlay
+#mermaid-container {
+  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--dark) 60%, transparent);
+
+  & > #mermaid-space {
+    border-radius: 12px;
+    border: 1px solid var(--lightgray);
+    box-shadow: 0 8px 40px color-mix(in srgb, var(--dark) 20%, transparent);
+
+    & > .mermaid-controls {
+      border-radius: 8px;
+      border: 1px solid var(--lightgray);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--dark) 10%, transparent);
+    }
+  }
+}
+
+// --- ASCII art / text diagrams ---
+
+pre:has(> code.language-ascii),
+pre:has(> code.language-text-diagram) {
+  border: 1px solid var(--lightgray);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  background: color-mix(in srgb, var(--lightgray) 10%, var(--light));
+  margin: 1.5rem 0;
+  overflow-x: auto;
+
+  code {
+    font-family: var(--codeFont);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--darkgray);
+    background: transparent;
+    padding: 0;
+  }
+
+  &:hover {
+    border-color: var(--gray);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--dark) 5%, transparent);
+  }
+}
+
+// --- PlantUML / GraphViz (kroki rendered) ---
+
+.diagram-container {
+  border: 1px solid var(--lightgray);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  background: color-mix(in srgb, var(--lightgray) 15%, var(--light));
+  overflow-x: auto;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--secondary) 8%, transparent);
+  }
+
+  img, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .diagram-caption {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 0.8rem;
+    font-style: italic;
+  }
+}
+
+// --- Kroki loading state ---
+
+.kroki-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--gray);
+  font-size: 0.9rem;
+
+  &::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--lightgray);
+    border-top-color: var(--secondary);
+    border-radius: 50%;
+    animation: kroki-spin 0.8s linear infinite;
+    margin-right: 0.5rem;
+  }
+}
+
+@keyframes kroki-spin {
+  to { transform: rotate(360deg); }
+}
+
+// --- Generic diagram code block (source shown alongside) ---
+
+.diagram-source-toggle {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--gray);
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--lightgray);
+  background: transparent;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+
+  &:hover {
+    color: var(--secondary);
+    border-color: var(--secondary);
+    background: color-mix(in srgb, var(--secondary) 5%, transparent);
+  }
+}
+
+// --- Dark mode diagram refinements ---
+
+[saved-theme="dark"] {
+  pre:has(> code.mermaid) {
+    background: color-mix(in srgb, var(--lightgray) 25%, var(--light));
+  }
+
+  .diagram-container {
+    background: color-mix(in srgb, var(--lightgray) 25%, var(--light));
+
+    img, svg {
+      filter: brightness(0.95);
+    }
+  }
+
+  pre:has(> code.language-ascii),
+  pre:has(> code.language-text-diagram) {
+    background: color-mix(in srgb, var(--lightgray) 20%, var(--light));
+
+    code {
+      color: var(--darkgray);
+    }
+  }
+}
+
 // --- Reduced motion ---
 
 @media (prefers-reduced-motion: reduce) {

@@ -99,6 +99,7 @@ export default (() => {
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
           .map((res) => JSResourceToScriptElement(res, true))}
+        <script defer src={joinSegments(baseDir, "static/kroki-diagrams.js")} />
         {additionalHead.map((resource) => {
           if (typeof resource === "function") {
             return resource(fileData)
