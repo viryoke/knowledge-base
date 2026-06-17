@@ -1,3 +1,460 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+// ============================================================================
+// "Midnight Scholar" — Editorial warmth meets deep-night focus
+// ============================================================================
+
+// --- Typography refinements ---
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  position: relative;
+  padding-bottom: 0.6rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 3rem;
+    height: 3px;
+    background: var(--secondary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 5rem;
+  }
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+// --- Body text rhythm ---
+
+article {
+  font-size: 1rem;
+  line-height: 1.75;
+
+  p {
+    margin-bottom: 1.1rem;
+  }
+
+  li {
+    margin-bottom: 0.3rem;
+    line-height: 1.7;
+  }
+}
+
+// --- Links ---
+
+a {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+
+  &.internal {
+    border-radius: 3px;
+    padding: 0 0.15rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--secondary) 15%, transparent);
+    }
+  }
+
+  &.external:hover {
+    text-shadow: 0 0 0.5px currentColor;
+  }
+}
+
+// --- Blockquotes ---
+
+blockquote {
+  border-left-width: 4px;
+  border-left-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 4%, var(--light));
+  padding: 0.8rem 1.2rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+
+  p {
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &:hover {
+    border-left-color: var(--tertiary);
+  }
+}
+
+// --- Code blocks ---
+
+pre {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--gray);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--dark) 6%, transparent);
+  }
+
+  > code {
+    font-size: 0.85rem;
+    line-height: 1.65;
+  }
+}
+
+code {
+  font-size: 0.88em;
+  border-radius: 4px;
+  padding: 0.15rem 0.35rem;
+  background: var(--lightgray);
+  transition: background-color 0.15s ease;
+}
+
+// --- Tables ---
+
+.table-container > table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--lightgray);
+
+  th {
+    background: color-mix(in srgb, var(--secondary) 6%, var(--light));
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--secondary);
+  }
+
+  td {
+    font-size: 0.95rem;
+  }
+
+  tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--secondary) 4%, transparent);
+    }
+  }
+}
+
+// --- Sidebar polish ---
+
+.sidebar {
+  &.left {
+    .page-title {
+      font-family: var(--headerFont);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// --- Explorer (file tree) ---
+
+.explorer {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: color-mix(in srgb, var(--lightgray) 20%, var(--light));
+
+  .folder-container {
+    .folder-title {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gray);
+      padding: 0.3rem 0;
+    }
+  }
+
+  a {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--secondary) 10%, transparent);
+    }
+  }
+}
+
+// --- Search ---
+
+.search {
+  #search-bar {
+    border-radius: 8px;
+    border: 1px solid var(--lightgray);
+    padding: 0.6rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondary) 15%, transparent);
+      outline: none;
+    }
+  }
+}
+
+// --- Graph view ---
+
+.graph {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// --- Table of Contents ---
+
+.toc {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  background: color-mix(in srgb, var(--lightgray) 15%, var(--light));
+
+  .toc-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray);
+  }
+
+  a {
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+}
+
+// --- Backlinks ---
+
+.backlinks {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  background: color-mix(in srgb, var(--lightgray) 15%, var(--light));
+
+  .backlink-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray);
+  }
+}
+
+// --- Breadcrumbs ---
+
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--gray);
+
+  a {
+    color: var(--gray);
+    font-weight: 400;
+
+    &:hover {
+      color: var(--secondary);
+    }
+  }
+}
+
+// --- Tags ---
+
+a.tag-link {
+  font-size: 0.85rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--secondary) 10%, var(--light));
+  color: var(--secondary);
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--secondary) 20%, var(--light));
+    color: var(--tertiary);
+  }
+}
+
+// --- Footer ---
+
+footer {
+  font-size: 0.85rem;
+  color: var(--gray);
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--lightgray);
+  margin-top: 2rem;
+
+  a {
+    color: var(--gray);
+    font-weight: 400;
+
+    &:hover {
+      color: var(--secondary);
+    }
+  }
+}
+
+// --- Smooth page transitions (SPA) ---
+
+.navigation-progress {
+  background: linear-gradient(90deg, var(--secondary), var(--tertiary));
+  height: 2px;
+}
+
+// --- Selection ---
+
+::selection {
+  background: color-mix(in srgb, var(--secondary) 25%, transparent);
+  color: var(--dark);
+}
+
+// --- Scrollbar ---
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lightgray);
+  border-radius: 3px;
+
+  &:hover {
+    background: var(--gray);
+  }
+}
+
+// --- Images ---
+
+img {
+  border-radius: 8px;
+  box-shadow: 0 2px 16px color-mix(in srgb, var(--dark) 8%, transparent);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--dark) 12%, transparent);
+    transform: translateY(-1px);
+  }
+}
+
+// --- Horizontal rule ---
+
+hr {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--lightgray) 20%,
+    var(--secondary) 50%,
+    var(--lightgray) 80%,
+    transparent
+  );
+  height: 1px;
+  margin: 2.5rem auto;
+}
+
+// --- Callouts ---
+
+.callout {
+  border-radius: 8px;
+  border: 1px solid var(--lightgray);
+}
+
+// --- Dark mode specific refinements ---
+
+[saved-theme="dark"] {
+  .explorer,
+  .toc,
+  .backlinks {
+    background: color-mix(in srgb, var(--lightgray) 30%, var(--light));
+  }
+
+  pre {
+    border-color: var(--lightgray);
+
+    &:hover {
+      border-color: var(--gray);
+      box-shadow: 0 2px 16px color-mix(in srgb, var(--secondary) 8%, transparent);
+    }
+  }
+
+  code {
+    background: color-mix(in srgb, var(--lightgray) 60%, var(--light));
+  }
+
+  img {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+// --- Reduced motion ---
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// --- Mobile refinements ---
+
+@media all and ($mobile) {
+  h1 {
+    font-size: 1.6rem;
+
+    &::after {
+      width: 2rem;
+    }
+
+    &:hover::after {
+      width: 3rem;
+    }
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  article {
+    font-size: 0.95rem;
+  }
+
+  .explorer,
+  .toc,
+  .backlinks {
+    border-radius: 6px;
+  }
+}
