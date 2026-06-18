@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: viryoke/obsidian-vault
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.VAULT_PAT }}
           path: vault
 
       - name: Sync content from vault
