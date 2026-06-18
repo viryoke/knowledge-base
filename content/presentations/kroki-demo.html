@@ -71,6 +71,12 @@
             min-height: 200px; background: #fff;
         }
         .diagram-body img { max-width: 100%; height: auto; }
+        .diagram-body.loading {
+            background: var(--elevated);
+            color: var(--text-muted);
+            font-family: var(--mono);
+            font-size: 0.9rem;
+        }
         .diagram-code {
             padding: 16px 20px; border-top: 1px solid var(--border);
             background: var(--bg); font-family: var(--mono);
@@ -118,7 +124,7 @@
             <div class="flow-box hl">SVG / PNG</div>
         </div>
         <p style="margin-top:16px;">
-            <strong style="color:var(--text);">使用方式</strong>：将图表代码进行 deflate + base64 编码后拼接到 URL 中，
+            <strong style="color:var(--text);">使用方式</strong>：将图表代码进行 deflate + base64url 编码后拼接到 URL 中，
             如 <code>https://kroki.io/mermaid/svg/{encoded}</code>。
             也可自建 Docker 容器（<code>docker run -p 8080:8080 yuzutech/kroki</code>）。
         </p>
@@ -133,16 +139,13 @@
                 <h3>流程图</h3>
                 <span class="lang-tag">Mermaid</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/mermaid/svg/eNpdzTEOwjAMQNG9p_AFeoEOIMFQIaDdUKEuqBOrrYmStKgCdHdEYkDMyf5_25-g1JQ66OYdRZKsMlTlDlV50YkqP6E70jB26KjJd3iD5uUd3iHJfJ5mL5C7v1v8BdOxRjY=" alt="Mermaid flowchart">
-            </div>
+            <div class="diagram-body loading" id="mermaid-diagram">Loading...</div>
             <div class="diagram-code">graph TD
-    A[需求分析] --> B{技术方案}
-    B -->|方案A| C[快速原型]
-    B -->|方案B| D[详细设计]
-    C --> E[验证]
-    D --> E
-    E --> F[交付上线]</div>
+    A[Client] --> B[Load Balancer]
+    B --> C[Server 01]
+    B --> D[Server 02]
+    C --> E[(Database)]
+    D --> E</div>
             <div class="diagram-desc">Mermaid 适合流程图、时序图、甘特图、类图等，Obsidian 原生支持。</div>
         </div>
 
@@ -152,9 +155,7 @@
                 <h3>时序图</h3>
                 <span class="lang-tag">PlantUML</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/plantuml/svg/eNptjDEOwjAMRfc-RReYCgMSTIUycAF7sBypVUicKk6RgOLdEakCg1f_7_n7P3i3D1XqE0YyU44ZKp2h0k9oUvJjjZ6avkMv2r6hZ-dwRC9eXp0s_4LlWCeNf8E4p009_wXjVqfY_wXDVCeMfYF7VjJ3" alt="PlantUML sequence">
-            </div>
+            <div class="diagram-body loading" id="plantuml-diagram">Loading...</div>
             <div class="diagram-code">@startuml
 User -> Server : GET /api/data
 activate Server
@@ -174,9 +175,7 @@ deactivate Server
                 <h3>架构图</h3>
                 <span class="lang-tag">D2</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/d2/svg/eNpLzs8rSS0qzszPU-ACcuPzSvNKOJW5uIAcxbyS1OISDgUgV4kLyEktKs7Mz1PiAuop5oAogbggU4p5YKZyUWpFQWZJalFyBkQpJxAYpqakZKYC1XKCAQChySYz" alt="D2 architecture">
-            </div>
+            <div class="diagram-body loading" id="d2-diagram">Loading...</div>
             <div class="diagram-code">Client -> CDN -> Server
 Server -> {
   Auth
@@ -194,9 +193,7 @@ API -> Queue</div>
                 <h3>有向图</h3>
                 <span class="lang-tag">GraphViz</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/graphviz/svg/eNpLL0osyFDgUgCC1Jzk_JxUJS4F98SSzPy81CKFtPwiBQf_HAVHBQ3Nai4upYKM1KLEnMTkVAUPhUwFBzXNai4ANz4XNQ==" alt="GraphViz digraph">
-            </div>
+            <div class="diagram-body loading" id="graphviz-diagram">Loading...</div>
             <div class="diagram-code">digraph G {
   rankdir=LR
   A -> B -> C
@@ -214,9 +211,7 @@ API -> Queue</div>
                 <h3>块状图</h3>
                 <span class="lang-tag">BlockDiag</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/blockdiag/svg/eNorSslPVuBSSs5PSUxJTlVIzs_R4OJKzklNzFNIy09O5eJS4lIqSSzJzM9TSs1NLCpR4AIAGXcMmg==" alt="BlockDiag">
-            </div>
+            <div class="diagram-body loading" id="blockdiag-diagram">Loading...</div>
             <div class="diagram-code">blockdiag {
   A -> B -> C -> D
   A -> E -> F -> D
@@ -231,9 +226,7 @@ API -> Queue</div>
                 <h3>C4 模型图</h3>
                 <span class="lang-tag">C4-PlantUML</span>
             </div>
-            <div class="diagram-body">
-                <img src="https://kroki.io/c4plantuml/svg/eNptjkEKwjAQRfc9xWAQ3IgncPETuoouBhO1oZmkTQQR8e4mUcGNy2H-5P_f_zF01iPY8gYN8pBThqpaoJpnqLqJGjX9h0Zp-4aOvMNBjFzB08l1jI9_wTg0KcW_YGw1J_sXjL0hZ_6C4WzI6L9g6Jqk-vkDcJ9GxQ==" alt="C4 diagram">
-            </div>
+            <div class="diagram-body loading" id="c4plantuml-diagram">Loading...</div>
             <div class="diagram-code">@startuml
 !include C4_Context.puml
 Person(user, "用户")
@@ -279,6 +272,117 @@ Rel(app, db, "读写")
     </div>
 
 </div>
+
+<script>
+// Kroki encoding function
+async function encodeForKroki(source) {
+    // Use pako for deflate compression
+    const encoder = new TextEncoder();
+    const data = encoder.encode(source);
+    const compressed = await pako.deflate(data, { level: 9 });
+    // Convert to base64url (URL-safe base64 without padding)
+    const base64 = btoa(String.fromCharCode(...compressed))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    return base64;
+}
+
+// Load pako library
+const pakoScript = document.createElement('script');
+pakoScript.src = 'https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
+pakoScript.onload = async () => {
+    // Diagram sources
+    const diagrams = {
+        'mermaid-diagram': {
+            lang: 'mermaid',
+            source: `graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server 01]
+    B --> D[Server 02]
+    C --> E[(Database)]
+    D --> E`
+        },
+        'plantuml-diagram': {
+            lang: 'plantuml',
+            source: `@startuml
+User -> Server : GET /api/data
+activate Server
+Server -> DB : SELECT *
+activate DB
+DB --> Server : ResultSet
+deactivate DB
+Server --> User : JSON Response
+deactivate Server
+@enduml`
+        },
+        'd2-diagram': {
+            lang: 'd2',
+            source: `Client -> CDN -> Server
+Server -> {
+  Auth
+  API
+  Cache
+}
+API -> Database
+API -> Queue`
+        },
+        'graphviz-diagram': {
+            lang: 'graphviz',
+            source: `digraph G {
+  rankdir=LR
+  A -> B -> C
+  A -> D
+  B -> D
+  C -> D
+  D -> E [style=dashed]
+}`
+        },
+        'blockdiag-diagram': {
+            lang: 'blockdiag',
+            source: `blockdiag {
+  A -> B -> C -> D
+  A -> E -> F -> D
+  B -> E
+}`
+        },
+        'c4plantuml-diagram': {
+            lang: 'c4plantuml',
+            source: `@startuml
+!include C4_Context.puml
+Person(user, "用户")
+System(app, "应用系统")
+System_Ext(db, "数据库")
+Rel(user, app, "使用")
+Rel(app, db, "读写")
+@enduml`
+        }
+    };
+
+    // Load all diagrams
+    for (const [id, { lang, source }] of Object.entries(diagrams)) {
+        const container = document.getElementById(id);
+        try {
+            const encoded = await encodeForKroki(source);
+            const url = `https://kroki.io/${lang}/svg/${encoded}`;
+            const img = new Image();
+            img.onload = () => {
+                container.classList.remove('loading');
+                container.appendChild(img);
+            };
+            img.onerror = () => {
+                container.innerHTML = `<span style="color:var(--rose);">加载失败</span>`;
+                console.error(`Failed to load ${lang} diagram from: ${url}`);
+            };
+            img.src = url;
+        } catch (error) {
+            container.innerHTML = `<span style="color:var(--rose);">编码错误</span>`;
+            console.error(`Encoding error for ${lang}:`, error);
+        }
+    }
+};
+document.head.appendChild(pakoScript);
+</script>
 
 </body>
 </html>
