@@ -30,7 +30,20 @@ const filesToCopy = async (argv: Argv, cfg: QuartzConfig, excludeExtensions: Set
 const copyFile = async (argv: Argv, fp: FilePath) => {
   const src = joinSegments(argv.directory, fp) as FilePath
 
-  const name = slugifyFilePath(fp)
+  // 保留演示文稿类文件的扩展名（HTML、PDF 等）
+  const ext = path.extname(fp).toLowerCase()
+  const preserveExtensions = ['.html', '.htm', '.pdf', '.pptx', '.ppt', '.key']
+  
+  let name: string
+  if (preserveExtensions.includes(ext)) {
+    // 保留扩展名：直接路径处理 + 添加回扩展名
+    const slugified = slugifyFilePath(fp)
+    name = (slugified + ext) as FilePath
+  } else {
+    // 其他资源文件：保持原有行为
+    name = slugifyFilePath(fp)
+  }
+  
   const dest = joinSegments(argv.output, name) as FilePath
 
   const dir = path.dirname(dest) as FilePath
