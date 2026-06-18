@@ -32,7 +32,29 @@ confidence: high
 
 ## Architecture
 
-```\n~/Documents/\n├── ObsidianVault/          # 知识库源（SINGLE SOURCE OF TRUTH）\n│   ├── concepts/           # ← 发布（Markdown → Quartz 渲染）\n│   ├── entities/           # ← 发布\n│   ├── comparisons/        # ← 发布\n│   ├── queries/            # ← 发布\n│   ├── skills/             # ← 发布\n│   ├── navigation/         # ← 发布\n│   ├── presentations/      # ← 发布（HTML/PDF/PPTX，Assets emitter 直接复制）\n│   ├── index.md            # ← 发布\n│   ├── raw/                # ✗ ignorePatterns 排除\n│   ├── profile/            # ✗ 排除\n│   ├── DailyNotes/         # ✗ 排除\n│   └── SCHEMA/AGENTS/log  # ✗ 排除\n│\n└── quartz/                 # Quartz 项目\n    ├── content/            # ← symlink → ~/Documents/ObsidianVault（唯一链接）\n    ├── static/             # Quartz 自有静态资源（图标、JS 等，不链接 vault）\n    ├── quartz.config.yaml  # 站点配置\n    └── .github/workflows/  # CI/CD\n```\n\n**关键设计决策**：\n- **单一链接原则**：只有 `content/` → vault 一条 symlink，不再单独链接 vault 子目录到 `static/` 等处\n- **Vault 是唯一实体来源**：所有人类可读内容（包括 HTML 幻灯片、PDF）都存放在 vault 中，Quartz 不存储实体文件\n- **presentations/ 是 vault 一级目录**：存放 HTML 幻灯片、PDF、PPTX 等适合人类观看的素材\n- Quartz 通过 `content/` symlink 访问 vault 中的所有内容，包括 `presentations/`\n- **验证 symlink**：`ls -la ~/Documents/quartz/content` 应显示 `-> ~/Documents/ObsidianVault`
+```
+~/Documents/
+├── ObsidianVault/          # 知识库源（SINGLE SOURCE OF TRUTH）
+│   ├── concepts/           # ← 发布（Markdown → Quartz 渲染）
+│   ├── entities/           # ← 发布
+│   ├── comparisons/        # ← 发布
+│   ├── queries/            # ← 发布
+│   ├── skills/             # ← 发布
+│   ├── navigation/         # ← 发布
+│   ├── presentations/      # ← 发布（HTML/PDF/PPTX，Assets emitter 复制）
+│   ├── index.md            # ← 发布
+│   ├── raw/                # ✗ ignorePatterns 排除
+│   ├── profile/            # ✗ 排除
+│   ├── DailyNotes/         # ✗ 排除
+│   └── SCHEMA/AGENTS/log   # ✗ 排除
+│
+└── quartz/                 # Quartz 项目
+    ├── content/            # ← 普通目录（sync-content.sh 从 vault 复制）
+    ├── sync-content.sh     # 同步脚本（vault → content/）
+    ├── static/             # Quartz 自有静态资源（图标、JS 等）
+    ├── quartz.config.yaml  # 站点配置
+    └── .github/workflows/  # CI/CD
+```\n\n**关键设计决策**：\n- **单一链接原则**：只有 `content/` → vault 一条 symlink，不再单独链接 vault 子目录到 `static/` 等处\n- **Vault 是唯一实体来源**：所有人类可读内容（包括 HTML 幻灯片、PDF）都存放在 vault 中，Quartz 不存储实体文件\n- **presentations/ 是 vault 一级目录**：存放 HTML 幻灯片、PDF、PPTX 等适合人类观看的素材\n- Quartz 通过 `content/` symlink 访问 vault 中的所有内容，包括 `presentations/`\n- **验证 symlink**：`ls -la ~/Documents/quartz/content` 应显示 `-> ~/Documents/ObsidianVault`
 
 ## Procedure
 
@@ -65,19 +87,27 @@ CONTENT_DIR="content"
 rm -rf "$CONTENT_DIR"
 mkdir -p "$CONTENT_DIR"
 
-for dir in concepts entities comparisons queries skills navigation; do
+# 同步 7 个发布目录（新增目录加在这里）
+for dir in concepts entities comparisons queries skills navigation presentations; do
   [ -d "$VAULT_DIR/$dir" ] && cp -R "$VAULT_DIR/$dir" "$CONTENT_DIR/"
 done
 
-for file in index.md SCHEMA.md; do
+# 同步发布文件（排除内部文件：SCHEMA.md, log.md, AGENTS.md）
+for file in index.md; do
   [ -f "$VAULT_DIR/$file" ] && cp "$VAULT_DIR/$file" "$CONTENT_DIR/"
 done
+
+# 清理不应发布的文件（双重保险）
+find "$CONTENT_DIR" -name ".obsidian" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$CONTENT_DIR" -name ".DS_Store" -delete 2>/dev/null || true
 ```
 
 ```bash
 chmod +x sync-content.sh
 ./sync-content.sh
 ```
+
+**重要**：`content/` 是**普通目录，不是 symlink**。GitHub Actions 无法解析跨仓库 symlink，所以必须用脚本复制。
 
 ### 3. 配置 quartz.config.yaml
 
@@ -100,8 +130,11 @@ configuration:
     - raw
     - profile
     - DailyNotes
-    - presentations
     - node_modules
+    - SCHEMA.md
+    - AGENTS.md
+    - log.md
+    - LINT-RULES.md
   theme:
     fontOrigin: googleFonts
     cdnCaching: true

@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
     <style>
         :root {
-            /* Warm Academic Palette — from Quartz config */
             --bg-deep: #1a1816;
             --bg-primary: #1e1c19;
             --bg-surface: #262320;
@@ -26,12 +25,9 @@
             --border: rgba(196, 169, 125, 0.12);
             --border-strong: rgba(196, 169, 125, 0.22);
             --highlight: rgba(196, 169, 125, 0.08);
-            /* Semantic */
             --green: #7daa6d;
             --blue: #6d8faa;
             --rose: #aa6d6d;
-            --amber: #c4a97d;
-            /* Typography */
             --font-cn: 'LXGW WenKai', 'Inter', sans-serif;
             --font-en: 'Inter', system-ui, sans-serif;
             --font-heading: 'Instrument Serif', serif;
@@ -48,11 +44,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Slide Container ── */
-        .deck {
-            width: 100vw; height: 100vh;
-            position: relative;
-        }
+        .deck { width: 100vw; height: 100vh; position: relative; }
 
         .slide {
             position: absolute; inset: 0;
@@ -77,7 +69,6 @@
         .slide-inner::-webkit-scrollbar { width: 4px; }
         .slide-inner::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
 
-        /* ── Typography ── */
         .t-display {
             font-family: var(--font-heading);
             font-size: 4.2rem; font-weight: 400;
@@ -103,7 +94,6 @@
             font-size: 0.82rem; color: var(--accent);
         }
 
-        /* ── Bento Grid ── */
         .bento {
             display: grid; gap: 16px;
             margin-top: 32px;
@@ -112,7 +102,6 @@
         .bento-3col { grid-template-columns: 1fr 1fr 1fr; }
         .bento-2col { grid-template-columns: 1.2fr 0.8fr; }
         .bento-sidebar { grid-template-columns: 0.6fr 1.4fr; }
-        .bento-hero { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
 
         .card {
             background: var(--bg-surface);
@@ -145,7 +134,6 @@
         }
         .card p { font-size: 0.92rem; line-height: 1.65; color: var(--text-muted); }
 
-        /* ── Pill / Tag ── */
         .pill {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 4px 12px;
@@ -160,7 +148,6 @@
         .pill-blue { color: var(--blue); border-color: rgba(109,143,170,0.2); }
         .pill-rose { color: var(--rose); border-color: rgba(170,109,109,0.2); }
 
-        /* ── Code Block ── */
         .code-block {
             background: var(--bg-primary);
             border: 1px solid var(--border);
@@ -176,9 +163,7 @@
         .code-block .comment { color: var(--text-faint); }
         .code-block .key { color: var(--accent); }
         .code-block .val { color: var(--green); }
-        .code-block .str { color: var(--accent-bright); }
 
-        /* ── Flow Diagram ── */
         .flow {
             display: flex; align-items: center; gap: 12px;
             flex-wrap: wrap;
@@ -206,7 +191,6 @@
             font-family: var(--font-mono);
         }
 
-        /* ── Skill Cards ── */
         .skill-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -237,14 +221,12 @@
             line-height: 1.6;
         }
 
-        /* ── Architecture Diagram ── */
         .arch-diagram {
             background: var(--bg-primary);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 32px;
             margin-top: 20px;
-            position: relative;
         }
         .arch-row {
             display: flex; align-items: center; gap: 16px;
@@ -271,7 +253,6 @@
             margin: 4px 0;
         }
 
-        /* ── Title Slide Specific ── */
         .title-slide {
             text-align: center;
             display: flex; flex-direction: column;
@@ -295,7 +276,6 @@
             background: var(--border-strong);
         }
 
-        /* ── Nav Bar ── */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             height: 48px;
@@ -338,7 +318,6 @@
             color: var(--text-muted);
         }
 
-        /* ── Closing Slide ── */
         .closing-quote {
             font-family: var(--font-heading);
             font-size: 2rem;
@@ -356,35 +335,48 @@
             font-size: 0.9rem;
         }
 
-        /* ── Utilities ── */
         .mt-sm { margin-top: 12px; }
         .mt-md { margin-top: 24px; }
         .mt-lg { margin-top: 36px; }
-        .gap-sm { gap: 12px; }
         .flex-col { display: flex; flex-direction: column; }
         .flex-row { display: flex; align-items: center; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .text-accent { color: var(--accent); }
         .text-green { color: var(--green); }
         .text-blue { color: var(--blue); }
-        .divider {
-            height: 1px; background: var(--border);
-            margin: 20px 0;
-        }
+        .text-rose { color: var(--rose); }
 
-        /* ── Responsive ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--bg-elevated);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent-dim);
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        tr:hover td { background: var(--bg-surface); }
+
         @media (max-width: 900px) {
             .slide { padding: 32px 24px; }
             .t-display { font-size: 2.8rem; }
             .t-h1 { font-size: 2rem; }
-            .bento-2x2, .bento-3col, .bento-2col, .bento-sidebar, .bento-hero {
+            .bento-2x2, .bento-3col, .bento-2col, .bento-sidebar {
                 grid-template-columns: 1fr;
             }
             .skill-grid { grid-template-columns: 1fr; }
             .skill-card.wide { grid-column: span 1; }
         }
 
-        /* ── Animations ── */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
@@ -408,7 +400,7 @@
 
 <div class="deck" id="deck">
 
-    <!-- ═══════════════════ SLIDE 0: Title ═══════════════════ -->
+    <!-- SLIDE 0: Title -->
     <div class="slide active" data-slide="0">
         <div class="slide-inner title-slide">
             <div class="t-h2 anim anim-d1">AI WORKFLOW INSIGHTS</div>
@@ -424,12 +416,50 @@
         </div>
     </div>
 
-    <!-- ═══════════════════ SLIDE 1: 统一AI工具 ═══════════════════ -->
+    <!-- SLIDE 1: Background -->
     <div class="slide" data-slide="1">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">BACKGROUND</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:16px;">问题意识</h2>
+            <div class="bento bento-2col anim anim-d2">
+                <div>
+                    <p class="t-body" style="margin-bottom:20px;">
+                        作为 12 年研发经验的架构师，AI 已成为我的<strong class="text-accent">常驻工作伙伴</strong>。但工具太多、输出风格不一、知识无法积累。
+                    </p>
+                    <p class="t-body" style="margin-bottom:20px;">
+                        核心思路：以<span class="text-accent">知识库为中心</span>，以<span class="text-accent">全局配置为约束</span>，让 AI 工具服务于长期知识积累。
+                    </p>
+                </div>
+                <div class="card" style="border-left: 3px solid var(--rose);">
+                    <h3>痛点</h3>
+                    <ul style="list-style:none; padding:0; margin-top:12px;">
+                        <li style="padding:8px 0; border-bottom:1px solid var(--border);">
+                            <span class="pill pill-rose">01</span> 输出风格不一致
+                        </li>
+                        <li style="padding:8px 0; border-bottom:1px solid var(--border);">
+                            <span class="pill pill-rose">02</span> AI 不懂个人偏好
+                        </li>
+                        <li style="padding:8px 0; border-bottom:1px solid var(--border);">
+                            <span class="pill pill-rose">03</span> 素材散落无法复利
+                        </li>
+                        <li style="padding:8px 0; border-bottom:1px solid var(--border);">
+                            <span class="pill pill-rose">04</span> 重复造轮子
+                        </li>
+                        <li style="padding:8px 0;">
+                            <span class="pill pill-rose">05</span> 跨端访问困难
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: 统一AI工具 -->
+    <div class="slide" data-slide="2">
         <div class="slide-inner">
             <div class="t-h2 anim anim-d1">PRACTICE 01</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">统一多个AI工具</h2>
-            <p class="t-body anim anim-d2" style="max-width:680px;margin-bottom:8px;">
+            <p class="t-body anim anim-d2" style="max-width:680px;">
                 构建全局 <span class="text-accent">AGENTS.md</span>，定义AI角色与个人偏好，让所有工具统一引用。
             </p>
             <div class="bento bento-sidebar anim anim-d3" style="margin-top:28px;">
@@ -437,17 +467,17 @@
                     <div class="card card-accent" style="flex:1;">
                         <div class="card-icon">S</div>
                         <h3>SOUL.md</h3>
-                        <p>Hermes Agent 的灵魂文件，定义人格、行为准则和工具使用规范</p>
+                        <p>Hermes Agent 的灵魂文件</p>
                     </div>
                     <div class="card card-accent" style="flex:1;">
                         <div class="card-icon">A</div>
                         <h3>~/.agents/AGENTS.md</h3>
-                        <p>OpenCode 的全局配置，跨项目共享角色定义和工作流约束</p>
+                        <p>OpenCode 全局配置</p>
                     </div>
                     <div class="card card-accent" style="flex:1;">
                         <div class="card-icon">C</div>
                         <h3>~/.claude/CLAUDE.md</h3>
-                        <p>Claude Code 的记忆文件，统一编码风格和审查标准</p>
+                        <p>Claude Code 记忆文件</p>
                     </div>
                 </div>
                 <div class="arch-diagram">
@@ -457,9 +487,9 @@
                     </div>
                     <div class="arch-connector">↓ 引用 ↓</div>
                     <div class="arch-row">
-                        <div class="arch-box source">Hermes Agent</div>
+                        <div class="arch-box source">Hermes</div>
                         <div class="arch-box source">OpenCode</div>
-                        <div class="arch-box source">Claude Code</div>
+                        <div class="arch-box source">Claude</div>
                         <div class="arch-box source">Cursor</div>
                     </div>
                     <div class="arch-connector">↓ 输出 ↓</div>
@@ -468,378 +498,355 @@
                     </div>
                 </div>
             </div>
+            <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
+                <h3>踩坑经验</h3>
+                <p>最初每个工具单独配偏好，维护成本极高。AGENTS.md 不宜超 200 行，否则消耗大量 Token。</p>
+            </div>
         </div>
     </div>
 
-    <!-- ═══════════════════ SLIDE 2: 让AI更懂你 ═══════════════════ -->
-    <div class="slide" data-slide="2">
+    <!-- SLIDE 3: 让AI更懂你 -->
+    <div class="slide" data-slide="3">
         <div class="slide-inner">
             <div class="t-h2 anim anim-d1">PRACTICE 02</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">让AI工具更懂你</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                通过<span class="text-accent">个人画像</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你的偏好。
+                通过<span class="text-accent">个人画像</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你。
             </p>
             <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
                 <div class="flex-col" style="gap:14px;">
                     <div class="card" style="border-left:3px solid var(--green);">
                         <h3>记忆积累</h3>
-                        <p>Hermes Agent 在日常使用中自动记录偏好：字体选择、设计风格、编码习惯、学习进度等</p>
+                        <p>自动记录偏好</p>
                         <div class="code-block" style="margin-top:12px;">
-                            <span class="comment"># Hermes 自动记忆示例</span><br>
+                            <span class="comment"># Hermes 自动记忆</span><br>
                             <span class="key">user.font.cn:</span> <span class="val">霞鹜文楷</span><br>
                             <span class="key">user.font.code:</span> <span class="val">JetBrains Mono</span><br>
-                            <span class="key">user.design:</span> <span class="val">Editorial Warm Academic</span><br>
-                            <span class="key">user.chart:</span> <span class="val">Mermaid only, no ASCII</span>
+                            <span class="key">user.design:</span> <span class="val">Warm Academic</span><br>
+                            <span class="key">user.chart:</span> <span class="val">Mermaid only</span>
                         </div>
                     </div>
                     <div class="card" style="border-left:3px solid var(--blue);">
                         <h3>画像生成</h3>
-                        <p>基于记忆生成结构化个人画像，配置在 AGENTS.md 中供所有工具引用</p>
+                        <p>结构化个人画像</p>
                         <div class="code-block" style="margin-top:12px;">
                             <span class="comment"># profile/user-profile.md</span><br>
-                            <span class="key">role:</span> <span class="val">12年研发经验 · 架构师</span><br>
+                            <span class="key">role:</span> <span class="val">12年经验 · 架构师</span><br>
                             <span class="key">goals:</span> <span class="val">AI/ML · 软考 · 英语</span><br>
                             <span class="key">style:</span> <span class="val">文本优先 · 具体可执行</span>
                         </div>
                     </div>
                 </div>
-                <div class="flex-col" style="gap:14px;">
-                    <div class="card" style="flex:1;">
-                        <h3>AGENTS.md 中的引用规则</h3>
-                        <div class="code-block">
-                            <span class="comment"># 何时引用个人画像</span><br>
-                            <span class="str">- 生成内容时：参考偏好风格</span><br>
-                            <span class="str">- 推荐资源时：参考学习目标</span><br>
-                            <span class="str">- 代码审查时：参考编码习惯</span><br>
-                            <br>
-                            <span class="comment"># 何时更新画像</span><br>
-                            <span class="key">trigger:</span> <span class="val">用户纠正偏好时</span><br>
-                            <span class="key">trigger:</span> <span class="val">发现新偏好信号时</span><br>
-                            <span class="key">trigger:</span> <span class="val">定期 lint 检查时</span>
-                        </div>
+                <div class="card" style="border-left:3px solid var(--accent);">
+                    <h3>闭环流程</h3>
+                    <div class="flow" style="margin-top:20px;">
+                        <div class="flow-node primary">日常交互</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node">记忆积累</div>
                     </div>
-                    <div class="card" style="background:var(--highlight);">
-                        <p style="color:var(--accent);font-size:0.88rem;">
-                            <strong>核心理念：</strong>记忆是渐进式的。AI工具不会一开始就懂你，但通过持续交互和主动提供个人信息文档，画像会越来越精准。
-                        </p>
+                    <div class="flow" style="margin-top:12px;">
+                        <div class="flow-node">记忆积累</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node">画像生成</div>
                     </div>
+                    <div class="flow" style="margin-top:12px;">
+                        <div class="flow-node">画像生成</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node">全局引用</div>
+                    </div>
+                    <div class="flow" style="margin-top:12px;">
+                        <div class="flow-node">全局引用</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node primary">日常交互</div>
+                    </div>
+                    <p style="margin-top:20px; font-size:0.88rem; color:var(--text-muted);">
+                        记忆是渐进式的。AI 不会一开始就懂你，但通过持续交互和主动提供文档，画像会越来越精准。
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════ SLIDE 3: 积累素材 ═══════════════════ -->
-    <div class="slide" data-slide="3">
+    <!-- SLIDE 4: 积累素材 -->
+    <div class="slide" data-slide="4">
         <div class="slide-inner">
             <div class="t-h2 anim anim-d1">PRACTICE 03</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">积累AI产生的素材</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                基于 <span class="text-accent">Karpathy LLM Wiki</span> 理念构建本地知识库，让洞察、方案和设计稿形成复利网络。
-            </p>
-            <div class="bento bento-2x2 anim anim-d3" style="margin-top:28px;">
-                <div class="card">
-                    <div class="card-icon">W</div>
-                    <h3>Wiki 知识库</h3>
-                    <p>三层架构：Raw（不可变素材）→ Wiki（编译后的知识页面）→ Schema（规则约束）</p>
-                    <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                        <span class="pill">124 pages</span>
-                        <span class="pill pill-green">7 domains</span>
-                        <span class="pill pill-blue">5 courses</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">A</div>
-                    <h3>AGENTS.md 声明</h3>
-                    <p>定义何时引用知识库（回答问题、生成内容）和何时更新（新素材摄入、知识冲突）</p>
-                    <div class="code-block" style="margin-top:10px;padding:10px 14px;">
-                        <span class="key">引用:</span> <span class="val">回答问题、交叉引用</span><br>
-                        <span class="key">更新:</span> <span class="val">新素材、冲突修正</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">C</div>
-                    <h3>定时任务 (Cron)</h3>
-                    <p>Hermes 自动化维护知识库的三个定时任务</p>
-                    <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-                        <div class="flex-row" style="gap:8px;">
-                            <span class="pill pill-green">CRON</span>
-                            <span style="font-size:0.85rem;color:var(--text-secondary);">AI 双日简报</span>
-                        </div>
-                        <div class="flex-row" style="gap:8px;">
-                            <span class="pill pill-blue">CRON</span>
-                            <span style="font-size:0.85rem;color:var(--text-secondary);">知识库 Lint 检查</span>
-                        </div>
-                        <div class="flex-row" style="gap:8px;">
-                            <span class="pill">CRON</span>
-                            <span style="font-size:0.85rem;color:var(--text-secondary);">知识库同步 GitHub</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" style="background:var(--highlight);border-color:var(--accent-dim);">
-                    <div class="card-icon" style="background:rgba(170,109,109,0.15);color:var(--rose);">!</div>
-                    <h3 style="color:var(--rose);">待解决：上下文浪费</h3>
-                    <p>每次引用知识库需读取大量页面作为上下文，消耗巨量 Token。知识库越丰富，每次交互的 Token 成本越高。目前尚未找到优雅的按需加载方案。</p>
-                    <div style="margin-top:10px;">
-                        <span class="pill pill-rose">OPEN PROBLEM</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════ SLIDE 4: 必装 Skills ═══════════════════ -->
-    <div class="slide" data-slide="4">
-        <div class="slide-inner">
-            <div class="t-h2 anim anim-d1">PRACTICE 04</div>
-            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">必装的 Skills</h2>
-            <p class="t-body anim anim-d2" style="max-width:680px;">
-                五个经过实战验证的 Skill，覆盖发现、创建、质量控制和设计输出。
-            </p>
-            <div class="skill-grid anim anim-d3">
-                <div class="skill-card">
-                    <div class="skill-name">find-skills</div>
-                    <div class="skill-desc">Skill 搜索引擎。描述你的问题，自动查找是否有现成 Skill 可用。</div>
-                    <div style="margin-top:10px;"><span class="pill pill-green">发现</span></div>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-name">skill-creator</div>
-                    <div class="skill-desc">高质量创建自定义 Skill，自动生成标准目录结构、frontmatter 和文档模板。</div>
-                    <div style="margin-top:10px;"><span class="pill pill-blue">创建</span></div>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-name">superpowers</div>
-                    <div class="skill-desc">四步质量流程：头脑风暴对齐思路 → Spec 定义 → Plan 执行 → Verify 验证。</div>
-                    <div style="margin-top:10px;"><span class="pill">质量</span></div>
-                </div>
-                <div class="skill-card wide">
-                    <div class="skill-name">frontend-design</div>
-                    <div class="skill-desc">生成 Web 页面时消除"AI味"——避免通用渐变、glassmorphism、过度圆角等典型 AI 生成特征，产出有设计感的界面。</div>
-                    <div style="margin-top:10px;">
-                        <span class="pill">设计</span>
-                        <span class="pill pill-green" style="margin-left:4px;">去AI味</span>
-                    </div>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-name">ui-ux-pro-max</div>
-                    <div class="skill-desc">50+ 风格、161 色彩方案、57 字体配对。搭配 frontend-design 使用：一个设计全局架构，一个生成高质量单页。</div>
-                    <div style="margin-top:10px;"><span class="pill pill-blue">素材库</span></div>
-                </div>
-            </div>
-            <div class="anim anim-d4" style="margin-top:24px;">
-                <div class="flow">
-                    <span class="flow-node">需求描述</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-node primary">find-skills</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-node">匹配 Skill</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-node primary">superpowers</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-node">高质量输出</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════ SLIDE 5: 跨端共享 ═══════════════════ -->
-    <div class="slide" data-slide="5">
-        <div class="slide-inner">
-            <div class="t-h2 anim anim-d1">PRACTICE 05</div>
-            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">知识库的跨端共享</h2>
-            <p class="t-body anim anim-d2" style="max-width:680px;">
-                GitHub 私仓同步 + Quartz 发布 + Kroki.io 图表渲染，实现多设备随时访问。
+                基于 <span class="text-accent">Karpathy LLM Wiki</span> 理念构建本地知识库，让素材形成复利网络。
             </p>
             <div class="arch-diagram anim anim-d3" style="margin-top:28px;">
+                <p class="t-caption" style="text-align:center;margin-bottom:18px;">三层架构</p>
                 <div class="arch-row">
-                    <div class="arch-box core" style="min-width:180px;">Obsidian Vault<br><span style="font-size:0.7rem;opacity:0.8;">~/Documents/ObsidianVault</span></div>
+                    <div class="arch-box source">字幕/转录</div>
+                    <div class="arch-box source">课件PDF</div>
+                    <div class="arch-box source">博客文章</div>
                 </div>
-                <div class="arch-connector">↓ git push ↓</div>
+                <div class="arch-connector">↓ 编译 ↓</div>
                 <div class="arch-row">
-                    <div class="arch-box source">GitHub 私仓<br><span style="font-size:0.7rem;">obsidian-vault</span></div>
-                    <div class="arch-connector" style="margin:0 12px;">→</div>
-                    <div class="arch-box source">多设备同步<br><span style="font-size:0.7rem;">Mac · iPhone · iPad</span></div>
+                    <div class="arch-box core" style="min-width:320px;">Wiki 页面（Agent 维护）<br><span style="font-size:0.72rem;opacity:0.8;">课程概览 · 概念页面 · 实体页面 · 对比分析</span></div>
                 </div>
-                <div class="arch-connector">↓</div>
+                <div class="arch-connector">↓ 约束 ↓</div>
                 <div class="arch-row">
-                    <div class="arch-box tool">Quartz 构建<br><span style="font-size:0.7rem;">npx quartz build</span></div>
-                    <div class="arch-connector" style="margin:0 12px;">→</div>
-                    <div class="arch-box output">GitHub Pages<br><span style="font-size:0.7rem;">viryoke.github.io/knowledge-base</span></div>
+                    <div class="arch-box tool">标签体系</div>
+                    <div class="arch-box tool">目录结构</div>
+                    <div class="arch-box tool">页面模板</div>
                 </div>
             </div>
             <div class="bento bento-3col anim anim-d4" style="margin-top:20px;">
                 <div class="card">
-                    <h3>Quartz 发布配置</h3>
-                    <div class="code-block" style="padding:10px 14px;">
-                        <span class="key">baseUrl:</span> <span class="str">viryoke.github.io/<br>&nbsp;&nbsp;knowledge-base</span><br>
-                        <span class="key">exclude:</span> <span class="val">raw/ profile/<br>&nbsp;&nbsp;SCHEMA.md AGENTS.md</span><br>
-                        <span class="key">font:</span> <span class="val">Inter + JetBrains Mono</span><br>
-                        <span class="key">theme:</span> <span class="val">暖色调学术风</span>
-                    </div>
+                    <h3>复利效应</h3>
+                    <p>每门新课触发 5-15 个页面更新，价值 = 页面数 × 交叉链接密度 × 内容质量</p>
                 </div>
                 <div class="card">
-                    <h3>Kroki.io 图表引擎</h3>
-                    <p style="margin-bottom:10px;">统一渲染入口，支持多种 Diagram-as-Code 语言：</p>
-                    <div style="display:flex;flex-wrap:wrap;gap:5px;">
-                        <span class="pill">Mermaid</span>
-                        <span class="pill pill-green">PlantUML</span>
-                        <span class="pill pill-blue">D2</span>
-                        <span class="pill">GraphViz</span>
-                        <span class="pill pill-rose">Excalidraw</span>
-                    </div>
-                    <p style="margin-top:10px;font-size:0.82rem;color:var(--text-muted);">流程图 · 架构图 · 类图 · 时序图 · 思维导图</p>
+                    <h3>定时任务</h3>
+                    <p>AI 双日简报 · Lint 检查 · 自动同步 GitHub</p>
                 </div>
-                <div class="card">
-                    <h3>自动化同步</h3>
-                    <p>Hermes 定时任务自动执行：</p>
-                    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
-                        <span style="font-size:0.85rem;color:var(--text-secondary);">① Lint 检查（孤儿页、断链）</span>
-                        <span style="font-size:0.85rem;color:var(--text-secondary);">② git add + commit + push</span>
-                        <span style="font-size:0.85rem;color:var(--text-secondary);">③ Quartz 构建 + Pages 部署</span>
-                    </div>
+                <div class="card" style="border-left:3px solid var(--rose);">
+                    <h3>待解决</h3>
+                    <p class="text-rose">上下文浪费：知识库越丰富，Token 消耗越高</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════ SLIDE 6: 富文本生成 ═══════════════════ -->
+    <!-- SLIDE 5: Skills -->
+    <div class="slide" data-slide="5">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 04</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">必装的 Skills</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                Skill 让 AI 的经验<span class="text-accent">可复用、可积累、可共享</span>。
+            </p>
+            <div class="skill-grid anim anim-d3">
+                <div class="skill-card">
+                    <div class="skill-name">find-skills</div>
+                    <div class="skill-desc">描述问题 → 自动查找可用 Skill</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">skill-creator</div>
+                    <div class="skill-desc">复杂任务完成 → 提炼流程 → 入库</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">SuperPowers</div>
+                    <div class="skill-desc">头脑风暴 → Spec → Plan → Verify</div>
+                </div>
+                <div class="skill-card wide">
+                    <div class="skill-name">frontend-design</div>
+                    <div class="skill-desc">消除 AI 味：禁止紫色渐变、glassmorphism、Space Grotesk</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">ui-ux-pro-max</div>
+                    <div class="skill-desc">50+ 风格 · 161 色彩方案 · 57 字体配对</div>
+                </div>
+            </div>
+            <div class="flow anim anim-d4" style="margin-top:32px; justify-content:center;">
+                <div class="flow-node">需求描述</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node primary">find-skills</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">加载 Skill</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">高质量输出</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: 跨端共享 -->
     <div class="slide" data-slide="6">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 05</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">知识库的跨端共享</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                GitHub 私仓同步 + Quartz 静态站点发布 + 自动化 CI/CD。
+            </p>
+            <div class="arch-diagram anim anim-d3" style="margin-top:28px;">
+                <p class="t-caption" style="text-align:center;margin-bottom:18px;">两个仓库协作架构</p>
+                <div class="arch-row">
+                    <div class="arch-box core" style="min-width:240px;">ObsidianVault<br><span style="font-size:0.72rem;opacity:0.8;">唯一实体来源</span></div>
+                </div>
+                <div class="arch-connector">↓ sync-content.sh ↓</div>
+                <div class="arch-row">
+                    <div class="arch-box source">obsidian-vault<br><span style="font-size:0.72rem;opacity:0.8;">私仓</span></div>
+                    <div class="arch-box source">knowledge-base<br><span style="font-size:0.72rem;opacity:0.8;">Quartz 仓库</span></div>
+                </div>
+                <div class="arch-connector">↓ GitHub Actions ↓</div>
+                <div class="arch-row">
+                    <div class="arch-box tool">自动 checkout vault</div>
+                    <div class="arch-box tool">同步 → 构建</div>
+                </div>
+                <div class="arch-connector">↓ 部署 ↓</div>
+                <div class="arch-row">
+                    <div class="arch-box output" style="min-width:320px;">GitHub Pages<br><span style="font-size:0.72rem;opacity:0.8;">viryoke.github.io/knowledge-base</span></div>
+                </div>
+            </div>
+            <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
+                <h3>踩坑经验</h3>
+                <p>软链接方案 GitHub Actions 无法解析，改用 sync-content.sh 脚本同步。需修改 assets.ts 保留 HTML 扩展名。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: 富文本 -->
+    <div class="slide" data-slide="7">
         <div class="slide-inner">
             <div class="t-h2 anim anim-d1">PRACTICE 06</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">富文本的生成</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                没有订阅图片生成模型？用 <span class="text-accent">Markdown 中转</span>，借助免费工具生成幻灯片和音视频。
+                Markdown 中转——AI 生成结构化 MD，手动导入免费工具生成富文本。
             </p>
-            <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
-                <div class="flex-col" style="gap:14px;">
-                    <div class="card">
-                        <h3>工作流 Pipeline</h3>
-                        <div class="flow" style="margin-top:14px;">
-                            <span class="flow-node primary">AI 生成 MD</span>
-                            <span class="flow-arrow">→</span>
-                            <span class="flow-node">手动导入</span>
-                            <span class="flow-arrow">→</span>
-                            <span class="flow-node primary">富文本输出</span>
-                        </div>
-                        <div class="divider"></div>
-                        <p style="font-size:0.88rem;color:var(--text-muted);">
-                            AI 工具（Hermes/Claude/GPT）负责内容生成和结构化排版，富文本工具负责视觉呈现。各取所长。
-                        </p>
-                    </div>
-                    <div class="card" style="background:var(--highlight);border-color:var(--accent-dim);">
-                        <p style="color:var(--accent);font-size:0.9rem;font-weight:500;">
-                            这正是本幻灯片的制作方式 —— 你正在看的这份 slides 就是这套流程的产物。
-                        </p>
-                    </div>
-                </div>
-                <div class="flex-col" style="gap:14px;">
-                    <div class="card">
-                        <div class="card-icon" style="background:rgba(109,143,170,0.15);color:var(--blue);">G</div>
-                        <h3>Gemini Canvas</h3>
-                        <p>导入 Markdown 内容，利用 Gemini 的多模态能力生成精美幻灯片、信息图和交互式内容</p>
-                        <div style="margin-top:8px;"><span class="pill pill-blue">幻灯片</span> <span class="pill pill-blue">信息图</span></div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon" style="background:rgba(125,170,109,0.12);color:var(--green);">N</div>
-                        <h3>NotebookLM</h3>
-                        <p>导入文档素材，自动生成音频摘要（Audio Overview）和对话式播客，适合通勤时听</p>
-                        <div style="margin-top:8px;"><span class="pill pill-green">音频播客</span> <span class="pill pill-green">对话摘要</span></div>
-                    </div>
-                    <div class="card">
-                        <h3>适用场景</h3>
-                        <p>学习笔记 → 幻灯片分享、技术调研 → 团队汇报、课程笔记 → 音频复习</p>
-                    </div>
-                </div>
+            <div class="flow anim anim-d3" style="margin-top:32px; justify-content:center;">
+                <div class="flow-node primary">AI Agent</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Markdown 素材</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Gemini Canvas / NotebookLM</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node primary">富文本输出</div>
+            </div>
+            <table class="anim anim-d4" style="margin-top:32px;">
+                <thead>
+                    <tr>
+                        <th>工具</th>
+                        <th>输入</th>
+                        <th>输出</th>
+                        <th>费用</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Gemini Canvas</strong></td>
+                        <td>Markdown</td>
+                        <td>幻灯片、信息图</td>
+                        <td class="text-green">免费</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NotebookLM</strong></td>
+                        <td>文档</td>
+                        <td>音频播客、摘要</td>
+                        <td class="text-green">免费</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HTML + CSS</strong></td>
+                        <td>Markdown</td>
+                        <td>交互式幻灯片</td>
+                        <td class="text-green">免费</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="t-caption anim anim-d5" style="margin-top:20px; text-align:center;">
+                这正是本幻灯片的制作方式
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Summary -->
+    <div class="slide" data-slide="8">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">SUMMARY</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:20px;">核心理念：复利思维</h2>
+            <table class="anim anim-d2">
+                <thead>
+                    <tr>
+                        <th>实践</th>
+                        <th>复利方式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>统一配置</strong></td>
+                        <td>一次配置，所有工具受益</td>
+                    </tr>
+                    <tr>
+                        <td><strong>个人画像</strong></td>
+                        <td>一次描述，所有对话受益</td>
+                    </tr>
+                    <tr>
+                        <td><strong>知识库</strong></td>
+                        <td>一次摄入，所有查询受益</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Skill</strong></td>
+                        <td>一次提炼，所有任务受益</td>
+                    </tr>
+                    <tr>
+                        <td><strong>跨端共享</strong></td>
+                        <td>一次发布，所有设备受益</td>
+                    </tr>
+                    <tr>
+                        <td><strong>富文本</strong></td>
+                        <td>一次编写，多种格式受益</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="card anim anim-d3" style="margin-top:32px; border-left:3px solid var(--accent); text-align:center;">
+                <p style="font-size:1.1rem; color:var(--text-primary); line-height:1.8;">
+                    AI 工具的最大价值不是"帮你写代码"，<br>
+                    而是<strong class="text-accent">帮你积累知识</strong>。<br>
+                    <span style="color:var(--text-muted);">代码会过时，但知识会复利。</span>
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════ SLIDE 7: Closing ═══════════════════ -->
-    <div class="slide" data-slide="7">
-        <div class="slide-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <div class="closing-quote anim anim-d2">
-                "知识库的价值 = 页面数量 × 交叉引用密度 × 内容质量"
-            </div>
-            <div class="closing-attr anim anim-d3">— Andrej Karpathy, LLM Wiki</div>
-            <div class="mt-lg anim anim-d4" style="text-align:center;">
-                <div class="flow" style="justify-content:center;">
-                    <span class="flow-node">AGENTS.md</span>
-                    <span class="flow-arrow">+</span>
-                    <span class="flow-node">Memory</span>
-                    <span class="flow-arrow">+</span>
-                    <span class="flow-node">Wiki</span>
-                    <span class="flow-arrow">+</span>
-                    <span class="flow-node">Skills</span>
-                    <span class="flow-arrow">=</span>
-                    <span class="flow-node primary">个性化AI工作流</span>
-                </div>
-            </div>
-            <div class="mt-lg anim anim-d5">
-                <p class="t-caption" style="text-align:center;">github.com/viryoke/obsidian-vault · viryoke.github.io/knowledge-base</p>
+    <!-- SLIDE 9: Closing -->
+    <div class="slide" data-slide="9">
+        <div class="slide-inner title-slide">
+            <p class="closing-quote anim anim-d1">
+                "The best time to plant a tree was 20 years ago.<br>
+                The second best time is now."
+            </p>
+            <p class="closing-attr anim anim-d2">— Chinese Proverb</p>
+            <div class="title-meta anim anim-d3" style="margin-top:48px;">
+                <span class="t-mono">knowledge-base</span>
+                <span class="sep"></span>
+                <span class="t-mono">viryoke.github.io</span>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- ── Navigation Bar ── -->
 <div class="nav-bar">
-    <span id="slideLabel">01 / 08</span>
+    <span id="slide-counter">1 / 10</span>
     <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width:12.5%"></div>
+        <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
     </div>
     <div class="nav-keys">
-        <kbd>←</kbd><kbd>→</kbd>
-        <span style="margin-left:4px;">navigate</span>
+        <kbd>←</kbd><kbd>→</kbd><span style="margin:0 4px;">或</span><kbd>Space</kbd>
     </div>
 </div>
 
 <script>
-(function() {
-    const STORAGE_KEY = 'ai-tools-slides-current';
-    const slides = document.querySelectorAll('.slide');
+    const deck = document.getElementById('deck');
+    const slides = deck.querySelectorAll('.slide');
+    const counter = document.getElementById('slide-counter');
+    const progress = document.getElementById('progress-fill');
+    let current = 0;
     const total = slides.length;
-    let current = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
-    if (current >= total) current = 0;
 
-    const progressFill = document.getElementById('progressFill');
-    const slideLabel = document.getElementById('slideLabel');
-
-    function show(idx) {
-        if (idx < 0 || idx >= total) return;
-        slides.forEach((s, i) => {
-            s.classList.remove('active');
-            if (i === idx) s.classList.add('active');
-        });
-        current = idx;
-        localStorage.setItem(STORAGE_KEY, idx);
-        progressFill.style.width = ((idx + 1) / total * 100) + '%';
-        slideLabel.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    function show(n) {
+        if (n < 0 || n >= total) return;
+        slides[current].classList.remove('active');
+        current = n;
+        slides[current].classList.add('active');
+        counter.textContent = `${current + 1} / ${total}`;
+        progress.style.width = `${((current + 1) / total) * 100}%`;
     }
 
-    show(current);
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
-            e.preventDefault(); show(current + 1);
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            e.preventDefault(); show(current - 1);
-        } else if (e.key === 'Home') {
-            e.preventDefault(); show(0);
-        } else if (e.key === 'End') {
-            e.preventDefault(); show(total - 1);
-        }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
+        if (e.key === 'Home') { e.preventDefault(); show(0); }
+        if (e.key === 'End') { e.preventDefault(); show(total - 1); }
     });
 
-    // Touch support
-    let touchStartX = 0;
-    document.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
-    document.addEventListener('touchend', function(e) {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(dx) > 50) {
-            dx < 0 ? show(current + 1) : show(current - 1);
-        }
+    let touchX = 0;
+    document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
     });
-})();
 </script>
 
 </body>
