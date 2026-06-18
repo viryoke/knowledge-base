@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具使用心得 — 构建个性化AI工作流</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Warm Academic Palette — from Quartz config */
+            --bg-deep: #1a1816;
+            --bg-primary: #1e1c19;
+            --bg-surface: #262320;
+            --bg-elevated: #2e2a26;
+            --bg-card: #332f29;
+            --text-primary: #e5ddd3;
+            --text-secondary: #d4ccc2;
+            --text-muted: #7d7468;
+            --text-faint: #5a534a;
+            --accent: #c4a97d;
+            --accent-bright: #d4bc8e;
+            --accent-dim: #8b6f47;
+            --border: rgba(196, 169, 125, 0.12);
+            --border-strong: rgba(196, 169, 125, 0.22);
+            --highlight: rgba(196, 169, 125, 0.08);
+            /* Semantic */
+            --green: #7daa6d;
+            --blue: #6d8faa;
+            --rose: #aa6d6d;
+            --amber: #c4a97d;
+            /* Typography */
+            --font-cn: 'LXGW WenKai', 'Inter', sans-serif;
+            --font-en: 'Inter', system-ui, sans-serif;
+            --font-heading: 'Instrument Serif', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-cn);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Slide Container ── */
+        .deck {
+            width: 100vw; height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            padding: 56px 72px;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s ease, transform 0.55s ease;
+            pointer-events: none;
+            background: var(--bg-deep);
+        }
+        .slide.active {
+            opacity: 1; transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .slide-inner {
+            width: 100%; max-width: 1200px;
+            max-height: calc(100vh - 112px);
+            overflow-y: auto;
+        }
+        .slide-inner::-webkit-scrollbar { width: 4px; }
+        .slide-inner::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+        /* ── Typography ── */
+        .t-display {
+            font-family: var(--font-heading);
+            font-size: 4.2rem; font-weight: 400;
+            line-height: 1.1; letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+        .t-display em { font-style: italic; color: var(--accent); }
+        .t-h1 {
+            font-family: var(--font-heading);
+            font-size: 2.8rem; font-weight: 400;
+            line-height: 1.15; color: var(--text-primary);
+        }
+        .t-h2 {
+            font-family: var(--font-en);
+            font-size: 1.1rem; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .t-body { font-size: 1.05rem; line-height: 1.75; color: var(--text-secondary); }
+        .t-caption { font-size: 0.85rem; color: var(--text-muted); }
+        .t-mono {
+            font-family: var(--font-mono);
+            font-size: 0.82rem; color: var(--accent);
+        }
+
+        /* ── Bento Grid ── */
+        .bento {
+            display: grid; gap: 16px;
+            margin-top: 32px;
+        }
+        .bento-2x2 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+        .bento-3col { grid-template-columns: 1fr 1fr 1fr; }
+        .bento-2col { grid-template-columns: 1.2fr 0.8fr; }
+        .bento-sidebar { grid-template-columns: 0.6fr 1.4fr; }
+        .bento-hero { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 28px;
+            transition: border-color 0.3s;
+        }
+        .card:hover { border-color: var(--border-strong); }
+        .card-accent {
+            border-left: 3px solid var(--accent);
+            padding-left: 24px;
+        }
+        .card .card-icon {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            background: var(--highlight);
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            font-family: var(--font-en);
+            font-weight: 600;
+        }
+        .card h3 {
+            font-family: var(--font-en);
+            font-size: 1rem; font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .card p { font-size: 0.92rem; line-height: 1.65; color: var(--text-muted); }
+
+        /* ── Pill / Tag ── */
+        .pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem; font-weight: 500;
+            font-family: var(--font-mono);
+            background: var(--highlight);
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+        .pill-green { color: var(--green); border-color: rgba(125,170,109,0.2); }
+        .pill-blue { color: var(--blue); border-color: rgba(109,143,170,0.2); }
+        .pill-rose { color: var(--rose); border-color: rgba(170,109,109,0.2); }
+
+        /* ── Code Block ── */
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+        .code-block .comment { color: var(--text-faint); }
+        .code-block .key { color: var(--accent); }
+        .code-block .val { color: var(--green); }
+        .code-block .str { color: var(--accent-bright); }
+
+        /* ── Flow Diagram ── */
+        .flow {
+            display: flex; align-items: center; gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .flow-node {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .flow-node.primary {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+        .flow-arrow {
+            color: var(--text-faint);
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+        }
+
+        /* ── Skill Cards ── */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 28px;
+        }
+        .skill-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 22px 22px;
+            transition: all 0.3s;
+        }
+        .skill-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+        .skill-card.wide { grid-column: span 2; }
+        .skill-card .skill-name {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+        .skill-card .skill-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── Architecture Diagram ── */
+        .arch-diagram {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 20px;
+            position: relative;
+        }
+        .arch-row {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+        .arch-box {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 120px;
+        }
+        .arch-box.source { background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-secondary); }
+        .arch-box.core { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--bg-deep); font-weight: 600; }
+        .arch-box.output { background: rgba(109,143,170,0.15); border: 1px solid rgba(109,143,170,0.3); color: var(--blue); }
+        .arch-box.tool { background: rgba(125,170,109,0.12); border: 1px solid rgba(125,170,109,0.25); color: var(--green); }
+        .arch-connector {
+            text-align: center;
+            color: var(--text-faint);
+            font-size: 1.3rem;
+            font-family: var(--font-mono);
+            margin: 4px 0;
+        }
+
+        /* ── Title Slide Specific ── */
+        .title-slide {
+            text-align: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .title-slide .t-display { margin-bottom: 20px; }
+        .title-slide .subtitle {
+            font-family: var(--font-en);
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-bottom: 40px;
+        }
+        .title-meta {
+            display: flex; gap: 24px;
+            align-items: center;
+        }
+        .title-meta .sep {
+            width: 1px; height: 16px;
+            background: var(--border-strong);
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 48px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-faint);
+        }
+        .nav-bar .progress-track {
+            flex: 1;
+            height: 2px;
+            background: var(--bg-elevated);
+            margin: 0 24px;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        .nav-bar .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 1px;
+            transition: width 0.4s ease;
+        }
+        .nav-keys {
+            display: flex; gap: 6px;
+            align-items: center;
+        }
+        .nav-keys kbd {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 22px; height: 20px;
+            padding: 0 5px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Closing Slide ── */
+        .closing-quote {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--accent);
+            line-height: 1.5;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .closing-attr {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ── Utilities ── */
+        .mt-sm { margin-top: 12px; }
+        .mt-md { margin-top: 24px; }
+        .mt-lg { margin-top: 36px; }
+        .gap-sm { gap: 12px; }
+        .flex-col { display: flex; flex-direction: column; }
+        .flex-row { display: flex; align-items: center; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .text-accent { color: var(--accent); }
+        .text-green { color: var(--green); }
+        .text-blue { color: var(--blue); }
+        .divider {
+            height: 1px; background: var(--border);
+            margin: 20px 0;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .slide { padding: 32px 24px; }
+            .t-display { font-size: 2.8rem; }
+            .t-h1 { font-size: 2rem; }
+            .bento-2x2, .bento-3col, .bento-2col, .bento-sidebar, .bento-hero {
+                grid-template-columns: 1fr;
+            }
+            .skill-grid { grid-template-columns: 1fr; }
+            .skill-card.wide { grid-column: span 1; }
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide.active .anim {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        .slide.active .anim-d1 { animation-delay: 0.1s; opacity: 0; }
+        .slide.active .anim-d2 { animation-delay: 0.2s; opacity: 0; }
+        .slide.active .anim-d3 { animation-delay: 0.3s; opacity: 0; }
+        .slide.active .anim-d4 { animation-delay: 0.4s; opacity: 0; }
+        .slide.active .anim-d5 { animation-delay: 0.5s; opacity: 0; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slide { transition: opacity 0.2s; transform: none !important; }
+            .slide.active .anim { animation: none !important; opacity: 1 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+    <!-- ═══════════════════ SLIDE 0: Title ═══════════════════ -->
+    <div class="slide active" data-slide="0">
+        <div class="slide-inner title-slide">
+            <div class="t-h2 anim anim-d1">AI WORKFLOW INSIGHTS</div>
+            <h1 class="t-display anim anim-d2">AI工具使用<em>心得</em></h1>
+            <p class="subtitle anim anim-d3">构建个性化 AI 工作流的六个关键实践</p>
+            <div class="title-meta anim anim-d4">
+                <span class="t-caption">viryoke</span>
+                <span class="sep"></span>
+                <span class="t-caption">2026-06</span>
+                <span class="sep"></span>
+                <span class="t-mono">Hermes Agent + Obsidian + Quartz</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 1: 统一AI工具 ═══════════════════ -->
+    <div class="slide" data-slide="1">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 01</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">统一多个AI工具</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;margin-bottom:8px;">
+                构建全局 <span class="text-accent">AGENTS.md</span>，定义AI角色与个人偏好，让所有工具统一引用。
+            </p>
+            <div class="bento bento-sidebar anim anim-d3" style="margin-top:28px;">
+                <div class="flex-col" style="gap:12px;">
+                    <div class="card card-accent" style="flex:1;">
+                        <div class="card-icon">S</div>
+                        <h3>SOUL.md</h3>
+                        <p>Hermes Agent 的灵魂文件，定义人格、行为准则和工具使用规范</p>
+                    </div>
+                    <div class="card card-accent" style="flex:1;">
+                        <div class="card-icon">A</div>
+                        <h3>~/.agents/AGENTS.md</h3>
+                        <p>OpenCode 的全局配置，跨项目共享角色定义和工作流约束</p>
+                    </div>
+                    <div class="card card-accent" style="flex:1;">
+                        <div class="card-icon">C</div>
+                        <h3>~/.claude/CLAUDE.md</h3>
+                        <p>Claude Code 的记忆文件，统一编码风格和审查标准</p>
+                    </div>
+                </div>
+                <div class="arch-diagram">
+                    <p class="t-caption" style="text-align:center;margin-bottom:18px;">统一引用架构</p>
+                    <div class="arch-row">
+                        <div class="arch-box core" style="min-width:200px;">AGENTS.md<br><span style="font-size:0.72rem;opacity:0.8;">角色 · 偏好 · 规范</span></div>
+                    </div>
+                    <div class="arch-connector">↓ 引用 ↓</div>
+                    <div class="arch-row">
+                        <div class="arch-box source">Hermes Agent</div>
+                        <div class="arch-box source">OpenCode</div>
+                        <div class="arch-box source">Claude Code</div>
+                        <div class="arch-box source">Cursor</div>
+                    </div>
+                    <div class="arch-connector">↓ 输出 ↓</div>
+                    <div class="arch-row">
+                        <div class="arch-box output" style="min-width:280px;">风格一致 · 品味统一</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 2: 让AI更懂你 ═══════════════════ -->
+    <div class="slide" data-slide="2">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 02</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">让AI工具更懂你</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                通过<span class="text-accent">个人画像</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你的偏好。
+            </p>
+            <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
+                <div class="flex-col" style="gap:14px;">
+                    <div class="card" style="border-left:3px solid var(--green);">
+                        <h3>记忆积累</h3>
+                        <p>Hermes Agent 在日常使用中自动记录偏好：字体选择、设计风格、编码习惯、学习进度等</p>
+                        <div class="code-block" style="margin-top:12px;">
+                            <span class="comment"># Hermes 自动记忆示例</span><br>
+                            <span class="key">user.font.cn:</span> <span class="val">霞鹜文楷</span><br>
+                            <span class="key">user.font.code:</span> <span class="val">JetBrains Mono</span><br>
+                            <span class="key">user.design:</span> <span class="val">Editorial Warm Academic</span><br>
+                            <span class="key">user.chart:</span> <span class="val">Mermaid only, no ASCII</span>
+                        </div>
+                    </div>
+                    <div class="card" style="border-left:3px solid var(--blue);">
+                        <h3>画像生成</h3>
+                        <p>基于记忆生成结构化个人画像，配置在 AGENTS.md 中供所有工具引用</p>
+                        <div class="code-block" style="margin-top:12px;">
+                            <span class="comment"># profile/user-profile.md</span><br>
+                            <span class="key">role:</span> <span class="val">12年研发经验 · 架构师</span><br>
+                            <span class="key">goals:</span> <span class="val">AI/ML · 软考 · 英语</span><br>
+                            <span class="key">style:</span> <span class="val">文本优先 · 具体可执行</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-col" style="gap:14px;">
+                    <div class="card" style="flex:1;">
+                        <h3>AGENTS.md 中的引用规则</h3>
+                        <div class="code-block">
+                            <span class="comment"># 何时引用个人画像</span><br>
+                            <span class="str">- 生成内容时：参考偏好风格</span><br>
+                            <span class="str">- 推荐资源时：参考学习目标</span><br>
+                            <span class="str">- 代码审查时：参考编码习惯</span><br>
+                            <br>
+                            <span class="comment"># 何时更新画像</span><br>
+                            <span class="key">trigger:</span> <span class="val">用户纠正偏好时</span><br>
+                            <span class="key">trigger:</span> <span class="val">发现新偏好信号时</span><br>
+                            <span class="key">trigger:</span> <span class="val">定期 lint 检查时</span>
+                        </div>
+                    </div>
+                    <div class="card" style="background:var(--highlight);">
+                        <p style="color:var(--accent);font-size:0.88rem;">
+                            <strong>核心理念：</strong>记忆是渐进式的。AI工具不会一开始就懂你，但通过持续交互和主动提供个人信息文档，画像会越来越精准。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 3: 积累素材 ═══════════════════ -->
+    <div class="slide" data-slide="3">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 03</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">积累AI产生的素材</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                基于 <span class="text-accent">Karpathy LLM Wiki</span> 理念构建本地知识库，让洞察、方案和设计稿形成复利网络。
+            </p>
+            <div class="bento bento-2x2 anim anim-d3" style="margin-top:28px;">
+                <div class="card">
+                    <div class="card-icon">W</div>
+                    <h3>Wiki 知识库</h3>
+                    <p>三层架构：Raw（不可变素材）→ Wiki（编译后的知识页面）→ Schema（规则约束）</p>
+                    <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="pill">124 pages</span>
+                        <span class="pill pill-green">7 domains</span>
+                        <span class="pill pill-blue">5 courses</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">A</div>
+                    <h3>AGENTS.md 声明</h3>
+                    <p>定义何时引用知识库（回答问题、生成内容）和何时更新（新素材摄入、知识冲突）</p>
+                    <div class="code-block" style="margin-top:10px;padding:10px 14px;">
+                        <span class="key">引用:</span> <span class="val">回答问题、交叉引用</span><br>
+                        <span class="key">更新:</span> <span class="val">新素材、冲突修正</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">C</div>
+                    <h3>定时任务 (Cron)</h3>
+                    <p>Hermes 自动化维护知识库的三个定时任务</p>
+                    <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+                        <div class="flex-row" style="gap:8px;">
+                            <span class="pill pill-green">CRON</span>
+                            <span style="font-size:0.85rem;color:var(--text-secondary);">AI 双日简报</span>
+                        </div>
+                        <div class="flex-row" style="gap:8px;">
+                            <span class="pill pill-blue">CRON</span>
+                            <span style="font-size:0.85rem;color:var(--text-secondary);">知识库 Lint 检查</span>
+                        </div>
+                        <div class="flex-row" style="gap:8px;">
+                            <span class="pill">CRON</span>
+                            <span style="font-size:0.85rem;color:var(--text-secondary);">知识库同步 GitHub</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="background:var(--highlight);border-color:var(--accent-dim);">
+                    <div class="card-icon" style="background:rgba(170,109,109,0.15);color:var(--rose);">!</div>
+                    <h3 style="color:var(--rose);">待解决：上下文浪费</h3>
+                    <p>每次引用知识库需读取大量页面作为上下文，消耗巨量 Token。知识库越丰富，每次交互的 Token 成本越高。目前尚未找到优雅的按需加载方案。</p>
+                    <div style="margin-top:10px;">
+                        <span class="pill pill-rose">OPEN PROBLEM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 4: 必装 Skills ═══════════════════ -->
+    <div class="slide" data-slide="4">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 04</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">必装的 Skills</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                五个经过实战验证的 Skill，覆盖发现、创建、质量控制和设计输出。
+            </p>
+            <div class="skill-grid anim anim-d3">
+                <div class="skill-card">
+                    <div class="skill-name">find-skills</div>
+                    <div class="skill-desc">Skill 搜索引擎。描述你的问题，自动查找是否有现成 Skill 可用。</div>
+                    <div style="margin-top:10px;"><span class="pill pill-green">发现</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">skill-creator</div>
+                    <div class="skill-desc">高质量创建自定义 Skill，自动生成标准目录结构、frontmatter 和文档模板。</div>
+                    <div style="margin-top:10px;"><span class="pill pill-blue">创建</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">superpowers</div>
+                    <div class="skill-desc">四步质量流程：头脑风暴对齐思路 → Spec 定义 → Plan 执行 → Verify 验证。</div>
+                    <div style="margin-top:10px;"><span class="pill">质量</span></div>
+                </div>
+                <div class="skill-card wide">
+                    <div class="skill-name">frontend-design</div>
+                    <div class="skill-desc">生成 Web 页面时消除"AI味"——避免通用渐变、glassmorphism、过度圆角等典型 AI 生成特征，产出有设计感的界面。</div>
+                    <div style="margin-top:10px;">
+                        <span class="pill">设计</span>
+                        <span class="pill pill-green" style="margin-left:4px;">去AI味</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">ui-ux-pro-max</div>
+                    <div class="skill-desc">50+ 风格、161 色彩方案、57 字体配对。搭配 frontend-design 使用：一个设计全局架构，一个生成高质量单页。</div>
+                    <div style="margin-top:10px;"><span class="pill pill-blue">素材库</span></div>
+                </div>
+            </div>
+            <div class="anim anim-d4" style="margin-top:24px;">
+                <div class="flow">
+                    <span class="flow-node">需求描述</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-node primary">find-skills</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-node">匹配 Skill</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-node primary">superpowers</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-node">高质量输出</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 5: 跨端共享 ═══════════════════ -->
+    <div class="slide" data-slide="5">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 05</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">知识库的跨端共享</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                GitHub 私仓同步 + Quartz 发布 + Kroki.io 图表渲染，实现多设备随时访问。
+            </p>
+            <div class="arch-diagram anim anim-d3" style="margin-top:28px;">
+                <div class="arch-row">
+                    <div class="arch-box core" style="min-width:180px;">Obsidian Vault<br><span style="font-size:0.7rem;opacity:0.8;">~/Documents/ObsidianVault</span></div>
+                </div>
+                <div class="arch-connector">↓ git push ↓</div>
+                <div class="arch-row">
+                    <div class="arch-box source">GitHub 私仓<br><span style="font-size:0.7rem;">obsidian-vault</span></div>
+                    <div class="arch-connector" style="margin:0 12px;">→</div>
+                    <div class="arch-box source">多设备同步<br><span style="font-size:0.7rem;">Mac · iPhone · iPad</span></div>
+                </div>
+                <div class="arch-connector">↓</div>
+                <div class="arch-row">
+                    <div class="arch-box tool">Quartz 构建<br><span style="font-size:0.7rem;">npx quartz build</span></div>
+                    <div class="arch-connector" style="margin:0 12px;">→</div>
+                    <div class="arch-box output">GitHub Pages<br><span style="font-size:0.7rem;">viryoke.github.io/knowledge-base</span></div>
+                </div>
+            </div>
+            <div class="bento bento-3col anim anim-d4" style="margin-top:20px;">
+                <div class="card">
+                    <h3>Quartz 发布配置</h3>
+                    <div class="code-block" style="padding:10px 14px;">
+                        <span class="key">baseUrl:</span> <span class="str">viryoke.github.io/<br>&nbsp;&nbsp;knowledge-base</span><br>
+                        <span class="key">exclude:</span> <span class="val">raw/ profile/<br>&nbsp;&nbsp;SCHEMA.md AGENTS.md</span><br>
+                        <span class="key">font:</span> <span class="val">Inter + JetBrains Mono</span><br>
+                        <span class="key">theme:</span> <span class="val">暖色调学术风</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Kroki.io 图表引擎</h3>
+                    <p style="margin-bottom:10px;">统一渲染入口，支持多种 Diagram-as-Code 语言：</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:5px;">
+                        <span class="pill">Mermaid</span>
+                        <span class="pill pill-green">PlantUML</span>
+                        <span class="pill pill-blue">D2</span>
+                        <span class="pill">GraphViz</span>
+                        <span class="pill pill-rose">Excalidraw</span>
+                    </div>
+                    <p style="margin-top:10px;font-size:0.82rem;color:var(--text-muted);">流程图 · 架构图 · 类图 · 时序图 · 思维导图</p>
+                </div>
+                <div class="card">
+                    <h3>自动化同步</h3>
+                    <p>Hermes 定时任务自动执行：</p>
+                    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+                        <span style="font-size:0.85rem;color:var(--text-secondary);">① Lint 检查（孤儿页、断链）</span>
+                        <span style="font-size:0.85rem;color:var(--text-secondary);">② git add + commit + push</span>
+                        <span style="font-size:0.85rem;color:var(--text-secondary);">③ Quartz 构建 + Pages 部署</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 6: 富文本生成 ═══════════════════ -->
+    <div class="slide" data-slide="6">
+        <div class="slide-inner">
+            <div class="t-h2 anim anim-d1">PRACTICE 06</div>
+            <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">富文本的生成</h2>
+            <p class="t-body anim anim-d2" style="max-width:680px;">
+                没有订阅图片生成模型？用 <span class="text-accent">Markdown 中转</span>，借助免费工具生成幻灯片和音视频。
+            </p>
+            <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
+                <div class="flex-col" style="gap:14px;">
+                    <div class="card">
+                        <h3>工作流 Pipeline</h3>
+                        <div class="flow" style="margin-top:14px;">
+                            <span class="flow-node primary">AI 生成 MD</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-node">手动导入</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-node primary">富文本输出</span>
+                        </div>
+                        <div class="divider"></div>
+                        <p style="font-size:0.88rem;color:var(--text-muted);">
+                            AI 工具（Hermes/Claude/GPT）负责内容生成和结构化排版，富文本工具负责视觉呈现。各取所长。
+                        </p>
+                    </div>
+                    <div class="card" style="background:var(--highlight);border-color:var(--accent-dim);">
+                        <p style="color:var(--accent);font-size:0.9rem;font-weight:500;">
+                            这正是本幻灯片的制作方式 —— 你正在看的这份 slides 就是这套流程的产物。
+                        </p>
+                    </div>
+                </div>
+                <div class="flex-col" style="gap:14px;">
+                    <div class="card">
+                        <div class="card-icon" style="background:rgba(109,143,170,0.15);color:var(--blue);">G</div>
+                        <h3>Gemini Canvas</h3>
+                        <p>导入 Markdown 内容，利用 Gemini 的多模态能力生成精美幻灯片、信息图和交互式内容</p>
+                        <div style="margin-top:8px;"><span class="pill pill-blue">幻灯片</span> <span class="pill pill-blue">信息图</span></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon" style="background:rgba(125,170,109,0.12);color:var(--green);">N</div>
+                        <h3>NotebookLM</h3>
+                        <p>导入文档素材，自动生成音频摘要（Audio Overview）和对话式播客，适合通勤时听</p>
+                        <div style="margin-top:8px;"><span class="pill pill-green">音频播客</span> <span class="pill pill-green">对话摘要</span></div>
+                    </div>
+                    <div class="card">
+                        <h3>适用场景</h3>
+                        <p>学习笔记 → 幻灯片分享、技术调研 → 团队汇报、课程笔记 → 音频复习</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ SLIDE 7: Closing ═══════════════════ -->
+    <div class="slide" data-slide="7">
+        <div class="slide-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div class="closing-quote anim anim-d2">
+                "知识库的价值 = 页面数量 × 交叉引用密度 × 内容质量"
+            </div>
+            <div class="closing-attr anim anim-d3">— Andrej Karpathy, LLM Wiki</div>
+            <div class="mt-lg anim anim-d4" style="text-align:center;">
+                <div class="flow" style="justify-content:center;">
+                    <span class="flow-node">AGENTS.md</span>
+                    <span class="flow-arrow">+</span>
+                    <span class="flow-node">Memory</span>
+                    <span class="flow-arrow">+</span>
+                    <span class="flow-node">Wiki</span>
+                    <span class="flow-arrow">+</span>
+                    <span class="flow-node">Skills</span>
+                    <span class="flow-arrow">=</span>
+                    <span class="flow-node primary">个性化AI工作流</span>
+                </div>
+            </div>
+            <div class="mt-lg anim anim-d5">
+                <p class="t-caption" style="text-align:center;">github.com/viryoke/obsidian-vault · viryoke.github.io/knowledge-base</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Navigation Bar ── -->
+<div class="nav-bar">
+    <span id="slideLabel">01 / 08</span>
+    <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:12.5%"></div>
+    </div>
+    <div class="nav-keys">
+        <kbd>←</kbd><kbd>→</kbd>
+        <span style="margin-left:4px;">navigate</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    const STORAGE_KEY = 'ai-tools-slides-current';
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
+    if (current >= total) current = 0;
+
+    const progressFill = document.getElementById('progressFill');
+    const slideLabel = document.getElementById('slideLabel');
+
+    function show(idx) {
+        if (idx < 0 || idx >= total) return;
+        slides.forEach((s, i) => {
+            s.classList.remove('active');
+            if (i === idx) s.classList.add('active');
+        });
+        current = idx;
+        localStorage.setItem(STORAGE_KEY, idx);
+        progressFill.style.width = ((idx + 1) / total * 100) + '%';
+        slideLabel.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    }
+
+    show(current);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+            e.preventDefault(); show(current + 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault(); show(current - 1);
+        } else if (e.key === 'Home') {
+            e.preventDefault(); show(0);
+        } else if (e.key === 'End') {
+            e.preventDefault(); show(total - 1);
+        }
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', function(e) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 50) {
+            dx < 0 ? show(current + 1) : show(current - 1);
+        }
+    });
+})();
+</script>
+
+</body>
+</html>
