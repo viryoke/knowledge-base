@@ -54,7 +54,11 @@ confidence: high
     ├── static/             # Quartz 自有静态资源（图标、JS 等）
     ├── quartz.config.yaml  # 站点配置
     └── .github/workflows/  # CI/CD
-```\n\n**关键设计决策**：\n- **单一链接原则**：只有 `content/` → vault 一条 symlink，不再单独链接 vault 子目录到 `static/` 等处\n- **Vault 是唯一实体来源**：所有人类可读内容（包括 HTML 幻灯片、PDF）都存放在 vault 中，Quartz 不存储实体文件\n- **presentations/ 是 vault 一级目录**：存放 HTML 幻灯片、PDF、PPTX 等适合人类观看的素材\n- Quartz 通过 `content/` symlink 访问 vault 中的所有内容，包括 `presentations/`\n- **验证 symlink**：`ls -la ~/Documents/quartz/content` 应显示 `-> ~/Documents/ObsidianVault`
+```\n\n**关键设计决策**：
+- **Vault 是唯一实体来源**：所有人类可读内容（包括 HTML 幻灯片、PDF）都存放在 vault 中，Quartz 不存储实体文件
+- **presentations/ 是 vault 一级目录**：存放 HTML 幻灯片、PDF、PPTX 等适合人类观看的素材
+- **content/ 是普通目录，不是 symlink**：GitHub Actions 无法解析跨仓库 symlink，所以必须用脚本复制（`sync-content.sh`）
+- **单一同步脚本**：只有 `sync-content.sh` 负责将 vault 内容复制到 Quartz，不再使用 symlink
 
 ## Procedure
 
@@ -81,25 +85,34 @@ cd obsidian-quartz && npm i
 
 ```bash
 #!/bin/bash
-VAULT_DIR="../ObsidianVault"
+# 支持环境变量覆盖（CI 环境需要）
+VAULT_DIR="${VAULT_DIR:-../ObsidianVault}"
 CONTENT_DIR="content"
+
+echo "Syncing vault content from $VAULT_DIR to $CONTENT_DIR..."
 
 rm -rf "$CONTENT_DIR"
 mkdir -p "$CONTENT_DIR"
 
 # 同步 7 个发布目录（新增目录加在这里）
 for dir in concepts entities comparisons queries skills navigation presentations; do
-  [ -d "$VAULT_DIR/$dir" ] && cp -R "$VAULT_DIR/$dir" "$CONTENT_DIR/"
+  [ -d "$VAULT_DIR/$dir" ] && echo "  Copying $dir/" && cp -R "$VAULT_DIR/$dir" "$CONTENT_DIR/"
 done
 
 # 同步发布文件（排除内部文件：SCHEMA.md, log.md, AGENTS.md）
 for file in index.md; do
-  [ -f "$VAULT_DIR/$file" ] && cp "$VAULT_DIR/$file" "$CONTENT_DIR/"
+  [ -f "$VAULT_DIR/$file" ] && echo "  Copying $file" && cp "$VAULT_DIR/$file" "$CONTENT_DIR/"
 done
 
 # 清理不应发布的文件（双重保险）
 find "$CONTENT_DIR" -name ".obsidian" -type d -exec rm -rf {} + 2>/dev/null || true
 find "$CONTENT_DIR" -name ".DS_Store" -delete 2>/dev/null || true
+
+echo "Sync complete!"
+echo "Content summary:"
+find "$CONTENT_DIR" -type f -name "*.md" | wc -l | xargs echo "  Markdown files:"
+find "$CONTENT_DIR" -type f ! -name "*.md" | wc -l | xargs echo "  Non-markdown files:"
+find "$CONTENT_DIR" -type d | wc -l | xargs echo "  Directories:"
 ```
 
 ```bash
@@ -259,34 +272,65 @@ digraph G { A -> B -> C; }
 
 ### 6. 配置 GitHub Actions 部署
 
+**重要**：如果 vault 是 private repository，需要 Personal Access Token (PAT)。
+
 创建 `.github/workflows/deploy.yml`：
 
 ```yaml
 name: Deploy Quartz site to GitHub Pages
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+      - name: Checkout Quartz
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout Obsidian Vault
+        uses: actions/checkout@v4
+        with:
+          repository: viryoke/obsidian-vault  # 替换为你的 vault repo
+          token: ${{ secrets.VAULT_PAT }}     # 必须是 PAT，不是 GITHUB_TOKEN
+          path: vault                         # 必须在 workspace 内
+
+      - name: Sync content from vault
+        run: VAULT_DIR=vault bash sync-content.sh
+
       - uses: actions/setup-node@v4
-        with: { node-version: "22", cache: "npm" }
-      - run: npm ci
-      - run: npx quartz plugin install --from-config
-      - run: npx quartz build
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: public }
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install plugins
+        run: npx quartz plugin install --from-config
+
+      - name: Build Quartz
+        run: npx quartz build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -294,8 +338,25 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 ```
+
+**设置 PAT secret**：
+
+```bash
+# 生成 PAT（需要 repo scope）
+gh auth token
+
+# 添加到 Quartz repo secrets
+gh secret set VAULT_PAT --repo your-username/knowledge-base
+```
+
+**关键要求**：
+1. **必须使用 PAT**：`GITHUB_TOKEN` 无法访问其他 private repository
+2. **vault 必须在 workspace 内**：`path: vault`，不能是 `../vault` 或其他位置
+3. **使用环境变量覆盖**：`VAULT_DIR=vault` 让 sync-content.sh 知道 vault 位置
 
 启用 GitHub Pages：
 ```bash
@@ -346,10 +407,10 @@ git push                             # 自动触发 GitHub Actions
 | 代码字体 | JetBrains Mono |
 | 亮色模式 | 暖白底 + 深靛蓝文字 + 深青绿强调 |
 | 暗色模式 | 午夜蓝底 + 柔薰衣草文字 + 靛紫强调 |
-| 排除目录 | raw, profile, DailyNotes, presentations, .obsidian |
+| 排除目录 | raw, profile, DailyNotes, .obsidian |
 | 部署方式 | GitHub Actions（非 `npx quartz sync`） |
-| 内容同步 | 复制脚本（非 symlink） |
-| Repo 策略 | vault private + quartz public（分离） |
+| 内容同步 | 复制脚本（非 symlink，GitHub Actions 限制） |
+| Repo 策略 | vault private + quartz public（分离，需要 PAT） |
 | 图表渲染 | Mermaid 原生 + kroki.io（PlantUML/GraphViz） |
 | Footer | GitHub 链接 |
 
@@ -402,7 +463,45 @@ git push                             # 自动触发 GitHub Actions
 
 9. **kroki.io 需要联网**：PlantUML/GraphViz 渲染在客户端调用 kroki.io API，离线环境不工作。Mermaid 和 ASCII 不受影响。
 
+14. **Kroki.io 静态 URL 编码陷阱**：预先编码的 Kroki URL（base64 或 base64url）经常返回 400 错误。Kroki 需要**精确的 deflate 压缩 + base64url 编码**（不是 zlib，不是标准 base64）。**解决方案**：使用 JavaScript 动态加载 + pako.js 库在客户端编码：
+
+```javascript
+// 1. 加载 pako.js（deflate 压缩库）
+const pakoScript = document.createElement('script');
+pakoScript.src = 'https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
+document.head.appendChild(pakoScript);
+
+// 2. 编码函数
+async function encodeForKroki(source) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(source);
+    // 使用 deflate（不是 zlib）
+    const compressed = await pako.deflate(data, { level: 9 });
+    // 转换为 base64url（URL-safe base64，无填充）
+    const base64 = btoa(String.fromCharCode(...compressed))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    return base64;
+}
+
+// 3. 动态加载图表
+pakoScript.onload = async () => {
+    const encoded = await encodeForKroki(diagramSource);
+    const url = `https://kroki.io/mermaid/svg/${encoded}`;
+    // 创建 <img> 并设置 src
+};
+```
+
+**关键点**：deflate ≠ zlib（deflate 是原始压缩，zlib 有头部），base64url ≠ base64（使用 `-` `_` 替代 `+` `/`，去掉 `=` 填充）。静态 URL 容易出错，动态生成更可靠。
+
 10. **Quartz 5 Assets emitter 丢失 HTML 扩展名**：`slugifyFilePath()` 会去掉 `.html`，导致 `public/presentations/foo.html` 变成 `public/presentations/foo`。必须 patch `quartz/plugins/emitters/assets.ts` 的 `copyFile` 函数，对 `.html/.htm/.pdf/.pptx/.ppt/.key` 保留扩展名。见下方 "Assets Emitter Extension Fix" 章节。
+
+11. **GitHub Actions 无法访问 private vault**：`GITHUB_TOKEN` 只能访问当前 repository，无法 checkout 其他 private repository。**必须使用 Personal Access Token (PAT)**。创建 PAT 后通过 `gh secret set VAULT_PAT` 添加到 Quartz repo secrets。
+
+12. **GitHub Actions checkout path 必须在 workspace 内**：vault checkout 的 `path` 必须是 workspace 内的相对路径（如 `vault`），不能是 `../vault` 或其他位置，否则会报错 "Repository path is not under workspace"。
+
+13. **sync-content.sh 需要环境变量支持**：CI 环境中 vault 位置可能不是默认的 `../ObsidianVault`，脚本必须支持 `VAULT_DIR` 环境变量覆盖：`VAULT_DIR="${VAULT_DIR:-../ObsidianVault}"`。
 
 ## Assets Emitter Extension Fix
 
@@ -438,6 +537,8 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
 
 ## Verification
 
+### 本地验证
+- `./sync-content.sh` 显示同步统计（markdown/non-markdown/directories）
 - `npx quartz build` 无错误完成
 - `http://localhost:8080` 显示知识库首页
 - Wikilinks 正确解析
@@ -445,10 +546,16 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
 - 搜索返回已知关键词结果
 - 暗色模式切换正常
 - Mermaid 图表正确渲染
+
+### GitHub Actions 验证
 - `git push` 后 GitHub Actions 构建成功
-- `gh run view` 显示 build + deploy 均为 ✓
+- `gh run view` 显示所有步骤均为 ✓（特别是 "Checkout Obsidian Vault" 和 "Sync content from vault"）
+- `gh run view --log` 显示 `Syncing vault content from vault to content...` 和同步统计
+- GitHub Pages 部署后，访问 `https://username.github.io/knowledge-base/` 显示正确内容
+- 访问 `https://username.github.io/knowledge-base/presentations/foo.html` 确认 HTML 幻灯片可访问（有 `.html` 扩展名）
 
 ## References
 
 - `references/setup-pitfalls.md` — 详细排障记录
 - `references/github-pages-setup.md` — GitHub Pages 配置与自定义域名
+- `references/github-actions-pat-setup.md` — GitHub Actions 访问 private vault 的 PAT 配置指南

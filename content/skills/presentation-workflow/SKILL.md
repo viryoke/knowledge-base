@@ -111,36 +111,97 @@ Open the PDF and check: page breaks, text readability, color accuracy, card alig
 4. Edit and refine
 5. Export as PPTX or PDF
 
+## Procedure: Rich Text Generation via Google Gemini Ecosystem
+
+**Preferred workflow**: AI Agent generates structured Markdown → Google Gemini ecosystem converts to rich text (slides, audio, infographics).
+
+**Tools** (Google AI Pro membership, $20/month):
+
+| Tool | Input | Output | Use Case |
+|------|-------|--------|----------|
+| **Gemini Canvas** | Markdown | Slides, infographics, interactive content | 技术分享、学习笔记 |
+| **NotebookLM** | Documents/links | Audio podcasts, Q&A summaries | 通勤复习、内容回顾 |
+| **Gemini + HTML** | Markdown | Custom interactive slides | 自定义演示文稿 |
+
+**Workflow**:
+1. AI Agent (Hermes/Claude Code) generates structured Markdown with clear sections, code examples, and diagrams
+2. Import Markdown into Gemini Canvas or NotebookLM
+3. Let Gemini generate the rich text format (slides, audio, etc.)
+4. Review and refine the output
+5. Export or share
+
+**Key principle**: Markdown is the universal intermediate format. AI tools excel at generating structured text; Gemini tools excel at converting that structure into rich media.
+
 ## Procedure: pptxgenjs (when PPTX is required)
 
 See `powerpoint` skill for pptxgenjs details. Remember: result won't be presentation-grade. Suggest the user open in PowerPoint for final polish, or switch to HTML/Gamma approach.
 
 ## Design Principles (HTML Slides)
 
-### Color Palettes
+### Preferred Theme: "Editorial Warm Academic" Dark
+
+User's preferred design system, matching the Quartz knowledge base config:
+
+**Color palette** (dark mode):
+```
+--bg:         #1a1816    (deep warm black)
+--bg-surface: #262320    (surface cards)
+--bg-elevated:#2e2a26    (elevated elements)
+--text:       #e5ddd3    (warm cream text)
+--text-muted: #7d7468    (muted text)
+--accent:     #c4a97d    (warm gold)
+--accent-dim: #8b6f47    (dim gold borders)
+--green:      #7daa6d
+--blue:       #6d8faa
+--rose:       #aa6d6d
+--border:     rgba(196,169,125,0.12)
+```
+
+**Typography**:
+- Chinese body: `LXGW WenKai` (霞鹜文楷, warm serif) — load via `https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css`
+- English body: `Inter` (clean sans-serif)
+- Headings: `Instrument Serif` (editorial serif, italic for emphasis)
+- Code/mono: `JetBrains Mono`
+
+**Layout**: Bento Grid (2-column cards with `border-radius: 12px`, accent left borders, subtle hover transitions). Cards use `background: var(--bg-surface); border: 1px solid var(--border);`.
+
+**Anti-AI-slop rules** (same as frontend-design):
+- No generic gradient hero sections
+- No glassmorphism / backdrop-blur
+- No purple/violet gradients or Space Grotesk font
+- No decorative emoji or SVG illustrations
+- No filler copy ("Lorem ipsum", "Let's dive in", "Unlock the power of")
+- No centered hero CTAs with glowing buttons
+- Use real data, specific numbers, actual code snippets
+- Editorial restraint: whitespace over decoration
+
+### Alternative Color Palettes
 
 | Theme | Primary | Secondary | Accent | Background |
 |-------|---------|-----------|--------|------------|
+| **Editorial Warm Academic (dark)** | `#c4a97d` | `#8b6f47` | `#7daa6d` | `#1a1816` |
 | Ocean Teal | `#0d9488` | `#14b8a6` | `#5eead4` | `#f8fafc` |
 | Midnight Executive | `#1E2761` | `#CADCFC` | `#FFFFFF` | `#0f172a` |
 | Forest & Moss | `#2C5F2D` | `#97BC62` | `#F5F5F5` | `#f5f5f0` |
 | Warm Terracotta | `#B85042` | `#E7E8D1` | `#A7BEAE` | `#faf8f5` |
 
-### Typography
+### Typography Options
 
-- **Chinese**: `Noto Serif SC` (serif) or `LXGW WenKai` (warm serif)
-- **English**: `Inter` (sans-serif) or `EB Garamond` (serif)
+- **Chinese**: `LXGW WenKai` (preferred) or `Noto Serif SC`
+- **English headings**: `Instrument Serif` (preferred) or `EB Garamond`
+- **English body**: `Inter`
 - **Code**: `JetBrains Mono`
-- Slide titles: 36-56px bold
+- Slide titles: 36-56px bold (use `Instrument Serif` for editorial feel)
 - Body text: 14-16px
 - Captions: 11-13px muted
 
 ### Layout Variety
 
 Never repeat the same layout across slides. Use:
-- Cards with accent bars (2-3 column grid)
-- Flow steps (horizontal or vertical)
-- Styled tables
+- **Bento Grid cards** with accent left borders (2-3 column grid)
+- **Flow steps** (horizontal or vertical) with `.flow-node` / `.flow-arrow` pattern
+- **Architecture diagrams** with `.arch-row` / `.arch-box` / `.arch-connector` pattern
+- Styled tables with header accent
 - Numbered principle lists with colored circles
 - Problem/insight rows with alternating backgrounds
 - Dark section transition slides with large numbers

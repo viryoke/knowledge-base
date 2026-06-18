@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kroki.io — Diagram as Code 渲染引擎示例</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
     <style>
         :root {
             --bg: #1a1816; --surface: #262320; --elevated: #2e2a26;
@@ -275,11 +276,10 @@ Rel(app, db, "读写")
 
 <script>
 // Kroki encoding function
-async function encodeForKroki(source) {
-    // Use pako for deflate compression
+function encodeForKroki(source) {
     const encoder = new TextEncoder();
     const data = encoder.encode(source);
-    const compressed = await pako.deflate(data, { level: 9 });
+    const compressed = pako.deflate(data, { level: 9 });
     // Convert to base64url (URL-safe base64 without padding)
     const base64 = btoa(String.fromCharCode(...compressed))
         .replace(/\+/g, '-')
@@ -288,12 +288,8 @@ async function encodeForKroki(source) {
     return base64;
 }
 
-// Load pako library
-const pakoScript = document.createElement('script');
-pakoScript.src = 'https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
-pakoScript.onload = async () => {
-    // Diagram sources
-    const diagrams = {
+// Diagram sources
+const diagrams = {
         'mermaid-diagram': {
             lang: 'mermaid',
             source: `graph TD
@@ -359,11 +355,20 @@ Rel(app, db, "读写")
         }
     };
 
-    // Load all diagrams
+// Load all diagrams
+window.addEventListener('load', () => {
+    if (typeof pako === 'undefined') {
+        console.error('pako library not loaded');
+        document.querySelectorAll('.diagram-body').forEach(el => {
+            el.innerHTML = '<span style="color:var(--rose);">pako 库加载失败</span>';
+        });
+        return;
+    }
+    
     for (const [id, { lang, source }] of Object.entries(diagrams)) {
         const container = document.getElementById(id);
         try {
-            const encoded = await encodeForKroki(source);
+            const encoded = encodeForKroki(source);
             const url = `https://kroki.io/${lang}/svg/${encoded}`;
             const img = new Image();
             img.onload = () => {
@@ -380,8 +385,7 @@ Rel(app, db, "读写")
             console.error(`Encoding error for ${lang}:`, error);
         }
     }
-};
-document.head.appendChild(pakoScript);
+});
 </script>
 
 </body>
