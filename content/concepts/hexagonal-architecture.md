@@ -16,36 +16,18 @@ confidence: medium
 
 ## 核心结构
 
-```mermaid
-graph LR
-    subgraph Driving["入站适配器 (Driving Adapters)"]
-        HTTP["HTTP Controller"]
-        gRPC["gRPC Handler"]
-        CLI["CLI Command"]
-    end
-
-    subgraph Domain["核心域 (Domain)"]
-        DP["«interface»<br>入站端口 (Driving Port)"]
-        BL["业务逻辑 (Business Logic)"]
-        VP["«interface»<br>出站端口 (Driven Port)"]
-        DP --> BL --> VP
-    end
-
-    subgraph Driven["出站适配器 (Driven Adapters)"]
-        MySQL[("MySQL Repository")]
-        Redis[("Redis Repository")]
-        Kafka["Kafka Producer"]
-    end
-
-    HTTP --> DP
-    gRPC --> DP
-    CLI --> DP
-    VP --> MySQL
-    VP --> Redis
-    VP --> Kafka
 ```
-
-> 上图展示六边形架构的三层结构：入站适配器通过入站端口驱动核心业务逻辑，核心业务逻辑通过出站端口调用出站适配器。依赖方向始终从外向内。
+        ┌─────────────────────┐
+  HTTP  │    ┌───────────┐    │  MySQL
+  ────→ │    │           │ ───→
+  gRPC  │    │   核心    │    │  Redis
+  ────→ │    │  业务域   │ ───→
+  CLI   │    │  (Domain) │    │  Kafka
+  ────→ │    │           │ ───→
+        │    └───────────┘    │
+        │   Port ← Adapter   │
+        └─────────────────────┘
+```
 
 三个核心概念：
 
@@ -61,15 +43,10 @@ graph LR
 
 ## 依赖规则
 
-```mermaid
-graph LR
-    Adapter["适配器"]
-    Port["«interface»<br>端口"]
-    Domain["核心域"]
-    Adapter --> Port --> Domain
 ```
-
-> 外层依赖内层，内层不知道外层存在。
+适配器 → 端口 → 核心域
+（外层依赖内层，内层不知道外层存在）
+```
 
 这与[[clean-architecture|整洁架构]]和[[onion-architecture|洋葱架构]]共享同一核心原则：**依赖指向内部**。
 

@@ -39,19 +39,19 @@ sources: []
 
 #### 时态选择指南
 
-```mermaid
-graph TD
-    A{你要描述什么？} --> B[系统架构/设计]
-    A --> C[刚完成的操作]
-    A --> D[事故经过]
-    A --> E[正在排查的问题]
-    B --> F["一般现在时\nThe API gateway routes requests."]
-    C --> G["现在完成时\nWe've just rolled out the new version."]
-    D --> H["一般过去时 + 过去完成时\nThe database had run out of connections."]
-    E --> I["现在进行时\nWe're currently looking into the memory leak."]
 ```
+描述系统架构/设计 → 一般现在时
+  "The API gateway routes requests to microservices."
 
-> 技术场景中时态选择的决策树：根据描述内容类型选择对应时态。
+描述刚完成的操作 → 现在完成时
+  "We've just rolled out the new version."
+
+描述事故经过 → 一般过去时 + 过去完成时
+  "The database had run out of connections before we noticed."
+
+描述正在排查的问题 → 现在进行时
+  "We're currently looking into the memory leak."
+```
 
 ---
 
@@ -258,18 +258,17 @@ by vs with:
 
 #### that vs which 的区别
 
-```mermaid
-graph TD
-    A{定语从句类型？} --> B["限定性（that/which，不加逗号）\n特指某个特定事物"]
-    A --> C["非限定性（which，加逗号）\n补充信息，不影响核心意思"]
-    B --> D["The service that handles auth is down.\n→ 特指处理认证的那个服务"]
-    C --> E["The auth service, which was deployed last week, is down.\n→ 补充说明，不影响句子核心意思"]
-    
-    style B fill:#e8f4ff
-    style C fill:#fff4e1
 ```
+限定性 (that/which，不加逗号):
+  "The service that handles authentication is down."
+  → 特指处理认证的那个服务
 
-> 限定性 vs 非限定性定语从句：前者用 that/which 不加逗号（特指），后者用 which 加逗号（补充信息）。美式英语倾向限定性用 that。
+非限定性 (which，加逗号):
+  "The auth service, which was deployed last week, is down."
+  → 补充信息，不影响句子核心意思
+
+注意：美国英语倾向于限定性用 that，非限定性用 which
+```
 
 #### 常见错误
 

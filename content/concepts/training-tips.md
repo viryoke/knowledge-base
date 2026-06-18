@@ -135,23 +135,22 @@ Skip connection 改变了网络架构（步骤 2），主要带来 **Optimizatio
 
 ## 诊断训练问题的决策树
 
-```mermaid
-graph TD
-    Start(("开始")) --> question["训练结果不好？"]
-    question --> decision{"Training Loss\n降不下去？"}
-    decision -->|"是 → Optimization 问题"| opt1["换更强的 Optimizer (Adam/AdamW)"]
-    opt1 --> opt2["调整 Learning Rate Schedule"]
-    opt2 --> opt3["检查 Initialization"]
-    opt3 --> opt4["添加 Batch Normalization / Skip Connection"]
-    opt4 -.->|"不要用 Data Augmentation\n(会让优化更难)"| decision
-    decision -->|"否 → Generalization 问题"| gen1["收集更多数据"]
-    gen1 --> gen2["Data Augmentation"]
-    gen2 --> gen3["Dropout / Weight Decay"]
-    gen3 --> gen4["Early Stopping"]
-    gen4 --> gen5["减小模型规模"]
 ```
-
-> 训练诊断决策树：首先判断 Training Loss 是否降得下去——如果能降但验证差，是泛化问题，用正则化和数据增强；如果降不下去，是优化问题，应调整 Optimizer、学习率和初始化策略。
+训练结果不好？
+├── Training Loss 降不下去？ → Optimization 问题
+│   ├── 换更强的 Optimizer（Adam/AdamW）
+│   ├── 调整 Learning Rate Schedule
+│   ├── 检查 Initialization
+│   ├── 添加 Batch Normalization / Skip Connection
+│   └── 不要用 Data Augmentation（会让优化更难）
+│
+└── Training Loss 低但 Validation Loss 高？ → Generalization 问题
+    ├── 收集更多数据
+    ├── Data Augmentation
+    ├── Dropout / Weight Decay
+    ├── Early Stopping
+    └── 减小模型规模
+```
 
 ## 技巧分类总览
 

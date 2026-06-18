@@ -46,7 +46,13 @@ Programmatic PPTX generation (python-pptx/pptxgenjs) has inherent quality limits
 
 ## Pitfalls
 
-1. **python-pptx 设计上限很低** — 本质是"画矩形和文本框"，没有渐变、阴影、精美排版。用户反馈"效果挺差的"。不要作为首选方案。
+1. **知识库归档优先，HTML 生成在后（用户明确约定）** — 用户的工作流约定：信息源必须来自知识库，HTML 页面只是从知识库发布到 GitHub Pages 时才生成的产物。正确流程：
+   - (1) 将内容归档到知识库合适的目录（`queries/`、`concepts/` 等）
+   - (2) 更新 `index.md`（新增条目 + 更新总数）和 `log.md`（追加操作记录）
+   - (3) 如果用户需要精美幻灯片，再生成 HTML 放入 `quartz/static/presentations/`
+   - (4) 知识库页面中链接到 HTML 幻灯片的发布地址
+   **绝对不要跳过知识库归档直接生成 HTML** — 这违反了"知识库作为唯一实体来源"原则。
+2. **python-pptx 设计上限很低** — 本质是"画矩形和文本框"，没有渐变、阴影、精美排版。用户反馈"效果挺差的"。不要作为首选方案。
 2. **pptxgenjs 比 python-pptx 好，但仍达不到专业水准** — 用户反馈"比上一个好很多了，不过还是没法直接作为成品进行展示"。
 3. **HTML 幻灯片是代码生成的最佳方案** — CSS 支持渐变、阴影、动画、精美排版，浏览器全屏演示效果好，Chrome headless 可无损导出 PDF。
 4. **HTML → PPTX 转换效果极差** — 大量设计丢失，排版错位，不推荐。

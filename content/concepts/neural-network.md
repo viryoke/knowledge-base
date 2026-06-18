@@ -16,16 +16,13 @@ confidence: high
 
 ## 核心结构
 
-```mermaid
-graph TD
-    A[输入层 Input Layer] --> B[隐藏层 Hidden Layers × N]
-    B --> C[输出层 Output Layer]
-    
-    style A fill:#e1f5ff
-    style C fill:#fff4e1
 ```
-
-> 神经网络的基本三层结构：输入层接收数据，隐藏层逐层提取特征，输出层产生预测结果。
+输入层 (Input Layer)
+    ↓
+隐藏层 (Hidden Layers) × N
+    ↓
+输出层 (Output Layer)
+```
 
 每一层由多个**神经元 (neuron)** 组成，层与层之间通过**权重 (weight)** 和**偏置 (bias)** 连接。数据从输入层流入，经过隐藏层的逐层变换（前向传播 forward propagation），最终在输出层产生预测结果。
 
@@ -59,19 +56,19 @@ graph TD
 
 ## 架构演化
 
-```mermaid
-graph TD
-    A[感知机 Perceptron 1958] --> B[多层感知机 MLP 1980s]
-    B --> C[卷积神经网络 CNN 1998 LeNet]
-    C --> D[循环神经网络 RNN/LSTM 1997-2014]
-    D --> E[[[transformer]] 2017 Attention Is All You Need]
-    E --> F[大语言模型 LLM 2018+ GPT/BERT]
-    
-    style E fill:#e8f4ff
-    style F fill:#fff4e1
 ```
-
-> 神经网络架构的演进历程：从简单的感知机到现代的大语言模型，每个阶段都解决了特定的问题。
+感知机 (Perceptron, 1958)
+    ↓
+多层感知机 MLP (1980s)
+    ↓
+卷积神经网络 CNN (1998, LeNet)
+    ↓
+循环神经网络 RNN / LSTM (1997-2014)
+    ↓
+[[transformer]] (2017, Attention Is All You Need)
+    ↓
+大语言模型 LLM (2018+, GPT/BERT)
+```
 
 ## 万能逼近定理 (Universal Approximation Theorem)
 

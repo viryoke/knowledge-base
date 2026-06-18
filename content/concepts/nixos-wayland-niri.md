@@ -1,7 +1,7 @@
 ---
 title: Wayland 与 Niri 合成器
 created: 2026-06-01
-updated: 2026-06-17
+updated: 2026-06-01
 type: concept
 tags: [linux]
 sources: []
@@ -34,38 +34,22 @@ confidence: high
 
 ### 架构对比
 
-```mermaid
-graph LR
-    subgraph X11["X11 架构"]
-        AppA["应用 A"]
-        AppB["应用 B"]
-        Server["X Server"]
-        Display["显示设备"]
-
-        AppA --> Server
-        AppB --> Server
-        Server --> Display
-        Server -.->|"复杂的往返通信"| Server
-    end
 ```
+X11 架构：
+┌─────────┐     ┌──────────┐     ┌─────────┐
+│ 应用 A  │────▶│ X Server │────▶│ 显示设备 │
+│ 应用 B  │────▶│          │     │         │
+└─────────┘     └──────────┘     └─────────┘
+                 ▲
+                 │ 复杂的往返通信
 
-> X11 架构中所有应用必须通过 X Server 中间层通信，导致不必要的往返延迟和安全隐患——任何应用都可读取其他窗口内容。
-
-```mermaid
-graph LR
-    subgraph Wayland["Wayland 架构"]
-        AppA["应用 A"]
-        AppB["应用 B"]
-        Compositor["合成器\n(Compositor)"]
-        Display["显示设备"]
-
-        AppA --> Compositor
-        AppB --> Compositor
-        Compositor --> Display
-    end
+Wayland 架构：
+┌─────────┐     ┌────────────┐     ┌─────────┐
+│ 应用 A  │────▶│ 合成器     │────▶│ 显示设备 │
+│ 应用 B  │────▶│ (Compositor│     │         │
+└─────────┘     └────────────┘     └─────────┘
+                 直接渲染，无中间层
 ```
-
-> Wayland 合成器直接管理渲染，无中间层，更安全高效。
 
 ---
 
@@ -78,28 +62,21 @@ Niri 采用**滚动平铺**（scrolling tiling）布局：
 - 列可以水平排列
 - 超出屏幕的列可以滚动查看
 
-```mermaid
-graph LR
-    subgraph Col1["列 1"]
-        WinA["Win A"]
-        WinD["Win D"]
-        WinA --> WinD
-    end
-
-    subgraph Col2["列 2"]
-        WinB["Win B"]
-        WinE["Win E"]
-        WinB --> WinE
-    end
-
-    subgraph Col3["列 3 (滚动)"]
-        WinC["Win C"]
-    end
-
-    Col1 --> Col2 --> Col3
 ```
-
-> Niri 的滚动平铺布局：窗口以列形式垂直堆叠，列水平排列，超出屏幕的列可滚动查看。
+┌─────────────────────────────────────┐
+│  列 1      列 2      列 3  (滚动)   │
+│ ┌─────┐   ┌─────┐   ┌─────┐        │
+│ │     │   │     │   │     │        │
+│ │ Win │   │ Win │   │ Win │  →     │
+│ │  A  │   │  B  │   │  C  │        │
+│ │     │   │     │   │     │        │
+│ └─────┘   └─────┘   └─────┘        │
+│ ┌─────┐   ┌─────┐                   │
+│ │ Win │   │ Win │                   │
+│ │  D  │   │  E  │                   │
+│ └─────┘   └─────┘                   │
+└─────────────────────────────────────┘
+```
 
 ### 与其他 WM 对比
 

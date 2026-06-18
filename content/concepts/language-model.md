@@ -20,18 +20,17 @@ $$P(w_t \mid w_1, w_2, \ldots, w_{t-1})$$
 
 ## 演化历程
 
-```mermaid
-graph TD
-    A[N-gram 统计方法 1980s] --> B[RNN/LSTM 神经网络 2010s]
-    B --> C[[[transformer]] 注意力机制 2017]
-    C --> D[GPT/BERT 预训练大模型 2018+]
-    D --> E[GPT-4/Claude/LLaMA 超大规模 LLM 2023+]
-    
-    style C fill:#e8f4ff
-    style E fill:#fff4e1
 ```
-
-> 语言模型的演化历程：从统计方法到神经网络，再到注意力机制和现代大语言模型。
+N-gram (统计方法, 1980s)
+    ↓
+RNN/LSTM (神经网络, 2010s)
+    ↓
+[[transformer]] (注意力机制, 2017)
+    ↓
+GPT / BERT (预训练大模型, 2018+)
+    ↓
+GPT-4 / Claude / LLaMA (超大规模 LLM, 2023+)
+```
 
 ## 关键概念
 

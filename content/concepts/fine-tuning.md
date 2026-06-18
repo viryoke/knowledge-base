@@ -21,17 +21,12 @@ confidence: high
 
 ## LLM 训练三阶段
 
-```mermaid
-graph LR
-    A[Pre-training<br/>学习语言通用知识] --> B[Fine-tuning SFT<br/>学习遵循指令]
-    B --> C[Alignment RLHF/DPO<br/>学习人类偏好]
-    
-    style A fill:#e8f4e8
-    style B fill:#e1f5ff
-    style C fill:#fff4e1
 ```
-
-> LLM 的训练分为三个阶段：预训练学习通用知识，监督微调学习任务能力，对齐训练确保安全和符合人类价值观。
+Pre-training → Fine-tuning (SFT) → Alignment (RLHF/DPO)
+     ↑                ↑                    ↑
+  学习语言        学习遵循指令         学习人类偏好
+  通用知识        任务特定能力          安全与对齐
+```
 
 ## 跨课程视角
 

@@ -23,6 +23,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checkout Obsidian Vault
+        uses: actions/checkout@v4
+        with:
+          repository: viryoke/obsidian-vault
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ../ObsidianVault
+
+      - name: Sync content from vault
+        run: bash sync-content.sh
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

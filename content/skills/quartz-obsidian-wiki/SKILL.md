@@ -32,35 +32,7 @@ confidence: high
 
 ## Architecture
 
-```
-~/Documents/
-├── ObsidianVault/          # 知识库源（private repo）
-│   ├── concepts/           # ← 发布
-│   ├── entities/           # ← 发布
-│   ├── comparisons/        # ← 发布
-│   ├── queries/            # ← 发布
-│   ├── skills/             # ← 发布
-│   ├── navigation/         # ← 发布
-│   ├── index.md            # ← 发布
-│   ├── SCHEMA.md           # ← 发布
-│   ├── raw/                # ✗ 不发布
-│   ├── profile/            # ✗ 不发布
-│   ├── DailyNotes/         # ✗ 不发布
-│   └── presentations/      # ✗ 不发布
-│
-└── obsidian-quartz/        # Quartz 项目（public repo）
-    ├── content/            # ← sync-content.sh 复制目标
-    ├── quartz.config.yaml  # 站点配置
-    ├── quartz/styles/custom.scss  # 自定义样式
-    ├── quartz/static/kroki-diagrams.js  # 图表渲染脚本
-    ├── .github/workflows/deploy.yml  # CI/CD
-    └── sync-content.sh     # 内容同步脚本
-```
-
-**关键设计决策**：
-- Vault repo 保持 private，Quartz repo 为 public
-- 内容通过 `sync-content.sh` 复制（非 symlink），确保 git 追踪正常
-- GitHub Actions 自动构建部署，不依赖 `npx quartz sync`
+```\n~/Documents/\n├── ObsidianVault/          # 知识库源（SINGLE SOURCE OF TRUTH）\n│   ├── concepts/           # ← 发布（Markdown → Quartz 渲染）\n│   ├── entities/           # ← 发布\n│   ├── comparisons/        # ← 发布\n│   ├── queries/            # ← 发布\n│   ├── skills/             # ← 发布\n│   ├── navigation/         # ← 发布\n│   ├── presentations/      # ← 发布（HTML/PDF/PPTX，Assets emitter 直接复制）\n│   ├── index.md            # ← 发布\n│   ├── raw/                # ✗ ignorePatterns 排除\n│   ├── profile/            # ✗ 排除\n│   ├── DailyNotes/         # ✗ 排除\n│   └── SCHEMA/AGENTS/log  # ✗ 排除\n│\n└── quartz/                 # Quartz 项目\n    ├── content/            # ← symlink → ~/Documents/ObsidianVault（唯一链接）\n    ├── static/             # Quartz 自有静态资源（图标、JS 等，不链接 vault）\n    ├── quartz.config.yaml  # 站点配置\n    └── .github/workflows/  # CI/CD\n```\n\n**关键设计决策**：\n- **单一链接原则**：只有 `content/` → vault 一条 symlink，不再单独链接 vault 子目录到 `static/` 等处\n- **Vault 是唯一实体来源**：所有人类可读内容（包括 HTML 幻灯片、PDF）都存放在 vault 中，Quartz 不存储实体文件\n- **presentations/ 是 vault 一级目录**：存放 HTML 幻灯片、PDF、PPTX 等适合人类观看的素材\n- Quartz 通过 `content/` symlink 访问 vault 中的所有内容，包括 `presentations/`\n- **验证 symlink**：`ls -la ~/Documents/quartz/content` 应显示 `-> ~/Documents/ObsidianVault`
 
 ## Procedure
 
@@ -348,6 +320,35 @@ git push                             # 自动触发 GitHub Actions
 | 图表渲染 | Mermaid 原生 + kroki.io（PlantUML/GraphViz） |
 | Footer | GitHub 链接 |
 
+## Knowledge Base First Workflow (Critical)
+
+**核心原则**：知识库是唯一实体来源（single source of truth），HTML 页面只是发布产物。
+
+### 正确流程
+
+1. **归档到知识库**：将内容写入 `queries/`、`concepts/`、`entities/` 等目录
+2. **更新索引**：`index.md` 添加条目 + 更新总数，`log.md` 追加操作记录
+3. **生成 HTML（如需要）**：放入 `quartz/static/presentations/` 或 `quartz/static/` 目录
+4. **知识库页面链接 HTML**：在 wiki 页面中添加指向发布后 HTML 的链接
+5. **Quartz 构建**：`npx quartz build` 生成静态站点
+6. **部署**：`git push` 触发 GitHub Actions
+
+### 绝对不要
+
+- ❌ 跳过知识库归档直接生成 HTML
+- ❌ 将 HTML 作为信息的唯一载体
+- ❌ 让 HTML 内容与知识库脱节
+
+### 为什么
+
+- 知识库是长期资产，可被搜索、引用、交叉链接
+- HTML 是展示层，服务于特定场景（演示、分享）
+- 未来可以重新生成 HTML，但知识库条目一旦缺失就丢失了上下文
+
+### Static HTML Artifacts
+
+`quartz/static/` 目录用于存放不参与 Quartz 渲染的静态文件（HTML 幻灯片、交互式 demo 等）。URL pattern: `quartz/static/presentations/foo/index.html` → `https://<baseUrl>/presentations/foo/`。
+
 ## Pitfalls
 
 1. **git clone 超时**：代理环境下用 `curl + unzip` 替代。**不要**设置 `git config --global http.proxy`（TUN 模式下会冲突）。
@@ -356,17 +357,51 @@ git push                             # 自动触发 GitHub Actions
 
 3. **CSS 变量名**：Quartz 用 `--bodyFont`、`--headerFont`、`--codeFont`，**不是** `--font-body`、`--font-header`。
 
-4. **symlink + git 警告**：如果用 symlink 方式链接内容，git 会报 untracked 警告。改用复制脚本可避免。
+4. **symlink + git 警告**：用 `content/` symlink 时，git 会显示大量 "deleted" 状态（因为从普通目录变成了链接）。**不要** `git add -A`——只 stage 实际修改的文件（如 `quartz/plugins/emitters/assets.ts`）。
 
 5. **插件 barrel 文件**：`.quartz/plugins/index.ts` 必须存在。如果 `npx quartz plugin install` 超时，手动创建最小 barrel。
 
 6. **satori 依赖**：og-image 插件需要 `npm install satori`。
 
-7. **ignorePatterns**：始终排除 `raw/`、`DailyNotes/`、`profile/`、`presentations/`、`.obsidian`——这些是内部文件。
+7. **ignorePatterns**：排除 `raw/`、`DailyNotes/`、`profile/`、`.obsidian`——**不要**排除 `presentations/`（那是需要发布的演示文稿）。
 
 8. **GitHub Pages 需要 public repo**：免费账户的 GitHub Pages 只能在 public repo 上启用。vault repo 保持 private，用独立 public repo 存放 Quartz 项目。
 
 9. **kroki.io 需要联网**：PlantUML/GraphViz 渲染在客户端调用 kroki.io API，离线环境不工作。Mermaid 和 ASCII 不受影响。
+
+10. **Quartz 5 Assets emitter 丢失 HTML 扩展名**：`slugifyFilePath()` 会去掉 `.html`，导致 `public/presentations/foo.html` 变成 `public/presentations/foo`。必须 patch `quartz/plugins/emitters/assets.ts` 的 `copyFile` 函数，对 `.html/.htm/.pdf/.pptx/.ppt/.key` 保留扩展名。见下方 "Assets Emitter Extension Fix" 章节。
+
+## Assets Emitter Extension Fix
+
+**问题**：Quartz 5 的 `Assets` emitter 使用 `slugifyFilePath()` 从 `@quartz-community/utils`，该函数会去掉文件扩展名。对于 HTML 幻灯片，这导致输出文件没有 `.html` 后缀，浏览器无法正确识别。
+
+**修复**：修改 `quartz/plugins/emitters/assets.ts` 中的 `copyFile` 函数：
+
+```typescript
+const copyFile = async (argv: Argv, fp: FilePath) => {
+  const src = joinSegments(argv.directory, fp) as FilePath
+  
+  // 保留演示文稿类文件的扩展名（HTML、PDF 等）
+  const ext = path.extname(fp).toLowerCase()
+  const preserveExtensions = ['.html', '.htm', '.pdf', '.pptx', '.ppt', '.key']
+  
+  let name: string
+  if (preserveExtensions.includes(ext)) {
+    const slugified = slugifyFilePath(fp)
+    name = (slugified + ext) as FilePath
+  } else {
+    name = slugifyFilePath(fp)
+  }
+  
+  const dest = joinSegments(argv.output, name) as FilePath
+  const dir = path.dirname(dest) as FilePath
+  await fs.promises.mkdir(dir, { recursive: true })
+  await fs.promises.copyFile(src, dest)
+  return dest
+}
+```
+
+**验证**：构建后检查 `public/presentations/` 目录，HTML 文件应有 `.html` 扩展名。
 
 ## Verification
 

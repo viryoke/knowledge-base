@@ -52,35 +52,29 @@ confidence: medium
 
 ## 典型架构
 
-```mermaid
-graph TD
-    Client["Client"]
-    Gateway["API Gateway<br>统一入口、路由、鉴权"]
-
-    subgraph Services["Microservices"]
-        Order["Order Service"]
-        Payment["Payment Service"]
-        Inventory["Inventory Service"]
-        OrderDB[("Order DB")]
-        PayDB[("Pay DB")]
-        InvDB[("Inventory DB")]
-        Order --> OrderDB
-        Payment --> PayDB
-        Inventory --> InvDB
-    end
-
-    MessageBroker["Message Broker<br>(Kafka / RabbitMQ)"]
-
-    Client --> Gateway
-    Gateway --> Order
-    Gateway --> Payment
-    Gateway --> Inventory
-    Order --> MessageBroker
-    Payment --> MessageBroker
-    Inventory --> MessageBroker
 ```
-
-> 微服务架构的典型部署拓扑：客户端通过 API Gateway 统一入口访问各独立服务，每个服务拥有自己的数据库，服务间通过消息中间件（如 Kafka）异步通信。
+  ┌─────────┐
+  │  Client  │
+  └────┬─────┘
+       │
+  ┌────▼──────────┐
+  │  API Gateway   │  ← 统一入口、路由、鉴权
+  └────┬──────────┘
+       │
+  ┌────▼────┐  ┌────────┐  ┌──────────┐
+  │ Order   │→ │Payment │  │ Inventory│
+  │ Service │  │Service │  │ Service  │
+  └────┬────┘  └────┬───┘  └────┬─────┘
+       │            │            │
+  ┌────▼───┐  ┌────▼───┐  ┌────▼─────┐
+  │Order DB│  │Pay DB  │  │Invent DB │
+  └────────┘  └────────┘  └──────────┘
+       │            │            │
+  ┌────▼────────────▼────────────▼─────┐
+  │         Message Broker             │
+  │      (Kafka / RabbitMQ)            │
+  └────────────────────────────────────┘
+```
 
 ## 关键挑战与应对
 
@@ -127,12 +121,14 @@ graph TD
 
 微服务架构与 [[hexagonal-architecture|六边形架构]] 的关系是**宏观与微观的配合**：
 
-| 微服务架构（宏观） | 六边形架构（微观） |
-|-------------------|-------------------|
-| 服务间通信（HTTP/gRPC/MQ） | 入站端口 + 入站适配器 |
-| 数据库/缓存/消息中间件 | 出站端口 + 出站适配器 |
-| 每个微服务 | 一个独立的六边形 |
-| 服务边界 | 对应 DDD Bounded Context |
+```
+  微服务架构（宏观）                六边形架构（微观）
+  ──────────────                  ──────────────
+  服务间通信（HTTP/gRPC/MQ）  →    入站端口 + 入站适配器
+  数据库/缓存/消息中间件       →    出站端口 + 出站适配器
+  每个微服务                   →    一个独立的六边形
+  服务边界                     →    对应 DDD Bounded Context
+```
 
 - 每个微服务**内部**可以用六边形架构组织代码
 - 微服务间的 API 调用 = 六边形的**入站适配器**接收请求

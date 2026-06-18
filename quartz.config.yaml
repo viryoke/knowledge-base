@@ -19,6 +19,8 @@ configuration:
     - _meta
     - LINT-RULES.md
     - AGENTS.md
+    - SCHEMA.md
+    - log.md
   theme:
     fontOrigin: googleFonts
     cdnCaching: true

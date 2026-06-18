@@ -18,18 +18,16 @@ confidence: medium
 
 ## 主要类型
 
-```mermaid
-graph TD
-    gm["生成模型 (Generative Models)"] --> ar["Autoregressive (自回归)"]
-    gm --> vae["VAE (变分自编码器)"]
-    gm --> gan["GAN (生成对抗网络)"]
-    gm --> dm["Diffusion Model (扩散模型)"]
-    gm --> fm["Flow Matching (流匹配模型)"]
-    ar --> dt["离散 Token 接龙 (Discrete Token)"]
-    ar --> ct["连续 Token 接龙 (Continuous Token)"]
 ```
-
-> 生成模型可分为五大范式：自回归（Autoregressive）、VAE、GAN、扩散模型和 Flow Matching，其中自回归模型又分为离散 Token 和连续 Token 两种接龙方式。
+生成模型 (Generative Models)
+├── Autoregressive (自回归)
+│   ├── 离散 Token 接龙 (Discrete Token)
+│   └── 连续 Token 接龙 (Continuous Token)
+├── VAE (Variational Autoencoder, 变分自编码器)
+├── GAN (Generative Adversarial Network, 生成对抗网络)
+├── Diffusion Model (扩散模型)
+└── Flow Matching (流匹配模型)
+```
 
 ### Autoregressive Model (自回归模型)
 

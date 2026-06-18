@@ -44,14 +44,20 @@ Classification（分类）是一种监督学习任务，目标是根据输入数
 
 决策边界是特征空间中将不同类别分开的超曲面。
 
-**二分类决策边界（2D 特征空间）**
+```
+二分类决策边界示意（2D 特征空间）：
 
-| 区域 | x₁ | x₂ | 类别 |
-|------|----|----|------|
-| 左上 | 低 | 高 | 类别 A |
-| 左下 | 低 | 低 | 类别 A |
-| 右上 | 高 | 高 | 类别 B |
-| 右下 | 高 | 低 | 类别 B |
+    类别 A    |    类别 B
+              |
+   ○  ○       |      ●  ●
+     ○        |    ●
+              |
+──────────────┼──────────────→ x₁
+              |
+   ○          |        ●
+     ○  ○     |    ●  ●
+              |
+```
 
 - **线性决策边界**：逻辑回归、线性 SVM 产生超平面
 - **非线性决策边界**：核 SVM、[[neural-network]]、决策树可产生复杂曲面
@@ -63,15 +69,17 @@ Classification（分类）是一种监督学习任务，目标是根据输入数
 
 分类结果的完整统计，是所有指标的基础：
 
-| | 预测：正类 (P') | 预测：负类 (N') |
-|---|---|---|
-| **实际：正类 (P)** | TP (True Positive) | FN (False Negative) |
-| **实际：负类 (N)** | FP (False Positive) | TN (True Negative) |
+```
+                    预测
+              正类(P')   负类(N')
+实   正类(P)    TP        FN
+际   负类(N)    FP        TN
 
-- **TP** = True Positive（正确预测为正类）
-- **FP** = False Positive（误判为正类，假阳性）
-- **FN** = False Negative（漏判正类，假阴性）
-- **TN** = True Negative（正确预测为负类）
+TP = True Positive   (正确预测为正类)
+FP = False Positive  (误判为正类，假阳性)
+FN = False Negative  (漏判正类，假阴性)
+TN = True Negative   (正确预测为负类)
+```
 
 ### 核心指标
 
@@ -108,18 +116,19 @@ Precision 和 Recall 通常此消彼长。调整分类阈值：
 
 ## 分类模型训练流程
 
-```mermaid
-graph TD
-    Start(("开始")) --> step1["数据准备"]
-    step1 --> step2["模型选择"]
-    step2 --> step3["定义损失函数"]
-    step3 --> step4["训练优化"]
-    step4 --> step5["评估验证"]
-    step5 --> step6["正则化"]
-    step6 --> End(("结束"))
 ```
-
-> 分类模型的训练流程包含六个步骤：数据准备、模型选择、损失函数定义、训练优化、评估验证和正则化，形成从数据到可部署模型的完整闭环。
+1. 数据准备 → 特征工程 + 标签标注
+       ↓
+2. 模型选择 → 逻辑回归 / SVM / [[neural-network]] / 决策树
+       ↓
+3. 定义 [[loss-function]] → Cross-Entropy Loss
+       ↓
+4. 训练优化 → [[gradient-descent]] 最小化损失
+       ↓
+5. 评估验证 → Confusion Matrix / F1 / AUC
+       ↓
+6. [[overfitting-regularization|正则化]] → 防止过拟合，提升泛化
+```
 
 ## 跨课程视角
 

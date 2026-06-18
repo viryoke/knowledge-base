@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具使用心得 - 构建个性化AI工作流</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #faf7f2;
+            --bg-secondary: #f5f1ea;
+            --bg-card: #ffffff;
+            --text-primary: #2a2520;
+            --text-secondary: #5c5549;
+            --accent: #c17817;
+            --accent-hover: #a56612;
+            --border: #e8e2d5;
+            --code-bg: #f8f5f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'LXGW WenKai', 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow: hidden;
+        }
+        
+        .slideshow {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 80px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-primary);
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide.prev {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        
+        .slide-content {
+            max-width: 1100px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+        
+        .slide-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .slide-content::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        
+        h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+            color: var(--text-primary);
+        }
+        
+        h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            color: var(--accent);
+        }
+        
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        p {
+            font-size: 1.15rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--code-bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+        
+        pre {
+            background: var(--code-bg);
+            padding: 1.2rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .highlight-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .tool-card {
+            background: var(--bg-card);
+            padding: 1.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-color: var(--accent);
+        }
+        
+        .tool-card h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .nav-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-top: -1rem;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .flow-diagram {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin: 2rem 0;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        
+        .flow-number {
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .flow-text {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        .flow-text strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow">
+        <!-- Slide 1: Cover -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>AI工具使用心得</h1>
+                <p class="subtitle">构建个性化、可持续复利的AI工作流</p>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0; font-size: 1.2rem; color: var(--text-primary);">
+                        <strong>核心理念：</strong>让AI工具适应你的工作方式，而非相反。
+                        <br><br>
+                        通过统一的配置、持续的记忆积累和本地知识库，打造真正懂你的AI助手生态。
+                    </p>
+                </div>
+                
+                <h3>今天的分享</h3>
+                <ol>
+                    <li>统一多个AI工具的输出风格</li>
+                    <li>让AI工具更懂你：个人画像与记忆</li>
+                    <li>知识积累：基于Karpathy LLM Wiki的本地知识库</li>
+                    <li>必装的5个Skill</li>
+                    <li>知识库的跨端共享与可视化</li>
+                    <li>富文本生成的务实方案</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Slide 2: Unified AGENTS.md -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>1. 统一AI工具的输出风格</h2>
+                <p>问题：不同AI工具（Hermes、OpenCode、Claude Code）输出风格不一致，需要反复调整。</p>
+                
+                <h3>解决方案：全局 AGENTS.md</h3>
+                <p>构建一份全局的 <code>AGENTS.md</code>，定义AI的角色、行为规范和个人偏好，让各个工具统一引用。</p>
+                
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div class="flow-text">
+                            <strong>定义核心规则</strong>
+                            在 AGENTS.md 中声明AI的角色、工作流、禁止事项、输出格式
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div class="flow-text">
+                            <strong>配置引用路径</strong>
+                            各工具通过软链接或直接引用，读取同一份 AGENTS.md
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div class="flow-text">
+                            <strong>自动注入上下文</strong>
+                            每次会话启动时，AGENTS.md 自动加载到AI的系统提示中
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>实际配置示例</h3>
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h4>Hermes Agent</h4>
+                        <p><code>~/.agents/AGENTS.md</code></p>
+                        <p>通过 SOUL.md 引用，定义学者型助手角色</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>OpenCode</h4>
+                        <p><code>~/.agents/AGENTS.md</code></p>
+                        <p>编码规范、注释语言、文件操作约束</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Claude Code</h4>
+                        <p><code>~/.claude/CLAUDE.md</code></p>
+                        <p>代码审查标准、测试要求、输出风格</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>效果：</strong>所有工具输出一致的风格——中文注释、保留注释代码、文本优先、避免空泛建议。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Personal Profile -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>2. 让AI工具更懂你</h2>
+                <p>问题：每次对话都要重新解释背景、偏好、目标，效率低下。</p>
+                
+                <h3>解决方案：个人画像 + 持续记忆</h3>
+                
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div class="flow-text">
+                            <strong>Hermes Agent 记录记忆</strong>
+                            在交互过程中，Agent 自动识别并记录你的偏好、习惯、个人信息
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div class="flow-text">
+                            <strong>提供个人文档</strong>
+                            主动提供简历、目标规划、技术栈等文档，让AI学习并产生记忆
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div class="flow-text">
+                            <strong>生成个人画像</strong>
+                            基于积累的 memory，让AI生成结构化的个人画像文件
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">4</div>
+                        <div class="flow-text">
+                            <strong>配置到 AGENTS.md</strong>
+                            在 AGENTS.md 中声明何时引用画像、何时更新画像
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>个人画像结构示例</h3>
+                <pre><code>profile/
+├── identity.md      # 身份、性格、价值观（极少变）
+├── preferences.md   # 交互偏好、输出风格（极少变）
+├── tech-stack.md    # 技术栈、学习阶段（中等频率）
+├── goals.md         # 当前目标、项目进度（高频变）
+└── interests.md     # 兴趣爱好、关注话题（低频变）</code></pre>
+                
+                <h3>AGENTS.md 中的引用规则</h3>
+                <pre><code>## 个人画像引用规则
+
+- 当任务涉及个人目标、职业规划、学习计划时，引用 profile/goals.md
+- 当任务涉及技术选型、工具推荐时，引用 profile/tech-stack.md
+- 当发现新的偏好信号时（用户纠正风格、表达喜好），更新对应画像文件
+- 画像更新后，通知用户审核确认</code></pre>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>效果：</strong>AI主动推荐符合你当前目标的资源，输出风格自动匹配你的偏好，无需重复解释背景。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Knowledge Base -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>3. 知识积累：Karpathy LLM Wiki</h2>
+                <p>问题：AI工具产生的洞察、方案、设计稿散落在各处，无法形成复利。</p>
+                
+                <h3>核心理念（来自 Andrej Karpathy）</h3>
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>为什么不用 RAG？</strong>
+                        <br><br>
+                        RAG 每次查询都从零发现知识，重复劳动，交叉引用缺失。<br><br>
+                        <strong>Wiki 的优势：</strong>编译一次，持续更新。交叉引用已建好，矛盾已标记，知识网络随时间增值。
+                    </p>
+                </div>
+                
+                <h3>三层架构</h3>
+                <pre><code>Layer 3 — Schema（SCHEMA.md）
+  ↓ 约束
+Layer 2 — Wiki（navigation/, concepts/, entities/, comparisons/）
+  ↑ 只读
+Layer 1 — Raw Sources（raw/，不可变）</code></pre>
+                
+                <h3>在 AGENTS.md 中声明引用规则</h3>
+                <pre><code>## 本地知识库引用规则
+
+**何时引用知识库：**
+- 当任务涉及已收录的课程、概念、人物时，先查询 index.md 和相关页面
+- 当生成学习材料、技术文档时，参考已有页面的格式和风格
+- 当回答问题时，优先从知识库中检索相关内容
+
+**何时更新知识库：**
+- 从新的学习材料（课程、文章、论文）中提取知识时
+- 发现新的概念、人物、组织值得存档时
+- 产生有价值的问答、对比分析、设计方案时
+- 用户明确要求"记录这个"时
+
+**更新流程：**
+1. 创建/更新 Wiki 页面
+2. 更新 index.md（新增条目 + 更新总数）
+3. 追加 log.md（记录操作）
+4. 更新相关页面的交叉引用</code></pre>
+                
+                <h3>自动化任务（Hermes 定时任务）</h3>
+                <ul>
+                    <li><strong>AI双日简报</strong>：每两天推送AI领域最新动态</li>
+                    <li><strong>知识库 Lint 检查</strong>：检测孤儿页面、断链、低置信度页面</li>
+                    <li><strong>GitHub 同步</strong>：自动推送变更到私有仓库，跨设备共享</li>
+                </ul>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>已知问题：</strong>每次引用知识库会消耗额外 token（上下文浪费），目前尚未找到最优解。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 5: Must-have Skills -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>4. 必装的5个Skill</h2>
+                <p>Skill 是 Hermes Agent 的可复用操作流程，将经验转化为可执行资产。</p>
+                
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h4>find-skills</h4>
+                        <span class="badge">发现</span>
+                        <p style="margin-top: 1rem;">搜索是否有现成的 skill 可以解决当前问题，避免重复造轮子。</p>
+                        <p><strong>触发场景：</strong>面对新任务时，先调用此 skill 查找可用资源。</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>skill-creator</h4>
+                        <span class="badge">创建</span>
+                        <p style="margin-top: 1rem;">高质量创建自定义 skill，遵循 Agent Skills 开放标准。</p>
+                        <p><strong>触发场景：</strong>识别到提炼信号时（用户纠正、复杂任务成功、非平凡方案）。</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>SuperPowers</h4>
+                        <span class="badge">质量保障</span>
+                        <p style="margin-top: 1rem;">头脑风暴 → Spec → Plan → Verify 四步走，确保AI生成质量。</p>
+                        <p><strong>触发场景：</strong>复杂需求、架构设计、需要多轮验证的任务。</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>frontend-design</h4>
+                        <span class="badge">设计</span>
+                        <p style="margin-top: 1rem;">生成 web 页面时，减少"AI味"，提升设计质感。</p>
+                        <p><strong>触发场景：</strong>创建 landing page、仪表盘、单页应用。</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>ui-ux-pro-max</h4>
+                        <span class="badge">素材库</span>
+                        <p style="margin-top: 1rem;">高质量 UI 框架设计素材库，搭配 frontend-design 使用。</p>
+                        <p><strong>触发场景：</strong>需要设计系统、组件库、全局架构时。</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>协作模式：</strong>
+                        <br>
+                        ui-ux-pro-max 设计全局架构和组件规范 → frontend-design 基于规范生成高质量单页面 → SuperPowers 确保交付质量。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Cross-device Sharing -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>5. 知识库的跨端共享与可视化</h2>
+                <p>问题：知识库只在本机可用，无法在手机、平板或其他设备上随时查阅。</p>
+                
+                <h3>解决方案：三层共享架构</h3>
+                
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div class="flow-text">
+                            <strong>GitHub 私有仓库</strong>
+                            将 Obsidian Vault 同步到 GitHub 私仓，多设备通过 git pull 获取最新内容。<br>
+                            <code>git remote add origin https://github.com/viryoke/obsidian-vault</code>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div class="flow-text">
+                            <strong>Quartz 发布到 GitHub Pages</strong>
+                            使用 Quartz 5 将可公开的内容构建为静态站点，部署到 GitHub Pages。<br>
+                            配置排除规则：不发布 raw/、DailyNotes、profile/ 等私有内容。
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div class="flow-text">
+                            <strong>多终端访问</strong>
+                            手机、平板、公司电脑通过浏览器随时访问，支持全文搜索和标签过滤。
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>图表绘制：Kroki.io + Diagram Code</h3>
+                <p>遵循"代码即图表"原则，所有图表可编辑、可版本控制，禁止截图。</p>
+                
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h4>Mermaid</h4>
+                        <p>Obsidian 原生支持，用于流程图、时序图、状态图、甘特图。</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>PlantUML</h4>
+                        <p>UML 标准图表（类图、用例图、组件图），表达力强。</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>GraphViz</h4>
+                        <p>复杂依赖图、自动布局，适合包依赖、调用链。</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>D2</h4>
+                        <p>系统架构图、微服务拓扑、云基础设施。</p>
+                    </div>
+                </div>
+                
+                <pre><code># Kroki.io 渲染示例
+curl -X POST https://kroki.io/mermaid/svg \
+  -d 'graph TD; A-->B; B-->C;' \
+  -o diagram.svg</code></pre>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>效果：</strong>知识库在任何设备上可通过浏览器访问，图表支持实时预览和导出，便于分享和协作。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 7: Rich Text Generation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>6. 富文本生成的务实方案</h2>
+                <p>问题：没有订阅 image2、nano banana 等图片生成模型，如何制作精美的幻灯片、音视频？</p>
+                
+                <h3>解决方案：AI生成素材 + 手动导入专业工具</h3>
+                
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div class="flow-text">
+                            <strong>AI 生成 Markdown 素材</strong>
+                            让 AI 生成结构化的 Markdown 内容（幻灯片大纲、演讲稿、知识点）
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div class="flow-text">
+                            <strong>手动导入 Gemini Canvas</strong>
+                            将 Markdown 导入 Gemini Canvas，利用其设计能力生成精美幻灯片
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div class="flow-text">
+                            <strong>或使用 NotebookLM</strong>
+                            将笔记导入 NotebookLM，生成音频播客、视频摘要
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>工作流对比</h3>
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h4>方案A：Gemini Canvas</h4>
+                        <p><strong>适合：</strong>幻灯片、信息图、视觉化内容</p>
+                        <p><strong>流程：</strong>AI生成MD → 导入Canvas → 调整设计 → 导出PPT/PDF</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>方案B：NotebookLM</h4>
+                        <p><strong>适合：</strong>音频播客、视频摘要、复习材料</p>
+                        <p><strong>流程：</strong>上传笔记 → 生成Audio Overview → 下载MP3/视频</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>方案C：本幻灯片</h4>
+                        <p><strong>适合：</strong>技术分享、内部培训</p>
+                        <p><strong>流程：</strong>AI生成HTML → 浏览器打开 → 键盘翻页 → 投屏分享</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0;">
+                        <strong>核心理念：</strong>
+                        <br>
+                        不追求全自动，而是找到成本最低的协作点。AI负责内容生成，专业工具负责视觉呈现，人工负责质量把控。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Summary -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>总结：构建可持续复利的AI工作流</h2>
+                
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h4>统一配置</h4>
+                        <p>全局 AGENTS.md 定义角色、规范、偏好，所有工具统一引用。</p>
+                        <p><span class="badge">一次配置</span><span class="badge">处处生效</span></p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>持续记忆</h4>
+                        <p>个人画像 + Hermes memory，让AI越用越懂你。</p>
+                        <p><span class="badge">渐进积累</span><span class="badge">用户审核</span></p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>知识复利</h4>
+                        <p>Karpathy LLM Wiki 构建本地知识库，交叉引用，持续增值。</p>
+                        <p><span class="badge">编译一次</span><span class="badge">持续更新</span></p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>质量保障</h4>
+                        <p>SuperPowers 四步走 + 必装 Skill，确保AI生成质量。</p>
+                        <p><span class="badge">头脑风暴</span><span class="badge">验证交付</span></p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>跨端共享</h4>
+                        <p>GitHub私仓 + Quartz站点 + Kroki图表，随时随地访问。</p>
+                        <p><span class="badge">私有同步</span><span class="badge">公开发布</span></p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>务实协作</h4>
+                        <p>AI生成素材 + 专业工具呈现，找到成本最低的协作点。</p>
+                        <p><span class="badge">内容生成</span><span class="badge">视觉呈现</span></p>
+                    </div>
+                </div>
+                
+                <h3>下一步行动</h3>
+                <ol>
+                    <li>创建你的 <code>AGENTS.md</code>，定义AI的角色和你的偏好</li>
+                    <li>让 Hermes Agent 记录你的 memory，生成个人画像</li>
+                    <li>搭建 Karpathy LLM Wiki 知识库，开始积累知识复利</li>
+                    <li>安装必装 Skill，提升AI生成质量</li>
+                    <li>配置 GitHub 同步和 Quartz 发布，实现跨端访问</li>
+                </ol>
+                
+                <div class="highlight-box">
+                    <p style="margin: 0; font-size: 1.3rem; text-align: center;">
+                        <strong>让AI工具适应你，而非你适应AI工具。</strong>
+                        <br><br>
+                        构建个性化、可持续复利的AI工作流，从今天开始。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">8</span>
+    </div>
+    
+    <div class="navigation">
+        <button class="nav-btn" id="prev-btn">← 上一页</button>
+        <button class="nav-btn" id="next-btn">下一页 →</button>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const currentSlideEl = document.getElementById('current-slide');
+        const totalSlidesEl = document.getElementById('total-slides');
+        
+        totalSlidesEl.textContent = totalSlides;
+        
+        function showSlide(n) {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === n) {
+                    slide.classList.add('active');
+                } else if (index < n) {
+                    slide.classList.add('prev');
+                }
+            });
+            currentSlideEl.textContent = n + 1;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+        
+        document.getElementById('next-btn').addEventListener('click', nextSlide);
+        document.getElementById('prev-btn').addEventListener('click', prevSlide);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>

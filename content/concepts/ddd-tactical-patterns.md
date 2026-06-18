@@ -67,20 +67,15 @@ record Money(BigDecimal amount, Currency currency) {
 
 一组**作为数据修改单元**的相关对象集合，由 **Aggregate Root**（聚合根）统一管控外部访问。
 
-```mermaid
-graph TD
-    subgraph Aggregate["Order Aggregate"]
-        Root["[Order]<br>Aggregate Root"]
-        I1["OrderItem<br>(Entity)"]
-        I2["OrderItem<br>(Entity)"]
-        SA["ShippingAddress<br>(Value Object)"]
-        Root --> I1
-        Root --> I2
-        Root --> SA
-    end
 ```
-
-> 外部只能通过 Order（Aggregate Root）操作内部对象。
+  ┌─── Order Aggregate ─────────────────┐
+  │  [Order] ← Aggregate Root          │
+  │     ├── OrderItem (Entity)         │
+  │     ├── OrderItem (Entity)         │
+  │     └── ShippingAddress (VO)       │
+  └─────────────────────────────────────┘
+  外部只能通过 Order 操作内部对象
+```
 
 **关键规则**：
 - 外部只引用 Aggregate Root，不直接操作内部对象
@@ -137,28 +132,18 @@ record OrderConfirmedEvent(String orderId, LocalDateTime timestamp) {}
 
 ## 模式之间的关系
 
-```mermaid
-graph TD
-    subgraph Agg["Aggregate"]
-        Root["Aggregate Root"]
-        E["Entity"]
-        VO["Value Object"]
-        Root --> E
-        Root --> VO
-    end
-
-    DomainEvent["Domain Event"]
-    DomainService["Domain Service<br>(跨聚合操作)"]
-    Factory["Factory<br>(创建聚合)"]
-    Repository[("Repository<br>(持久化聚合)")]
-
-    Root -->|"发布"| DomainEvent
-    Agg -.-> DomainService
-    Agg -.-> Factory
-    Agg -.-> Repository
 ```
-
-> 该图展示了 DDD 战术模式之间的协作关系：Aggregate Root 管理内部 Entity 和 Value Object，通过 Domain Event 发布状态变化，并借助 Repository 持久化、Factory 创建、Domain Service 处理跨聚合操作。
+  Domain Event ←── 发布 ──┐
+                          │
+  ┌────── Aggregate ──────┤
+  │  Aggregate Root ──────┘
+  │     ├── Entity
+  │     └── Value Object
+  │
+  Domain Service（跨聚合操作）
+  Factory（创建聚合）
+  Repository（持久化聚合）
+```
 
 ## 与其他架构模式的比较
 
@@ -199,13 +184,15 @@ DDD 战术模式与 [[hexagonal-architecture|六边形架构]] 是**天然搭配
 - **Repository 实现**就是六边形的**出站适配器（Driven Adapter）**
 - **Application Service**（编排 Use Case）位于六边形内部、Domain 外围
 
-| 六边形架构 | DDD 战术模式 |
-|-----------|-------------|
-| 入站适配器 | Application Service |
-| 入站端口 | Use Case 接口 |
-| 核心域 | Aggregate + Entity + VO + Domain Service |
-| 出站端口 | Repository 接口 |
-| 出站适配器 | Repository 实现（JPA/MongoDB/Redis） |
+```
+六边形架构              DDD 战术模式
+─────────              ──────────
+入站适配器     →        Application Service
+入站端口       →        Use Case 接口
+核心域         →        Aggregate + Entity + VO + Domain Service
+出站端口       →        Repository 接口
+出站适配器     →        Repository 实现（JPA/MongoDB/Redis）
+```
 
 ## 备考提示
 

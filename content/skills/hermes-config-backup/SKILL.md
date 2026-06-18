@@ -111,6 +111,28 @@ The `gh` CLI handles HTTPS authentication via `gh auth login`.
 - `.env` works as-is (API keys are portable)
 - `auth.json` OAuth tokens may need re-authentication (`hermes auth add <provider>`)
 
+### `hermes config set` Mangles Array Values
+
+`hermes config set skills.external_dirs '["~/.agents/skills"]'` stores the value as a **YAML string** `'["~/.agents/skills"]'`, not as a YAML list. Hermes then fails to parse it as a list of directories.
+
+**Affected keys:** any config value that should be a YAML list (e.g. `skills.external_dirs`, `gateway.platforms`, `agent.disabled_toolsets`).
+
+**Fix:** For list-type config values, edit `config.yaml` directly (via `hermes config edit`) using proper YAML syntax:
+```yaml
+# WRONG (what `hermes config set` produces):
+external_dirs: '["~/.agents/skills"]'
+
+# CORRECT (edit manually):
+external_dirs:
+  - ~/.agents/skills
+```
+
+**Detection:** `hermes skills list` won't show skills from the external directory. Verify with:
+```bash
+python3 -c "import yaml; cfg=yaml.safe_load(open('$HOME/.hermes/config.yaml')); print(type(cfg['skills']['external_dirs']))"
+# Should print <class 'list'>, not <class 'str'>
+```
+
 ## Workflow
 
 1. **Create private repo:**

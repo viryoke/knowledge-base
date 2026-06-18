@@ -20,38 +20,26 @@ confidence: medium
 
 ### 1. 同心圆分层
 
-```mermaid
-graph TD
-    subgraph Infra["最外层 · Infrastructure（基础设施层）"]
-        UI["UI / Web"]
-        DB[("DB")]
-        API["External APIs"]
-    end
-
-    subgraph AppServices["第三层 · Application Services（应用服务层）"]
-        AS["编排、协调、事务管理"]
-    end
-
-    subgraph DomainServices["第二层 · Domain Services（领域服务层）"]
-        DS["跨聚合的业务逻辑"]
-    end
-
-    subgraph DomainModel["核心层 · Domain Model（领域模型）"]
-        E["Entity"]
-        VO["Value Object"]
-        AR["Aggregate Root"]
-    end
-
-    UI --> AS
-    DB --> AS
-    API --> AS
-    AS --> DS
-    DS --> E
-    DS --> VO
-    DS --> AR
 ```
-
-> 洋葱架构的同心圆分层：领域模型（Entity/VO/Aggregate）位于最核心，依次向外包裹领域服务、应用服务和基础设施层，依赖方向始终从外指向内。
+  ┌─────────────────────────────────────────┐
+  │  Infrastructure（基础设施层）              │
+  │  UI / Web / DB / External APIs          │
+  │  ┌───────────────────────────────────┐  │
+  │  │  Application Services（应用服务层） │  │
+  │  │  编排、协调、事务管理              │  │
+  │  │  ┌────────────────────────────┐   │  │
+  │  │  │  Domain Services（领域服务层）│   │  │
+  │  │  │  跨聚合的业务逻辑           │   │  │
+  │  │  │  ┌──────────────────────┐  │   │  │
+  │  │  │  │  Domain Model        │  │   │  │
+  │  │  │  │  （领域模型/核心层）   │  │   │  │
+  │  │  │  │  Entity / VO /       │  │   │  │
+  │  │  │  │  Aggregate Root      │  │   │  │
+  │  │  │  └──────────────────────┘  │   │  │
+  │  │  └────────────────────────────┘   │  │
+  │  └───────────────────────────────────┘  │
+  └─────────────────────────────────────────┘
+```
 
 ### 2. 各层职责
 

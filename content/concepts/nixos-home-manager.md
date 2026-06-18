@@ -111,18 +111,14 @@ home-manager switch --flake .#viryoke
 
 ### 典型目录结构
 
-```mermaid
-graph TD
-    Home[home/] --> Default[default.nix<br/>主配置，imports 子模块]
-    Home --> Shell[shell.nix<br/>Shell 配置 zsh/bash]
-    Home --> Editor[editor.nix<br/>编辑器配置 neovim/emacs]
-    Home --> Wm[wm.nix<br/>窗口管理器 niri/sway]
-    Home --> Dev[dev.nix<br/>开发环境配置]
-    
-    style Default fill:#e8f4ff
 ```
-
-> Home Manager 的典型模块化结构：主配置通过 imports 引入各子模块，按功能分离管理。
+home/
+├── default.nix       # 主配置，imports 子模块
+├── shell.nix         # Shell 配置（zsh, bash）
+├── editor.nix        # 编辑器配置（neovim, emacs）
+├── wm.nix            # 窗口管理器配置（niri, sway）
+└── dev.nix           # 开发环境配置
+```
 
 ### 主配置示例
 
@@ -465,23 +461,25 @@ home-manager = {
 
 ### 2. 模块化配置
 
-```mermaid
-graph TD
-    Home[home/] --> Default[default.nix<br/>主配置]
-    Home --> Shell[shell.nix<br/>Shell]
-    Home --> Editor[editor.nix<br/>编辑器]
-    Home --> Wm[wm.nix<br/>窗口管理器]
-    Home --> Dev[dev.nix<br/>开发工具]
-    
-    Default -->|imports| Shell
-    Default -->|imports| Editor
-    Default -->|imports| Wm
-    Default -->|imports| Dev
-    
-    style Default fill:#e8f4ff
-```
+```nix
+# 按功能分离
+home/
+├── default.nix    # 主配置
+├── shell.nix      # Shell
+├── editor.nix     # 编辑器
+├── wm.nix         # 窗口管理器
+└── dev.nix        # 开发工具
 
-> 模块化配置的最佳实践：按功能分离为独立文件，主配置通过 imports 统一引入。
+# 在 default.nix 中导入
+{
+  imports = [
+    ./shell.nix
+    ./editor.nix
+    ./wm.nix
+    ./dev.nix
+  ];
+}
+```
 
 ### 3. 使用 stateVersion
 

@@ -1,7 +1,7 @@
 # Wiki Index
 
 > 知识库总目录。
-> Last updated: 2026-06-15 | Total pages: 108
+> Last updated: 2026-06-17 | Total pages: 125
 
 ---
 
@@ -92,15 +92,14 @@
 
 ### AI/ML · 应用架构
 - [[ai-agent]] — AI Agent
-- [[ai-agent-tooling-practice]] — AI Agent 工具链实践总结（工具选型/Skill生态/知识库/全局约束/核心问题）
 - [[rag]] — RAG · 检索增强生成
 - [[rag-architecture]] — RAG 系统架构
 - [[llm-application-architecture]] — LLM 应用架构模式
 - [[vector-database-ai]] — 向量数据库
 
 ### 软件工程
-- [[hexagonal-architecture]] — 六边形架构（含 Mermaid 图表）
-- [[clean-architecture]] — Clean Architecture（含 Mermaid 图表）
+- [[hexagonal-architecture]] — 六边形架构
+- [[clean-architecture]] — Clean Architecture
 - [[onion-architecture]] — 洋葱架构
 - [[microservice-architecture]] — 微服务架构
 - [[ddd-tactical-patterns]] — DDD 战术模式
@@ -170,9 +169,33 @@
 
 ---
 
-## ⚡ Skills（skills/）
-
-- [[skills/index]] — Skills 索引（10 个自定义 skill，通过 symlink 与 Hermes 双向同步）
+## Comparisons
+<!-- 暂无 -->
 
 ## Queries
-- [[ai-agent-tooling-team-sharing]] — AI Agent 工具链团队经验分享稿（基于 ai-agent-tooling-practice 的口语化分享版）
+
+- [[ai-tools-workflow-insights]] — AI工具使用心得：构建个性化AI工作流的六个关键实践
+- [[ai-agent-tooling-team-sharing]] — AI Agent 工具链踩坑与收获（团队经验分享）
+
+## 🛠 Skills（skills/）
+
+> 可复用操作流程，遵循 Agent Skills 开放标准。
+
+- [[skills/agent-browser/SKILL.md|agent-browser]] — 浏览器自动化
+- [[skills/ai-dev-environment-setup/SKILL.md|ai-dev-environment-setup]] — AI 开发环境搭建
+- [[skills/clash-verge-rev/SKILL.md|clash-verge-rev]] — Clash Verge Rev 代理配置
+- [[skills/find-skills/SKILL.md|find-skills]] — 发现和安装 Skills
+- [[skills/frontend-design/SKILL.md|frontend-design]] — 前端设计
+- [[skills/grill-me/SKILL.md|grill-me]] — 知识拷问（自测）
+- [[skills/grill-with-docs/SKILL.md|grill-with-docs]] — 带文档的知识拷问
+- [[skills/hermes-backup-migration/SKILL.md|hermes-backup-migration]] — Hermes 备份与迁移
+- [[skills/hermes-config-backup/SKILL.md|hermes-config-backup]] — Hermes 配置备份
+- [[skills/hermes-python-package-installation/SKILL.md|hermes-python-package-installation]] — Hermes Python 包安装
+- [[skills/improve-codebase-architecture/SKILL.md|improve-codebase-architecture]] — 代码架构改进
+- [[skills/nixos-setup/SKILL.md|nixos-setup]] — NixOS 安装配置
+- [[skills/presentation-workflow/SKILL.md|presentation-workflow]] — 演示文稿工作流
+- [[skills/quartz-obsidian-wiki/SKILL.md|quartz-obsidian-wiki]] — Quartz + Obsidian Wiki 发布
+- [[skills/skill-creator/SKILL.md|skill-creator]] — Skill 创建指南
+- [[skills/tdd/SKILL.md|tdd]] — 测试驱动开发
+- [[skills/ui-ux-pro-max/SKILL.md|ui-ux-pro-max]] — UI/UX 设计
+- [[skills/youtube-content/SKILL.md|youtube-content]] — YouTube 内容提取
