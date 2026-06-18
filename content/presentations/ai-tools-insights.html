@@ -481,20 +481,19 @@
                     </div>
                 </div>
                 <div class="arch-diagram">
-                    <p class="t-caption" style="text-align:center;margin-bottom:18px;">统一引用架构</p>
+                    <p class="t-caption" style="text-align:center;margin-bottom:18px;">工具引用 AGENTS.md 架构</p>
                     <div class="arch-row">
-                        <div class="arch-box core" style="min-width:200px;">AGENTS.md<br><span style="font-size:0.72rem;opacity:0.8;">角色 · 偏好 · 规范</span></div>
-                    </div>
-                    <div class="arch-connector">↓ 引用 ↓</div>
-                    <div class="arch-row">
-                        <div class="arch-box source">Hermes</div>
+                        <div class="arch-box source">Hermes Agent</div>
                         <div class="arch-box source">OpenCode</div>
-                        <div class="arch-box source">Claude</div>
-                        <div class="arch-box source">Cursor</div>
+                        <div class="arch-box source">Claude Code</div>
                     </div>
-                    <div class="arch-connector">↓ 输出 ↓</div>
+                    <div class="arch-connector">↓ 读取引用 ↓</div>
                     <div class="arch-row">
-                        <div class="arch-box output" style="min-width:280px;">风格一致 · 品味统一</div>
+                        <div class="arch-box core" style="min-width:240px;">AGENTS.md<br><span style="font-size:0.72rem;opacity:0.8;">角色定义 · 个人偏好 · 输出规范 · 知识库规则</span></div>
+                    </div>
+                    <div class="arch-connector">↓ 约束输出 ↓</div>
+                    <div class="arch-row">
+                        <div class="arch-box output" style="min-width:280px;">风格一致 · 品味统一 · 质量可控</div>
                     </div>
                 </div>
             </div>
@@ -511,56 +510,57 @@
             <div class="t-h2 anim anim-d1">PRACTICE 02</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">让AI工具更懂你</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                通过<span class="text-accent">个人画像</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你。
+                通过<span class="text-accent">架构设计积累</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你的工作流。
             </p>
             <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
                 <div class="flex-col" style="gap:14px;">
                     <div class="card" style="border-left:3px solid var(--green);">
-                        <h3>记忆积累</h3>
-                        <p>自动记录偏好</p>
+                        <h3>架构模式积累</h3>
+                        <p>记录设计决策、架构模式、最佳实践</p>
                         <div class="code-block" style="margin-top:12px;">
-                            <span class="comment"># Hermes 自动记忆</span><br>
-                            <span class="key">user.font.cn:</span> <span class="val">霞鹜文楷</span><br>
-                            <span class="key">user.font.code:</span> <span class="val">JetBrains Mono</span><br>
-                            <span class="key">user.design:</span> <span class="val">Warm Academic</span><br>
-                            <span class="key">user.chart:</span> <span class="val">Mermaid only</span>
+                            <span class="comment"># 架构决策记录</span><br>
+                            <span class="key">pattern:</span> <span class="val">Event-Driven Architecture</span><br>
+                            <span class="key">decision:</span> <span class="val">使用 Kafka 替代轮询</span><br>
+                            <span class="key">trade-off:</span> <span class="val">复杂度 vs 实时性</span><br>
+                            <span class="key">context:</span> <span class="val">高并发订单系统</span>
                         </div>
                     </div>
                     <div class="card" style="border-left:3px solid var(--blue);">
-                        <h3>画像生成</h3>
-                        <p>结构化个人画像</p>
+                        <h3>技术方案模板</h3>
+                        <p>标准化技术选型和方案设计</p>
                         <div class="code-block" style="margin-top:12px;">
-                            <span class="comment"># profile/user-profile.md</span><br>
-                            <span class="key">role:</span> <span class="val">12年经验 · 架构师</span><br>
-                            <span class="key">goals:</span> <span class="val">AI/ML · 软考 · 英语</span><br>
-                            <span class="key">style:</span> <span class="val">文本优先 · 具体可执行</span>
+                            <span class="comment"># 技术方案模板</span><br>
+                            <span class="key">problem:</span> <span class="val">业务痛点描述</span><br>
+                            <span class="key">options:</span> <span class="val">方案A/B/C对比</span><br>
+                            <span class="key">criteria:</span> <span class="val">成本/性能/维护</span><br>
+                            <span class="key">decision:</span> <span class="val">最终选择及理由</span>
                         </div>
                     </div>
                 </div>
                 <div class="card" style="border-left:3px solid var(--accent);">
-                    <h3>闭环流程</h3>
+                    <h3>知识复利闭环</h3>
                     <div class="flow" style="margin-top:20px;">
-                        <div class="flow-node primary">日常交互</div>
+                        <div class="flow-node primary">架构实践</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">记忆积累</div>
+                        <div class="flow-node">模式提炼</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">记忆积累</div>
+                        <div class="flow-node">模式提炼</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">画像生成</div>
+                        <div class="flow-node">模板固化</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">画像生成</div>
+                        <div class="flow-node">模板固化</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">全局引用</div>
+                        <div class="flow-node">AI 辅助应用</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">全局引用</div>
+                        <div class="flow-node">AI 辅助应用</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node primary">日常交互</div>
+                        <div class="flow-node primary">架构实践</div>
                     </div>
                     <p style="margin-top:20px; font-size:0.88rem; color:var(--text-muted);">
-                        记忆是渐进式的。AI 不会一开始就懂你，但通过持续交互和主动提供文档，画像会越来越精准。
+                        每次架构决策都是知识资产。通过模板和模式库，AI 能快速理解上下文，给出更精准的建议。
                     </p>
                 </div>
             </div>
@@ -573,9 +573,13 @@
             <div class="t-h2 anim anim-d1">PRACTICE 03</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">积累AI产生的素材</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                基于 <span class="text-accent">Karpathy LLM Wiki</span> 理念构建本地知识库，让素材形成复利网络。
+                基于 <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Karpathy LLM Wiki</a> 理念构建本地知识库，让素材形成复利网络。参考 Google 最新提出的 <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">OKF（Open Knowledge Format）</a> 标准。
             </p>
-            <div class="arch-diagram anim anim-d3" style="margin-top:28px;">
+            <div class="card anim anim-d2" style="margin-top:20px; border-left:3px solid var(--green);">
+                <h3>LLM Wiki 核心理念</h3>
+                <p style="color:var(--text-secondary);">传统 RAG 每次从零发现知识，LLM Wiki 则<strong style="color:var(--text-primary);">一次编译、持续更新</strong>。交叉引用已建好，矛盾已标记，综合反映所有已摄入内容。知识库价值 = 页面数 × 交叉链接密度 × 内容质量。</p>
+            </div>
+            <div class="arch-diagram anim anim-d3" style="margin-top:20px;">
                 <p class="t-caption" style="text-align:center;margin-bottom:18px;">三层架构</p>
                 <div class="arch-row">
                     <div class="arch-box source">字幕/转录</div>
@@ -596,7 +600,7 @@
             <div class="bento bento-3col anim anim-d4" style="margin-top:20px;">
                 <div class="card">
                     <h3>复利效应</h3>
-                    <p>每门新课触发 5-15 个页面更新，价值 = 页面数 × 交叉链接密度 × 内容质量</p>
+                    <p>每门新课触发 5-15 个页面更新，交叉引用自动建立</p>
                 </div>
                 <div class="card">
                     <h3>定时任务</h3>
@@ -658,31 +662,59 @@
             <div class="t-h2 anim anim-d1">PRACTICE 05</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">知识库的跨端共享</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                GitHub 私仓同步 + Quartz 静态站点发布 + 自动化 CI/CD。
+                Obsidian Vault 通过 Git 实现<span class="text-accent">多平台同步</span>（Mac · Linux · Windows），发布 GitHub Pages 后实现<span class="text-accent">多终端访问</span>（手机 · 平板 · 浏览器），使用 <a href="https://kroki.io" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Kroki.io</a> 统一图表渲染。
             </p>
-            <div class="arch-diagram anim anim-d3" style="margin-top:28px;">
-                <p class="t-caption" style="text-align:center;margin-bottom:18px;">两个仓库协作架构</p>
-                <div class="arch-row">
-                    <div class="arch-box core" style="min-width:240px;">ObsidianVault<br><span style="font-size:0.72rem;opacity:0.8;">唯一实体来源</span></div>
+            <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
+                <div>
+                    <div class="arch-diagram">
+                        <p class="t-caption" style="text-align:center;margin-bottom:18px;">两个仓库协作架构</p>
+                        <div class="arch-row">
+                            <div class="arch-box core" style="min-width:240px;">ObsidianVault<br><span style="font-size:0.72rem;opacity:0.8;">唯一实体来源</span></div>
+                        </div>
+                        <div class="arch-connector">↓ sync-content.sh ↓</div>
+                        <div class="arch-row">
+                            <div class="arch-box source">obsidian-vault<br><span style="font-size:0.72rem;opacity:0.8;">私仓</span></div>
+                            <div class="arch-box source">knowledge-base<br><span style="font-size:0.72rem;opacity:0.8;">Quartz 仓库</span></div>
+                        </div>
+                        <div class="arch-connector">↓ GitHub Actions ↓</div>
+                        <div class="arch-row">
+                            <div class="arch-box tool">自动 checkout vault</div>
+                            <div class="arch-box tool">同步 → 构建</div>
+                        </div>
+                        <div class="arch-connector">↓ 部署 ↓</div>
+                        <div class="arch-row">
+                            <div class="arch-box output" style="min-width:320px;">GitHub Pages<br><span style="font-size:0.72rem;opacity:0.8;">viryoke.github.io/knowledge-base</span></div>
+                        </div>
+                    </div>
+                    <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
+                        <h3>踩坑经验</h3>
+                        <p>软链接方案 GitHub Actions 无法解析，改用 sync-content.sh 脚本同步。需修改 assets.ts 保留 HTML 扩展名。</p>
+                    </div>
                 </div>
-                <div class="arch-connector">↓ sync-content.sh ↓</div>
-                <div class="arch-row">
-                    <div class="arch-box source">obsidian-vault<br><span style="font-size:0.72rem;opacity:0.8;">私仓</span></div>
-                    <div class="arch-box source">knowledge-base<br><span style="font-size:0.72rem;opacity:0.8;">Quartz 仓库</span></div>
+                <div class="card" style="border-left:3px solid var(--green);">
+                    <h3>Kroki.io 图表渲染引擎</h3>
+                    <p style="margin-bottom:16px;">统一的 Diagram as Code 渲染服务，支持 20+ 种图表语言。</p>
+                    <div class="code-block" style="margin-top:12px;">
+                        <span class="comment"># 渲染原理</span><br>
+                        <span class="key">1.</span> <span class="val">编写图表代码</span>（Mermaid/PlantUML/D2）<br>
+                        <span class="key">2.</span> <span class="val">Base64 编码</span>（deflate + base64）<br>
+                        <span class="key">3.</span> <span class="val">HTTP 请求</span> Kroki API<br>
+                        <span class="key">4.</span> <span class="val">返回 SVG/PNG</span> 渲染结果
+                    </div>
+                    <p style="margin-top:16px; font-size:0.88rem;">支持的图表语言：</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+                        <span class="pill" style="font-size:0.75rem;">Mermaid</span>
+                        <span class="pill" style="font-size:0.75rem;">PlantUML</span>
+                        <span class="pill" style="font-size:0.75rem;">D2</span>
+                        <span class="pill" style="font-size:0.75rem;">GraphViz</span>
+                        <span class="pill" style="font-size:0.75rem;">Excalidraw</span>
+                        <span class="pill" style="font-size:0.75rem;">C4</span>
+                        <span class="pill" style="font-size:0.75rem;">+15种</span>
+                    </div>
+                    <p style="margin-top:16px;">
+                        <a href="kroki-demo.html" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">查看图表示例 →</a>
+                    </p>
                 </div>
-                <div class="arch-connector">↓ GitHub Actions ↓</div>
-                <div class="arch-row">
-                    <div class="arch-box tool">自动 checkout vault</div>
-                    <div class="arch-box tool">同步 → 构建</div>
-                </div>
-                <div class="arch-connector">↓ 部署 ↓</div>
-                <div class="arch-row">
-                    <div class="arch-box output" style="min-width:320px;">GitHub Pages<br><span style="font-size:0.72rem;opacity:0.8;">viryoke.github.io/knowledge-base</span></div>
-                </div>
-            </div>
-            <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
-                <h3>踩坑经验</h3>
-                <p>软链接方案 GitHub Actions 无法解析，改用 sync-content.sh 脚本同步。需修改 assets.ts 保留 HTML 扩展名。</p>
             </div>
         </div>
     </div>
@@ -693,44 +725,48 @@
             <div class="t-h2 anim anim-d1">PRACTICE 06</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">富文本的生成</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                Markdown 中转——AI 生成结构化 MD，手动导入免费工具生成富文本。
+                Markdown 中转——AI Agent 生成结构化 MD，通过 Google Gemini 生态工具转换为富文本。
             </p>
             <div class="flow anim anim-d3" style="margin-top:32px; justify-content:center;">
                 <div class="flow-node primary">AI Agent</div>
                 <div class="flow-arrow">→</div>
                 <div class="flow-node">Markdown 素材</div>
                 <div class="flow-arrow">→</div>
-                <div class="flow-node">Gemini Canvas / NotebookLM</div>
+                <div class="flow-node">Google AI Pro 生态</div>
                 <div class="flow-arrow">→</div>
                 <div class="flow-node primary">富文本输出</div>
             </div>
-            <table class="anim anim-d4" style="margin-top:32px;">
+            <div class="card anim anim-d3" style="margin-top:24px; border-left:3px solid var(--green);">
+                <h3>Google AI Pro 会员优势</h3>
+                <p>每月 $20，获得 Gemini 1.5 Pro（100万 Token 上下文）+ Gemini 生态工具完整访问权限，AI 生成 MD 后可直接导入转换。</p>
+            </div>
+            <table class="anim anim-d4" style="margin-top:24px;">
                 <thead>
                     <tr>
                         <th>工具</th>
                         <th>输入</th>
                         <th>输出</th>
-                        <th>费用</th>
+                        <th>来源</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>Gemini Canvas</strong></td>
                         <td>Markdown</td>
-                        <td>幻灯片、信息图</td>
-                        <td class="text-green">免费</td>
+                        <td>幻灯片、信息图、交互式内容</td>
+                        <td class="text-accent">Google AI Pro</td>
                     </tr>
                     <tr>
                         <td><strong>NotebookLM</strong></td>
-                        <td>文档</td>
-                        <td>音频播客、摘要</td>
-                        <td class="text-green">免费</td>
+                        <td>文档 / 链接</td>
+                        <td>音频播客、问答摘要</td>
+                        <td class="text-accent">Google AI Pro</td>
                     </tr>
                     <tr>
-                        <td><strong>HTML + CSS</strong></td>
+                        <td><strong>Gemini + HTML</strong></td>
                         <td>Markdown</td>
-                        <td>交互式幻灯片</td>
-                        <td class="text-green">免费</td>
+                        <td>自定义交互式幻灯片</td>
+                        <td class="text-accent">Google AI Pro</td>
                     </tr>
                 </tbody>
             </table>

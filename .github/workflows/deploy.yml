@@ -28,10 +28,10 @@ jobs:
         with:
           repository: viryoke/obsidian-vault
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: ../ObsidianVault
+          path: vault
 
       - name: Sync content from vault
-        run: bash sync-content.sh
+        run: VAULT_DIR=vault bash sync-content.sh
 
       - uses: actions/setup-node@v4
         with:
