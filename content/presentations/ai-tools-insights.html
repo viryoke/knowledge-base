@@ -10,24 +10,24 @@
     <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #1a1816;
-            --bg-primary: #1e1c19;
-            --bg-surface: #262320;
-            --bg-elevated: #2e2a26;
-            --bg-card: #332f29;
-            --text-primary: #e5ddd3;
-            --text-secondary: #d4ccc2;
-            --text-muted: #7d7468;
-            --text-faint: #5a534a;
-            --accent: #c4a97d;
-            --accent-bright: #d4bc8e;
-            --accent-dim: #8b6f47;
-            --border: rgba(196, 169, 125, 0.12);
-            --border-strong: rgba(196, 169, 125, 0.22);
-            --highlight: rgba(196, 169, 125, 0.08);
-            --green: #7daa6d;
-            --blue: #6d8faa;
-            --rose: #aa6d6d;
+            --bg-deep: #faf8f5;
+            --bg-primary: #ffffff;
+            --bg-surface: #f5f2ee;
+            --bg-elevated: #ebe7e0;
+            --bg-card: #ffffff;
+            --text-primary: #2a2520;
+            --text-secondary: #4a4540;
+            --text-muted: #8a837a;
+            --text-faint: #b5aea5;
+            --accent: #9a7a4a;
+            --accent-bright: #8b6530;
+            --accent-dim: #c9a96e;
+            --border: rgba(150, 130, 100, 0.15);
+            --border-strong: rgba(150, 130, 100, 0.3);
+            --highlight: rgba(150, 130, 100, 0.06);
+            --green: #4a8a3a;
+            --blue: #3a6a8a;
+            --rose: #b54a4a;
             --font-cn: 'LXGW WenKai', 'Inter', sans-serif;
             --font-en: 'Inter', system-ui, sans-serif;
             --font-heading: 'Instrument Serif', serif;
@@ -87,11 +87,11 @@
             letter-spacing: 0.12em; text-transform: uppercase;
             color: var(--accent); margin-bottom: 12px;
         }
-        .t-body { font-size: 1.05rem; line-height: 1.75; color: var(--text-secondary); }
-        .t-caption { font-size: 0.85rem; color: var(--text-muted); }
+        .t-body { font-size: 1.2rem; line-height: 1.75; color: var(--text-secondary); }
+        .t-caption { font-size: 0.9rem; color: var(--text-muted); }
         .t-mono {
             font-family: var(--font-mono);
-            font-size: 0.82rem; color: var(--accent);
+            font-size: 0.88rem; color: var(--accent);
         }
 
         .bento {
@@ -424,7 +424,7 @@
             <div class="bento bento-2col anim anim-d2">
                 <div>
                     <p class="t-body" style="margin-bottom:20px;">
-                        作为 12 年研发经验的架构师，AI 已成为我的<strong class="text-accent">常驻工作伙伴</strong>。但工具太多、输出风格不一、知识无法积累。
+                        AI 工具种类繁多，但工具太多、输出风格不一、知识无法积累。
                     </p>
                     <p class="t-body" style="margin-bottom:20px;">
                         核心思路：以<span class="text-accent">知识库为中心</span>，以<span class="text-accent">全局配置为约束</span>，让 AI 工具服务于长期知识积累。
@@ -446,7 +446,7 @@
                             <span class="pill pill-rose">04</span> 重复造轮子
                         </li>
                         <li style="padding:8px 0;">
-                            <span class="pill pill-rose">05</span> 跨端访问困难
+                            <span class="pill pill-rose">05</span> 跨端共享不便
                         </li>
                     </ul>
                 </div>
@@ -483,23 +483,30 @@
                 <div class="arch-diagram">
                     <p class="t-caption" style="text-align:center;margin-bottom:18px;">工具引用 AGENTS.md 架构</p>
                     <div class="arch-row">
-                        <div class="arch-box source">Hermes Agent</div>
-                        <div class="arch-box source">OpenCode</div>
-                        <div class="arch-box source">Claude Code</div>
-                    </div>
-                    <div class="arch-connector">↓ 读取引用 ↓</div>
-                    <div class="arch-row">
                         <div class="arch-box core" style="min-width:240px;">AGENTS.md<br><span style="font-size:0.72rem;opacity:0.8;">角色定义 · 个人偏好 · 输出规范 · 知识库规则</span></div>
+                    </div>
+                    <div class="arch-connector">↑ 读取引用 ↑</div>
+                    <div class="arch-row">
+                        <div class="arch-box tool">Hermes Agent</div>
+                        <div class="arch-box tool">OpenCode</div>
+                        <div class="arch-box tool">Claude Code</div>
                     </div>
                     <div class="arch-connector">↓ 约束输出 ↓</div>
                     <div class="arch-row">
-                        <div class="arch-box output" style="min-width:280px;">风格一致 · 品味统一 · 质量可控</div>
+                        <div class="arch-box output" style="min-width:280px;">统一的输出风格 · 个人品味 · 质量可控</div>
                     </div>
                 </div>
             </div>
             <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
                 <h3>踩坑经验</h3>
-                <p>最初每个工具单独配偏好，维护成本极高。AGENTS.md 不宜超 200 行，否则消耗大量 Token。</p>
+                <p>最初各个工具独立配置，积累的工具和经验无法汇聚在一起。维护成本极高，AGENTS.md 不宜超 200 行，否则消耗大量 Token。</p>
+            </div>
+            <div class="card anim anim-d5" style="margin-top:12px; border-left:3px solid var(--accent);">
+                <h3>参考来源</h3>
+                <ul style="margin:8px 0 0; padding-left:20px; list-style:disc;">
+                    <li style="padding:4px 0;"><a href="https://github.com/multica-ai/andrej-karpathy-skills" target="_blank" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">Andrej Karpathy Skills</a> — Karpathy 风格的 AGENTS.md 最佳实践</li>
+                    <li style="padding:4px 0;"><a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/personality#example" target="_blank" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">Hermes Agent Personality</a> — AI Agent 人格定义与配置示例</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -510,57 +517,57 @@
             <div class="t-h2 anim anim-d1">PRACTICE 02</div>
             <h2 class="t-h1 anim anim-d1" style="margin-bottom:8px;">让AI工具更懂你</h2>
             <p class="t-body anim anim-d2" style="max-width:680px;">
-                通过<span class="text-accent">架构设计积累</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你的工作流。
+                通过<span class="text-accent">个人经验积累</span>、<span class="text-accent">个人品味</span>和<span class="text-accent">持久记忆</span>，让AI工具渐进式理解你的工作流。
             </p>
             <div class="bento bento-2col anim anim-d3" style="margin-top:28px;">
                 <div class="flex-col" style="gap:14px;">
                     <div class="card" style="border-left:3px solid var(--green);">
-                        <h3>架构模式积累</h3>
-                        <p>记录设计决策、架构模式、最佳实践</p>
+                        <h3>个人经验积累</h3>
+                        <p>记录工作心得、最佳实践、踩坑经验</p>
                         <div class="code-block" style="margin-top:12px;">
-                            <span class="comment"># 架构决策记录</span><br>
-                            <span class="key">pattern:</span> <span class="val">Event-Driven Architecture</span><br>
-                            <span class="key">decision:</span> <span class="val">使用 Kafka 替代轮询</span><br>
-                            <span class="key">trade-off:</span> <span class="val">复杂度 vs 实时性</span><br>
-                            <span class="key">context:</span> <span class="val">高并发订单系统</span>
+                            <span class="comment"># 经验记录示例</span><br>
+                            <span class="key">scenario:</span> <span class="val">高并发场景</span><br>
+                            <span class="key">lesson:</span> <span class="val">缓存策略比查询优化更重要</span><br>
+                            <span class="key">context:</span> <span class="val">订单系统峰值处理</span><br>
+                            <span class="key">applied:</span> <span class="val">后续类似场景优先考虑</span>
                         </div>
                     </div>
                     <div class="card" style="border-left:3px solid var(--blue);">
-                        <h3>技术方案模板</h3>
-                        <p>标准化技术选型和方案设计</p>
+                        <h3>个人品味偏好</h3>
+                        <p>定义代码风格、架构偏好、设计原则</p>
                         <div class="code-block" style="margin-top:12px;">
-                            <span class="comment"># 技术方案模板</span><br>
-                            <span class="key">problem:</span> <span class="val">业务痛点描述</span><br>
-                            <span class="key">options:</span> <span class="val">方案A/B/C对比</span><br>
-                            <span class="key">criteria:</span> <span class="val">成本/性能/维护</span><br>
-                            <span class="key">decision:</span> <span class="val">最终选择及理由</span>
+                            <span class="comment"># 个人品味定义</span><br>
+                            <span class="key">code_style:</span> <span class="val">简洁优先，避免过度抽象</span><br>
+                            <span class="key">architecture:</span> <span class="val">偏好事件驱动而非轮询</span><br>
+                            <span class="key">documentation:</span> <span class="val">中文注释，英文代码</span><br>
+                            <span class="key">testing:</span> <span class="val">集成测试优先于单元测试</span>
                         </div>
                     </div>
                 </div>
                 <div class="card" style="border-left:3px solid var(--accent);">
-                    <h3>知识复利闭环</h3>
+                    <h3>持久记忆机制</h3>
                     <div class="flow" style="margin-top:20px;">
-                        <div class="flow-node primary">架构实践</div>
+                        <div class="flow-node primary">经验记录</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">模式提炼</div>
+                        <div class="flow-node">品味提炼</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">模式提炼</div>
+                        <div class="flow-node">品味提炼</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">模板固化</div>
+                        <div class="flow-node">持久记忆</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">模板固化</div>
+                        <div class="flow-node">持久记忆</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node">AI 辅助应用</div>
+                        <div class="flow-node">AI 理解上下文</div>
                     </div>
                     <div class="flow" style="margin-top:12px;">
-                        <div class="flow-node">AI 辅助应用</div>
+                        <div class="flow-node">AI 理解上下文</div>
                         <div class="flow-arrow">→</div>
-                        <div class="flow-node primary">架构实践</div>
+                        <div class="flow-node primary">精准建议</div>
                     </div>
-                    <p style="margin-top:20px; font-size:0.88rem; color:var(--text-muted);">
-                        每次架构决策都是知识资产。通过模板和模式库，AI 能快速理解上下文，给出更精准的建议。
+                    <p style="margin-top:20px; font-size:1rem; color:var(--text-muted);">
+                        每次经验记录都是知识资产。通过持久记忆机制，AI 能快速理解个人上下文，给出更符合个人品味和经验的精准建议。架构设计积累只是经验和品味积累的一部分。
                     </p>
                 </div>
             </div>
@@ -686,10 +693,6 @@
                             <div class="arch-box output" style="min-width:320px;">GitHub Pages<br><span style="font-size:0.72rem;opacity:0.8;">viryoke.github.io/knowledge-base</span></div>
                         </div>
                     </div>
-                    <div class="card anim anim-d4" style="margin-top:20px; border-left:3px solid var(--rose);">
-                        <h3>踩坑经验</h3>
-                        <p>软链接方案 GitHub Actions 无法解析，改用 sync-content.sh 脚本同步。需修改 assets.ts 保留 HTML 扩展名。</p>
-                    </div>
                 </div>
                 <div class="card" style="border-left:3px solid var(--green);">
                     <h3>Kroki.io 图表渲染引擎</h3>
@@ -701,7 +704,7 @@
                         <span class="key">3.</span> <span class="val">HTTP 请求</span> Kroki API<br>
                         <span class="key">4.</span> <span class="val">返回 SVG/PNG</span> 渲染结果
                     </div>
-                    <p style="margin-top:16px; font-size:0.88rem;">支持的图表语言：</p>
+                    <p style="margin-top:16px; font-size:1rem;">支持的图表语言：</p>
                     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
                         <span class="pill" style="font-size:0.75rem;">Mermaid</span>
                         <span class="pill" style="font-size:0.75rem;">PlantUML</span>

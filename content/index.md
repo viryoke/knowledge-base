@@ -1,7 +1,7 @@
 # Wiki Index
 
 > 知识库总目录。
-> Last updated: 2026-06-17 | Total pages: 125
+> Last updated: 2026-06-20 | Total pages: 126
 
 ---
 
@@ -176,6 +176,7 @@
 
 - [[ai-tools-workflow-insights]] — AI工具使用心得：构建个性化AI工作流的六个关键实践
 - [[ai-agent-tooling-team-sharing]] — AI Agent 工具链踩坑与收获（团队经验分享）
+- [[rundianhong-job-analysis]] — 润电鸿实验室主任岗位分析与鸿蒙经验个人介绍幻灯片
 
 ## 🛠 Skills（skills/）
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagram Demo - Kroki.io Integration</title>
+    
+    <!-- Load pako library for deflate compression -->
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+    
+    <style>
+        :root {
+            --bg: #1a1816;
+            --bg-surface: #262320;
+            --bg-elevated: #2e2a26;
+            --text: #e5ddd3;
+            --text-muted: #7d7468;
+            --accent: #c4a97d;
+            --accent-dim: #8b6f47;
+            --border: rgba(196, 169, 125, 0.12);
+            --rose: #aa6d6d;
+        }
+        
+        body {
+            font-family: 'LXGW WenKai', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        h1 {
+            color: var(--accent);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+        
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .diagram-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.2s;
+        }
+        
+        .diagram-card:hover {
+            border-color: var(--accent-dim);
+        }
+        
+        .diagram-card h3 {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .diagram-body {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .diagram-body.loading {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .diagram-body img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagram-as-Code Examples</h1>
+    
+    <div class="diagram-grid">
+        <div class="diagram-card">
+            <h3>Mermaid Flowchart</h3>
+            <div class="diagram-body loading" id="mermaid-diagram">Loading...</div>
+        </div>
+        
+        <div class="diagram-card">
+            <h3>PlantUML Sequence</h3>
+            <div class="diagram-body loading" id="plantuml-diagram">Loading...</div>
+        </div>
+        
+        <div class="diagram-card">
+            <h3>D2 Architecture</h3>
+            <div class="diagram-body loading" id="d2-diagram">Loading...</div>
+        </div>
+        
+        <div class="diagram-card">
+            <h3>GraphViz DAG</h3>
+            <div class="diagram-body loading" id="graphviz-diagram">Loading...</div>
+        </div>
+        
+        <div class="diagram-card">
+            <h3>BlockDiag Flow</h3>
+            <div class="diagram-body loading" id="blockdiag-diagram">Loading...</div>
+        </div>
+        
+        <div class="diagram-card">
+            <h3>C4 Architecture</h3>
+            <div class="diagram-body loading" id="c4plantuml-diagram">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        // Define diagram sources
+        const diagrams = {
+            'mermaid-diagram': {
+                lang: 'mermaid',
+                source: `graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server 01]
+    B --> D[Server 02]
+    C --> E[Database]
+    D --> E`
+            },
+            'plantuml-diagram': {
+                lang: 'plantuml',
+                source: `@startuml
+User -> Server: GET /api/data
+activate Server
+Server -> Database: SELECT *
+activate Database
+Database --> Server: ResultSet
+deactivate Database
+Server --> User: JSON Response
+deactivate Server
+@enduml`
+            },
+            'd2-diagram': {
+                lang: 'd2',
+                source: `Client -> CDN -> Server
+Server -> {
+  Auth
+  API
+  Cache
+}
+API -> Database
+API -> Queue`
+            },
+            'graphviz-diagram': {
+                lang: 'graphviz',
+                source: `digraph G {
+  rankdir=LR
+  A -> B
+  A -> C
+  B -> D
+  C -> D
+  D -> E
+}`
+            },
+            'blockdiag-diagram': {
+                lang: 'blockdiag',
+                source: `blockdiag {
+  A -> B -> C -> D
+  A -> E -> F -> D
+  B -> E
+}`
+            },
+            'c4plantuml-diagram': {
+                lang: 'c4plantuml',
+                source: `@startuml
+!include C4_Context.puml
+Person(user, "User", "Uses the system")
+System(app, "Application", "Main system")
+System_Ext(db, "Database", "Stores data")
+Rel(user, app, "Uses")
+Rel(app, db, "Reads/Writes")
+@enduml`
+            }
+        };
+
+        // Encode diagram source for Kroki URL
+        function encodeForKroki(source) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(source);
+            const compressed = pako.deflate(data, { level: 9 });
+            const base64 = btoa(String.fromCharCode(...compressed))
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=/g, '');
+            return base64;
+        }
+
+        // Render all diagrams on window load
+        window.addEventListener('load', () => {
+            // Check if pako is loaded
+            if (typeof pako === 'undefined') {
+                document.querySelectorAll('.diagram-body').forEach(el => {
+                    el.innerHTML = '<span style="color:var(--rose);">pako library failed to load</span>';
+                });
+                return;
+            }
+
+            // Render each diagram
+            for (const [id, { lang, source }] of Object.entries(diagrams)) {
+                const container = document.getElementById(id);
+                try {
+                    const encoded = encodeForKroki(source);
+                    const url = `https://kroki.io/${lang}/svg/${encoded}`;
+                    
+                    const img = new Image();
+                    img.onload = () => {
+                        container.classList.remove('loading');
+                        container.appendChild(img);
+                    };
+                    img.onerror = () => {
+                        container.innerHTML = `<span style="color:var(--rose);">Failed to load diagram</span>`;
+                        console.error(`Failed to load ${lang} diagram from: ${url}`);
+                    };
+                    img.src = url;
+                } catch (error) {
+                    container.innerHTML = `<span style="color:var(--rose);">Encoding error</span>`;
+                    console.error(`Encoding error for ${lang}:`, error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

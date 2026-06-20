@@ -105,7 +105,7 @@
 
 <div class="container">
     <h1>Kroki.io — <em>Diagram as Code</em> 渲染引擎</h1>
-    <p class="subtitle">统一渲染入口，支持 20+ 种图表语言，文本输入 → SVG/PNG 输出</p>
+    <p class="subtitle">以 Transformer 架构为例，对比 6 种图表语言的表现力</p>
 
     <!-- 渲染原理 -->
     <div class="principle">
@@ -134,109 +134,247 @@
     <!-- 图表示例 -->
     <div class="diagram-grid">
 
-        <!-- Mermaid: 流程图 -->
+        <!-- Mermaid: Transformer 架构图 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>流程图</h3>
+                <h3>Transformer 架构</h3>
                 <span class="lang-tag">Mermaid</span>
             </div>
             <div class="diagram-body loading" id="mermaid-diagram">Loading...</div>
-            <div class="diagram-code">graph TD
-    A[Client] --> B[Load Balancer]
-    B --> C[Server 01]
-    B --> D[Server 02]
-    C --> E[(Database)]
-    D --> E</div>
-            <div class="diagram-desc">Mermaid 适合流程图、时序图、甘特图、类图等，Obsidian 原生支持。</div>
+            <div class="diagram-code">graph TB
+    subgraph Input
+        I[Input Embedding] --> PE[Positional Encoding]
+    end
+    
+    subgraph Encoder[Encoder × N]
+        E1[Multi-Head Attention]
+        E2[Add & Norm]
+        E3[Feed Forward]
+        E4[Add & Norm]
+        E1 --> E2 --> E3 --> E4
+    end
+    
+    subgraph Decoder[Decoder × N]
+        D1[Masked Multi-Head Attention]
+        D2[Add & Norm]
+        D3[Cross Attention]
+        D4[Add & Norm]
+        D5[Feed Forward]
+        D6[Add & Norm]
+        D1 --> D2 --> D3 --> D4 --> D5 --> D6
+    end
+    
+    subgraph Output
+        L[Linear] --> S[Softmax]
+    end
+    
+    PE --> Encoder
+    E4 --> D3
+    I --> D1
+    D6 --> L --> S --> P[Output Probabilities]</div>
+            <div class="diagram-desc">Mermaid 使用 subgraph 清晰展示 Transformer 的分层架构和数据流向。</div>
         </div>
 
-        <!-- PlantUML: 时序图 -->
+        <!-- PlantUML: Transformer 组件图 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>时序图</h3>
+                <h3>Transformer 组件</h3>
                 <span class="lang-tag">PlantUML</span>
             </div>
             <div class="diagram-body loading" id="plantuml-diagram">Loading...</div>
             <div class="diagram-code">@startuml
-User -> Server : GET /api/data
-activate Server
-Server -> DB : SELECT *
-activate DB
-DB --> Server : ResultSet
-deactivate DB
-Server --> User : JSON Response
-deactivate Server
+skinparam componentStyle rectangle
+
+package "Encoder Stack" {
+  [Input Embedding] as IE
+  [Positional Encoding] as PE
+  package "Encoder Block N" {
+    [Multi-Head Self-Attention] as MHA1
+    [Feed Forward Network] as FF1
+  }
+}
+
+package "Decoder Stack" {
+  [Output Embedding] as OE
+  package "Decoder Block N" {
+    [Masked Multi-Head Attention] as MMHA
+    [Cross-Attention] as CA
+    [Feed Forward Network] as FF2
+  }
+}
+
+package "Output Head" {
+  [Linear Layer] as LL
+  [Softmax] as SM
+}
+
+IE --> PE
+PE --> MHA1
+MHA1 --> FF1
+OE --> MMHA
+FF1 --> CA
+MMHA --> CA
+CA --> FF2
+FF2 --> LL
+LL --> SM
 @enduml</div>
-            <div class="diagram-desc">PlantUML 擅长时间序图、UML 类图、组件图，Java 引擎渲染。</div>
+            <div class="diagram-desc">PlantUML 使用 package 和 component 展示 Transformer 的模块化组件结构。</div>
         </div>
 
-        <!-- D2: 架构图 -->
+        <!-- D2: Transformer 架构图 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>架构图</h3>
+                <h3>Transformer 架构</h3>
                 <span class="lang-tag">D2</span>
             </div>
             <div class="diagram-body loading" id="d2-diagram">Loading...</div>
-            <div class="diagram-code">Client -> CDN -> Server
-Server -> {
-  Auth
-  API
-  Cache
-}
-API -> Database
-API -> Queue</div>
-            <div class="diagram-desc">D2 专为复杂系统架构设计，Go 引擎渲染，支持主题和布局控制。</div>
+            <div class="diagram-code">transformer: {
+  input: {
+    embedding: Input Embedding
+    pos_enc: Positional Encoding
+    embedding -> pos_enc
+  }
+  
+  encoder: {
+    label: Encoder × N
+    mha: Multi-Head Attention
+    norm1: LayerNorm
+    ff: Feed Forward
+    norm2: LayerNorm
+    mha -> norm1 -> ff -> norm2
+  }
+  
+  decoder: {
+    label: Decoder × N
+    masked_mha: Masked Attention
+    norm1: LayerNorm
+    cross_attn: Cross Attention
+    norm2: LayerNorm
+    ff: Feed Forward
+    norm3: LayerNorm
+    masked_mha -> norm1 -> cross_attn -> norm2 -> ff -> norm3
+  }
+  
+  output: {
+    linear: Linear
+    softmax: Softmax
+    linear -> softmax
+  }
+  
+  input.pos_enc -> encoder.mha
+  encoder.norm2 -> decoder.cross_attn
+  decoder.norm3 -> output.linear
+}</div>
+            <div class="diagram-desc">D2 使用嵌套容器清晰展示 Transformer 的层次化架构，支持样式自定义。</div>
         </div>
 
-        <!-- GraphViz: 有向图 -->
+        <!-- GraphViz: Transformer 注意力流向图 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>有向图</h3>
+                <h3>Attention 流向</h3>
                 <span class="lang-tag">GraphViz</span>
             </div>
             <div class="diagram-body loading" id="graphviz-diagram">Loading...</div>
-            <div class="diagram-code">digraph G {
-  rankdir=LR
-  A -> B -> C
-  A -> D
-  B -> D
-  C -> D
-  D -> E [style=dashed]
+            <div class="diagram-code">digraph Transformer {
+  rankdir=TB;
+  node [shape=box, style=filled, fillcolor=lightblue];
+  
+  // Encoder components
+  subgraph cluster_encoder {
+    label="Encoder";
+    style=dashed;
+    color=gray;
+    Q1 [label="Query", fillcolor=lightyellow];
+    K1 [label="Key", fillcolor=lightyellow];
+    V1 [label="Value", fillcolor=lightyellow];
+    Attn1 [label="Self-Attention", fillcolor=lightgreen];
+    Q1 -> Attn1;
+    K1 -> Attn1;
+    V1 -> Attn1;
+  }
+  
+  // Decoder components
+  subgraph cluster_decoder {
+    label="Decoder";
+    style=dashed;
+    color=gray;
+    Q2 [label="Query", fillcolor=lightyellow];
+    K2 [label="Key", fillcolor=lightyellow];
+    V2 [label="Value", fillcolor=lightyellow];
+    Attn2 [label="Cross-Attention", fillcolor=lightcoral];
+    Q2 -> Attn2;
+    K2 -> Attn2;
+    V2 -> Attn2;
+  }
+  
+  // Cross-attention connection
+  Attn1 -> K2 [label="K,V", style=bold, color=red];
+  Attn1 -> V2 [style=bold, color=red];
 }</div>
-            <div class="diagram-desc">GraphViz 是经典的自动布局引擎，适合依赖关系图和 DAG。</div>
+            <div class="diagram-desc">GraphViz 使用 cluster 和样式属性精细控制 Transformer 注意力机制的可视化。</div>
         </div>
 
-        <!-- BlockDiag: 块状图 -->
+        <!-- Nomnoml: Transformer 层级关系 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>块状图</h3>
-                <span class="lang-tag">BlockDiag</span>
+                <h3>Layer 关系</h3>
+                <span class="lang-tag">Nomnoml</span>
             </div>
-            <div class="diagram-body loading" id="blockdiag-diagram">Loading...</div>
-            <div class="diagram-code">blockdiag {
-  A -> B -> C -> D
-  A -> E -> F -> D
-  B -> E
-}</div>
-            <div class="diagram-desc">BlockDiag 自动排列块状节点，适合展示简单的流程和数据流。</div>
+            <div class="diagram-body loading" id="nomnoml-diagram">Loading...</div>
+            <div class="diagram-code">[Transformer Model]
+  [Encoder Stack]
+    [<input>Input Layer]
+    [<package>Encoder Block]
+      [<state>Multi-Head Attention]
+      [<frame>Feed Forward]
+    [<database>Layer Normalization]
+  [Decoder Stack]
+    [<input>Output Embedding]
+    [<package>Decoder Block]
+      [<state>Masked Attention]
+      [<frame>Cross Attention]
+      [<frame>Feed Forward]
+    [<database>Layer Normalization]
+  [Output Head]
+    [<frame>Linear]
+    [<frame>Softmax]
+
+[Encoder Stack] -> [Decoder Stack]
+[Decoder Stack] -> [Output Head]</div>
+            <div class="diagram-desc">Nomnoml 用简洁语法和类型标注展示 Transformer 各层的组合关系。</div>
         </div>
 
-        <!-- C4: 系统架构图 -->
+        <!-- C4: Transformer 系统架构 -->
         <div class="diagram-card">
             <div class="diagram-header">
-                <h3>C4 模型图</h3>
+                <h3>Transformer 系统</h3>
                 <span class="lang-tag">C4-PlantUML</span>
             </div>
             <div class="diagram-body loading" id="c4plantuml-diagram">Loading...</div>
             <div class="diagram-code">@startuml
-!include C4_Context.puml
-Person(user, "用户")
-System(app, "应用系统")
-System_Ext(db, "数据库")
-Rel(user, app, "使用")
-Rel(app, db, "读写")
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Transformer Architecture - C4 Container Diagram
+
+Person(user, "NLP Application", "Text Input")
+
+System_Boundary(model, "Transformer Model") {
+  Container(embedding, "Embedding Layer", "PyTorch", "Token to vector")
+  Container(encoder, "Encoder Stack", "PyTorch", "N × Encoder blocks")
+  Container(decoder, "Decoder Stack", "PyTorch", "N × Decoder blocks")
+  Container(output, "Output Head", "PyTorch", "Linear + Softmax")
+}
+
+System_Ext(vocab, "Vocabulary", "Token dictionary")
+
+Rel(user, embedding, "tokens")
+Rel(embedding, vocab, "lookup")
+Rel(embedding, encoder, "embeddings")
+Rel(encoder, decoder, "encoded context")
+Rel(decoder, output, "decoded vectors")
+Rel(output, user, "predictions")
 @enduml</div>
-            <div class="diagram-desc">C4 模型用于分层描述软件架构（Context → Container → Component → Code）。</div>
+            <div class="diagram-desc">C4 模型在 Container 层级展示 Transformer 作为系统组件的架构视图。</div>
         </div>
 
     </div>
@@ -292,71 +430,209 @@ function encodeForKroki(source) {
 const diagrams = {
         'mermaid-diagram': {
             lang: 'mermaid',
-            source: `graph TD
-    A[Client] --> B[Load Balancer]
-    B --> C[Server 01]
-    B --> D[Server 02]
-    C --> E[(Database)]
-    D --> E`
+            source: `graph TB
+    subgraph Input
+        I[Input Embedding] --> PE[Positional Encoding]
+    end
+    
+    subgraph Encoder[Encoder × N]
+        E1[Multi-Head Attention]
+        E2[Add & Norm]
+        E3[Feed Forward]
+        E4[Add & Norm]
+        E1 --> E2 --> E3 --> E4
+    end
+    
+    subgraph Decoder[Decoder × N]
+        D1[Masked Multi-Head Attention]
+        D2[Add & Norm]
+        D3[Cross Attention]
+        D4[Add & Norm]
+        D5[Feed Forward]
+        D6[Add & Norm]
+        D1 --> D2 --> D3 --> D4 --> D5 --> D6
+    end
+    
+    subgraph Output
+        L[Linear] --> S[Softmax]
+    end
+    
+    PE --> Encoder
+    E4 --> D3
+    I --> D1
+    D6 --> L --> S --> P[Output Probabilities]`
         },
         'plantuml-diagram': {
             lang: 'plantuml',
             source: `@startuml
-User -> Server : GET /api/data
-activate Server
-Server -> DB : SELECT *
-activate DB
-DB --> Server : ResultSet
-deactivate DB
-Server --> User : JSON Response
-deactivate Server
+skinparam componentStyle rectangle
+
+package "Encoder Stack" {
+  [Input Embedding] as IE
+  [Positional Encoding] as PE
+  package "Encoder Block N" {
+    [Multi-Head Self-Attention] as MHA1
+    [Feed Forward Network] as FF1
+  }
+}
+
+package "Decoder Stack" {
+  [Output Embedding] as OE
+  package "Decoder Block N" {
+    [Masked Multi-Head Attention] as MMHA
+    [Cross-Attention] as CA
+    [Feed Forward Network] as FF2
+  }
+}
+
+package "Output Head" {
+  [Linear Layer] as LL
+  [Softmax] as SM
+}
+
+IE --> PE
+PE --> MHA1
+MHA1 --> FF1
+OE --> MMHA
+FF1 --> CA
+MMHA --> CA
+CA --> FF2
+FF2 --> LL
+LL --> SM
 @enduml`
         },
         'd2-diagram': {
             lang: 'd2',
-            source: `Client -> CDN -> Server
-Server -> {
-  Auth
-  API
-  Cache
-}
-API -> Database
-API -> Queue`
+            source: `transformer: {
+  input: {
+    embedding: Input Embedding
+    pos_enc: Positional Encoding
+    embedding -> pos_enc
+  }
+  
+  encoder: {
+    label: Encoder × N
+    mha: Multi-Head Attention
+    norm1: LayerNorm
+    ff: Feed Forward
+    norm2: LayerNorm
+    mha -> norm1 -> ff -> norm2
+  }
+  
+  decoder: {
+    label: Decoder × N
+    masked_mha: Masked Attention
+    norm1: LayerNorm
+    cross_attn: Cross Attention
+    norm2: LayerNorm
+    ff: Feed Forward
+    norm3: LayerNorm
+    masked_mha -> norm1 -> cross_attn -> norm2 -> ff -> norm3
+  }
+  
+  output: {
+    linear: Linear
+    softmax: Softmax
+    linear -> softmax
+  }
+  
+  input.pos_enc -> encoder.mha
+  encoder.norm2 -> decoder.cross_attn
+  decoder.norm3 -> output.linear
+}`
         },
         'graphviz-diagram': {
             lang: 'graphviz',
-            source: `digraph G {
-  rankdir=LR
-  A -> B -> C
-  A -> D
-  B -> D
-  C -> D
-  D -> E [style=dashed]
+            source: `digraph Transformer {
+  rankdir=TB;
+  node [shape=box, style=filled, fillcolor=lightblue];
+  
+  // Encoder components
+  subgraph cluster_encoder {
+    label="Encoder";
+    style=dashed;
+    color=gray;
+    Q1 [label="Query", fillcolor=lightyellow];
+    K1 [label="Key", fillcolor=lightyellow];
+    V1 [label="Value", fillcolor=lightyellow];
+    Attn1 [label="Self-Attention", fillcolor=lightgreen];
+    Q1 -> Attn1;
+    K1 -> Attn1;
+    V1 -> Attn1;
+  }
+  
+  // Decoder components
+  subgraph cluster_decoder {
+    label="Decoder";
+    style=dashed;
+    color=gray;
+    Q2 [label="Query", fillcolor=lightyellow];
+    K2 [label="Key", fillcolor=lightyellow];
+    V2 [label="Value", fillcolor=lightyellow];
+    Attn2 [label="Cross-Attention", fillcolor=lightcoral];
+    Q2 -> Attn2;
+    K2 -> Attn2;
+    V2 -> Attn2;
+  }
+  
+  // Cross-attention connection
+  Attn1 -> K2 [label="K,V", style=bold, color=red];
+  Attn1 -> V2 [style=bold, color=red];
 }`
         },
-        'blockdiag-diagram': {
-            lang: 'blockdiag',
-            source: `blockdiag {
-  A -> B -> C -> D
-  A -> E -> F -> D
-  B -> E
-}`
+        'nomnoml-diagram': {
+            lang: 'nomnoml',
+            source: `[Transformer Model]
+  [Encoder Stack]
+    [<input>Input Layer]
+    [<package>Encoder Block]
+      [<state>Multi-Head Attention]
+      [<frame>Feed Forward]
+    [<database>Layer Normalization]
+  [Decoder Stack]
+    [<input>Output Embedding]
+    [<package>Decoder Block]
+      [<state>Masked Attention]
+      [<frame>Cross Attention]
+      [<frame>Feed Forward]
+    [<database>Layer Normalization]
+  [Output Head]
+    [<frame>Linear]
+    [<frame>Softmax]
+
+[Encoder Stack] -> [Decoder Stack]
+[Decoder Stack] -> [Output Head]`
         },
         'c4plantuml-diagram': {
             lang: 'c4plantuml',
             source: `@startuml
-!include C4_Context.puml
-Person(user, "用户")
-System(app, "应用系统")
-System_Ext(db, "数据库")
-Rel(user, app, "使用")
-Rel(app, db, "读写")
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Transformer Architecture - C4 Container Diagram
+
+Person(user, "NLP Application", "Text Input")
+
+System_Boundary(model, "Transformer Model") {
+  Container(embedding, "Embedding Layer", "PyTorch", "Token to vector")
+  Container(encoder, "Encoder Stack", "PyTorch", "N × Encoder blocks")
+  Container(decoder, "Decoder Stack", "PyTorch", "N × Decoder blocks")
+  Container(output, "Output Head", "PyTorch", "Linear + Softmax")
+}
+
+System_Ext(vocab, "Vocabulary", "Token dictionary")
+
+Rel(user, embedding, "tokens")
+Rel(embedding, vocab, "lookup")
+Rel(embedding, encoder, "embeddings")
+Rel(encoder, decoder, "encoded context")
+Rel(decoder, output, "decoded vectors")
+Rel(output, user, "predictions")
 @enduml`
         }
     };
 
-// Load all diagrams
-window.addEventListener('load', () => {
+// Load all diagrams using POST requests to avoid URL encoding issues
+window.addEventListener('load', async () => {
     if (typeof pako === 'undefined') {
         console.error('pako library not loaded');
         document.querySelectorAll('.diagram-body').forEach(el => {
@@ -368,21 +644,40 @@ window.addEventListener('load', () => {
     for (const [id, { lang, source }] of Object.entries(diagrams)) {
         const container = document.getElementById(id);
         try {
-            const encoded = encodeForKroki(source);
-            const url = `https://kroki.io/${lang}/svg/${encoded}`;
+            // Use POST request instead of URL encoding
+            const response = await fetch(`https://kroki.io/${lang}/svg`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: source
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const svgText = await response.text();
+            console.log(`${lang} SVG response:`, svgText.substring(0, 200));
+            
+            const blob = new Blob([svgText], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            console.log(`${lang} Blob URL:`, url);
+            
             const img = new Image();
             img.onload = () => {
                 container.classList.remove('loading');
                 container.appendChild(img);
             };
-            img.onerror = () => {
-                container.innerHTML = `<span style="color:var(--rose);">加载失败</span>`;
-                console.error(`Failed to load ${lang} diagram from: ${url}`);
+            img.onerror = (e) => {
+                container.innerHTML = `<span style="color:var(--rose);">SVG 加载失败</span>`;
+                console.error(`Failed to render ${lang} diagram`, e);
+                console.error(`${lang} SVG content:`, svgText);
             };
             img.src = url;
         } catch (error) {
-            container.innerHTML = `<span style="color:var(--rose);">编码错误</span>`;
-            console.error(`Encoding error for ${lang}:`, error);
+            container.innerHTML = `<span style="color:var(--rose);">渲染失败: ${error.message}</span>`;
+            console.error(`Error for ${lang}:`, error);
         }
     }
 });

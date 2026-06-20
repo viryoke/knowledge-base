@@ -36,9 +36,13 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
   
   let name: string
   if (preserveExtensions.includes(ext)) {
-    // 保留扩展名：直接路径处理 + 添加回扩展名
+    // 保留扩展名：slugify 后加回扩展名（但避免重复添加）
     const slugified = slugifyFilePath(fp)
-    name = (slugified + ext) as FilePath
+    if (slugified.toLowerCase().endsWith(ext)) {
+      name = slugified as FilePath
+    } else {
+      name = (slugified + ext) as FilePath
+    }
   } else {
     // 其他资源文件：保持原有行为
     name = slugifyFilePath(fp)

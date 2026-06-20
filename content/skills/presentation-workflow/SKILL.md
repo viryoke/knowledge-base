@@ -111,6 +111,130 @@ Open the PDF and check: page breaks, text readability, color accuracy, card alig
 4. Edit and refine
 5. Export as PPTX or PDF
 
+## Procedure: Embedding Dynamic Diagrams (Kroki.io)
+
+For presentations that showcase multiple diagram-as-code languages, use Kroki.io's URL-based rendering API with JavaScript dynamic encoding.
+
+### Architecture
+
+1. Load pako library in `<head>` for deflate compression:
+   ```html
+   <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+   ```
+
+2. Define diagram sources in JavaScript object:
+   ```javascript
+   const diagrams = {
+     'mermaid-diagram': { lang: 'mermaid', source: `graph TD\n  A --> B` },
+     'plantuml-diagram': { lang: 'plantuml', source: `@startuml\nA -> B\n@enduml` },
+     // ... more diagrams
+   };
+   ```
+
+3. Encode and render on window load:
+   ```javascript
+   function encodeForKroki(source) {
+     const encoder = new TextEncoder();
+     const data = encoder.encode(source);
+     const compressed = pako.deflate(data, { level: 9 });
+     const base64 = btoa(String.fromCharCode(...compressed))
+       .replace(/\+/g, '-')
+       .replace(/\//g, '_')
+       .replace(/=/g, '');
+     return base64;
+   }
+
+   window.addEventListener('load', () => {
+     if (typeof pako === 'undefined') {
+       // Show error state
+       return;
+     }
+     
+     for (const [id, { lang, source }] of Object.entries(diagrams)) {
+       const container = document.getElementById(id);
+       const encoded = encodeForKroki(source);
+       const url = `https://kroki.io/${lang}/svg/${encoded}`;
+       const img = new Image();
+       img.onload = () => {
+         container.classList.remove('loading');
+         container.appendChild(img);
+       };
+       img.onerror = () => {
+         container.innerHTML = `<span style="color:var(--rose);">加载失败</span>`;
+       };
+       img.src = url;
+     }
+   });
+   ```
+
+### Recommended Approach: POST Requests
+
+**Always use POST requests instead of GET URL encoding** for Kroki diagrams. GET encoding fails with:
+- Chinese characters (Unicode)
+- Complex PlantUML syntax
+- Long diagram sources
+
+POST method:
+```javascript
+const response = await fetch(`https://kroki.io/${lang}/svg`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'text/plain' },
+  body: source  // Plain text, no encoding needed
+});
+
+const svgText = await response.text();
+const blob = new Blob([svgText], { type: 'image/svg+xml' });
+const url = URL.createObjectURL(blob);
+
+const img = new Image();
+img.src = url;
+container.appendChild(img);
+```
+
+**Benefits**: No encoding complexity, handles all characters, works with any diagram size.
+
+### Pitfalls
+
+1. **Prefer POST over GET URL encoding** — GET encoding with deflate + base64url fails silently with Chinese characters and complex syntax. POST with plain text body is more reliable and simpler.
+
+2. **Never use static pre-encoded URLs** — They're fragile, hard to debug, and break when diagram source changes. Always use POST or dynamic JavaScript encoding.
+
+3. **Load pako in <head>, not dynamically** (only if using GET encoding) — If you create the script tag dynamically, it may not load before your encoding function runs. Add it directly in `<head>`:
+   ```html
+   <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+   ```
+
+4. **Use async fetch with proper error handling** — Check response.ok and show specific error messages:
+   ```javascript
+   if (!response.ok) {
+     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+   }
+   ```
+
+5. **Browser cache causes confusion during debugging** — When testing changes, use hard refresh (Ctrl+Shift+R / Cmd+Shift+R) or add cache-busting query param (`?v=2`) to avoid seeing stale versions.
+
+6. **Some diagram languages return empty responses** — BlockDiag and SeqDiag may return HTTP 200 but with empty SVG content. Check `svgText.length > 0` before creating blob. Consider using Nomnoml or Mermaid instead.
+
+7. **HTML/JS Dual-Source Synchronization** — When embedding diagrams in HTML pages with JavaScript rendering, the diagram source appears in TWO places: the HTML `<div class="diagram-code">` (for display) and the JavaScript `diagrams` object (for actual rendering). Common bug: fixing only the HTML display creates misleading "working code" that still fails to render. Always update both locations.
+
+8. **Kroki URL format** (for GET method): `https://kroki.io/{language}/svg/{encoded}` where encoded is deflate-compressed, base64url-encoded (no padding).
+
+### PlantUML-Specific Pitfalls
+
+1. **Component diagrams don't support chained arrows** — `A --> B --> C` causes syntax error. Use individual arrows:
+   ```plantuml
+   A --> B
+   B --> C
+   ```
+
+2. **Special characters in package names cause errors** — Characters like `×` (multiplication sign) in `"Encoder Block × N"` trigger syntax errors. Use plain text: `"Encoder Block N"` or `"Encoder Block (N)"`.
+
+3. **Always use individual arrow declarations** — Even for simple chains, write each connection separately to avoid parsing errors.
+
+### Reference Implementation
+
+See `templates/kroki-demo.html` for a complete working example with 6 diagram types (Mermaid, PlantUML, D2, GraphViz, BlockDiag, C4-PlantUML).
+
 ## Procedure: Rich Text Generation via Google Gemini Ecosystem
 
 **Preferred workflow**: AI Agent generates structured Markdown → Google Gemini ecosystem converts to rich text (slides, audio, infographics).
@@ -135,6 +259,26 @@ Open the PDF and check: page breaks, text readability, color accuracy, card alig
 ## Procedure: pptxgenjs (when PPTX is required)
 
 See `powerpoint` skill for pptxgenjs details. Remember: result won't be presentation-grade. Suggest the user open in PowerPoint for final polish, or switch to HTML/Gamma approach.
+
+## User Preferences
+
+### Typography and Readability
+- **Body text**: 1.2rem (not 1.05rem) for better readability in presentations
+- **Captions**: 0.9rem for supporting text
+- **Monospace**: 0.88rem for code snippets
+- User prefers larger, more comfortable reading sizes over compact layouts
+
+### Content Style
+- **Avoid personal experience emphasis**: Don't use phrases like "X years of experience" or "作为N年经验的架构师" - focus on universal problems and solutions
+- **Simplify technical jargon**: When explaining pitfalls or lessons learned, use clear, accessible language rather than overly technical descriptions
+- **Focus on practical accumulation**: Emphasize how experience and taste build over time through real usage, not abstract principles
+- **Correct terminology**: Use precise terms (e.g., "跨端共享" not "跨端访问" when describing cross-device sharing)
+
+### Anti-Patterns in Content
+- Don't over-emphasize personal credentials or experience years
+- Don't use overly complex technical explanations in "pitfalls" sections
+- Don't repeat the same layout or phrasing across multiple practice sections
+- Do focus on actionable insights and universal lessons
 
 ## Design Principles (HTML Slides)
 
@@ -174,6 +318,31 @@ User's preferred design system, matching the Quartz knowledge base config:
 - No centered hero CTAs with glowing buttons
 - Use real data, specific numbers, actual code snippets
 - Editorial restraint: whitespace over decoration
+
+### Content Guidelines
+
+**Typography and readability**:
+- Body text: 1.2rem (not 1.05rem) for better readability
+- Caption text: 0.9rem
+- Mono text: 0.88rem
+- Larger fonts improve presentation legibility
+
+**Tone and framing**:
+- Don't emphasize personal experience years (e.g., "作为12年经验的架构师")
+- Focus on universal, relatable problems that any AI tool user faces
+- Frame issues as common challenges, not personal achievements
+- Architecture diagrams should show clear hierarchy: tools at center, configuration above, output below
+
+**Simplify technical explanations**:
+- "Pitfalls" sections should be concise and relatable
+- Avoid overly technical jargon in problem descriptions
+- Example: "各个工具独立配置，积累的工具和经验无法汇聚在一起" (clear and relatable)
+- Not: "最初每个工具单独配偏好，维护成本极高" (too technical)
+
+**Focus on practical wisdom**:
+- Emphasize accumulated experience and personal taste (个人经验、个人品味)
+- Architecture design accumulation is just one aspect of overall experience building
+- Show how tools help preserve and apply accumulated knowledge
 
 ### Alternative Color Palettes
 

@@ -463,37 +463,84 @@ git push                             # 自动触发 GitHub Actions
 
 9. **kroki.io 需要联网**：PlantUML/GraphViz 渲染在客户端调用 kroki.io API，离线环境不工作。Mermaid 和 ASCII 不受影响。
 
-14. **Kroki.io 静态 URL 编码陷阱**：预先编码的 Kroki URL（base64 或 base64url）经常返回 400 错误。Kroki 需要**精确的 deflate 压缩 + base64url 编码**（不是 zlib，不是标准 base64）。**解决方案**：使用 JavaScript 动态加载 + pako.js 库在客户端编码：
+14. **Kroki.io diagram rendering — use POST API, not GET URLs**:
+    - **GET URLs with deflate+base64url encoding frequently return 400 errors**, especially with Chinese characters, complex syntax, or encoding mismatches.
+    - **POST API is reliable**: send plain text source in the request body, get SVG back.
+    - Some diagram languages (blockdiag, seqdiag, actdiag) return HTTP 200 with **empty response body** — they have service issues on the public Kroki instance. Replace with working alternatives (nomnoml, etc.).
+    - Test each diagram language with curl before embedding: `curl -X POST -H "Content-Type: text/plain" -d '<source>' https://kroki.io/<lang>/svg`
 
-```javascript
-// 1. 加载 pako.js（deflate 压缩库）
-const pakoScript = document.createElement('script');
-pakoScript.src = 'https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
-document.head.appendChild(pakoScript);
+**Recommended Kroki template** (POST-based, verified working):
 
-// 2. 编码函数
-async function encodeForKroki(source) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(source);
-    // 使用 deflate（不是 zlib）
-    const compressed = await pako.deflate(data, { level: 9 });
-    // 转换为 base64url（URL-safe base64，无填充）
-    const base64 = btoa(String.fromCharCode(...compressed))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '');
-    return base64;
-}
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Kroki Diagrams</title>
+    <style>
+        .diagram-body.loading { background: #f0f0f0; color: #999; font-family: monospace; }
+        .diagram-body img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <div id="mermaid-diagram" class="diagram-body loading">Loading...</div>
+    
+    <script>
+    const diagrams = {
+        'mermaid-diagram': {
+            lang: 'mermaid',
+            source: `graph TD
+    A[Client] --> B[Server]
+    B --> C[Database]`
+        }
+        // Add more diagrams here
+    };
 
-// 3. 动态加载图表
-pakoScript.onload = async () => {
-    const encoded = await encodeForKroki(diagramSource);
-    const url = `https://kroki.io/mermaid/svg/${encoded}`;
-    // 创建 <img> 并设置 src
-};
+    // Use POST requests — no encoding needed, no pako dependency
+    window.addEventListener('load', async () => {
+        for (const [id, { lang, source }] of Object.entries(diagrams)) {
+            const container = document.getElementById(id);
+            try {
+                const response = await fetch(`https://kroki.io/${lang}/svg`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: source
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const svgText = await response.text();
+                if (!svgText) throw new Error('Empty response from Kroki');
+                const blob = new Blob([svgText], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const img = new Image();
+                img.onload = () => {
+                    container.classList.remove('loading');
+                    container.appendChild(img);
+                };
+                img.src = url;
+            } catch (error) {
+                container.innerHTML = `<span style="color:red;">渲染失败: ${error.message}</span>`;
+                console.error(`Error for ${lang}:`, error);
+            }
+        }
+    });
+    </script>
+</body>
+</html>
 ```
 
-**关键点**：deflate ≠ zlib（deflate 是原始压缩，zlib 有头部），base64url ≠ base64（使用 `-` `_` 替代 `+` `/`，去掉 `=` 填充）。静态 URL 容易出错，动态生成更可靠。
+**Why POST over GET**:
+1. No encoding complexity (no deflate, no base64url, no pako dependency)
+2. Chinese characters and special syntax work correctly
+3. Easier to debug (plain text in request body)
+4. Still works for all supported diagram languages
+
+**Known service issues** (public kroki.io instance, may change):
+- blockdiag: returns 200 with empty body
+- seqdiag: returns 200 with empty body
+- actdiag: returns 200 with empty body
+- Use nomnoml, mermaid, plantuml, d2, graphviz, c4plantuml as reliable alternatives
 
 10. **Quartz 5 Assets emitter 丢失 HTML 扩展名**：`slugifyFilePath()` 会去掉 `.html`，导致 `public/presentations/foo.html` 变成 `public/presentations/foo`。必须 patch `quartz/plugins/emitters/assets.ts` 的 `copyFile` 函数，对 `.html/.htm/.pdf/.pptx/.ppt/.key` 保留扩展名。见下方 "Assets Emitter Extension Fix" 章节。
 
